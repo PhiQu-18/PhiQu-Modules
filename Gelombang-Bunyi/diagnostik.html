@@ -224,15 +224,14 @@
 
 <script>
   function checkDevice() {
-    // Standar 992px untuk desktop mode
-    if (window.innerWidth < 992) {
-      document.getElementById("mobileModal").style.display = "flex";
-      document.getElementById("mainContent").style.display = "none";
-    } else {
-      document.getElementById("mobileModal").style.display = "none";
-      document.getElementById("mainContent").style.display = "block";
+    // Pastikan mobileModal selalu tertutup dan konten utama selalu terbuka
+    if (document.getElementById("mobileModal")) {
+        document.getElementById("mobileModal").style.display = "none";
+        }
+        if (document.getElementById("mainContent")) {
+            document.getElementById("mainContent").style.display = "block";
+        }
     }
-  }
 
   window.onresize = checkDevice;
 
