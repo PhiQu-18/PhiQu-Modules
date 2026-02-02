@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penilaian Sikap - PhiQu</title>
+    <link rel="icon" href="../foto/logo.png" type="image/png">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 5px solid #4d7c2c; }
+        
+        /* Style Header Logo & Judul Sejajar */
+        .header-banner {
+            display: flex;
+            align-items: center;
+            position: relative;
+            margin-bottom: 10px;
+            min-height: 60px;
+        }
+        .instrumen-logo {
+            position: absolute;
+            left: 0;
+            width: 60px;
+            height: auto;
+        }
+        h2 { 
+            flex: 1;
+            color: #4d7c2c; 
+            text-align: center; 
+            margin: 0; 
+        }
+
+        .info-text { text-align: center; font-size: 13px; color: #64748b; margin-bottom: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+        th { background: #fbbf24; color: black; padding: 12px; border: 1px solid #ddd; }
+        td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        
+        input[type="text"] { width: 90%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+        select { padding: 8px; border-radius: 6px; border: 1px solid #ccc; background: white; }
+        
+        .btn-group { margin-top: 30px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        .btn-add { background: #3b82f6; }
+        .btn-save { background: #4d7c2c; }
+        .btn-pdf { background: #ef4444; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-banner">
+        <img src="../foto/logo.png" alt="Logo" class="instrumen-logo">
+        <h2>INPUT PENILAIAN SIKAP</h2>
+    </div>
+
+    <div class="info-text">Skala Skor: 3 (Baik), 2 (Cukup), 1 (Kurang)</div>
+    
+    <table id="tabelSikap">
+        <thead>
+            <tr>
+                <th style="width: 50px;">No</th>
+                <th>Nama Peserta Didik</th>
+                <th>Jujur</th>
+                <th>Disiplin</th>
+                <th>Tj. Jawab</th>
+                <th>Santun</th>
+                <th>P. Diri</th>
+                <th style="width: 80px;">Total</th>
+            </tr>
+        </thead>
+        <tbody id="bodyTabel"></tbody>
+    </table>
+
+    <div class="btn-group">
+        <button class="btn btn-add" onclick="tambahSiswa()">➕ Tambah Baris</button>
+        <button class="btn btn-save" onclick="simpanData()">💾 Simpan di Browser</button>
+        <button class="btn btn-pdf" onclick="generatePDF()">📄 Download PDF</button>
+    </div>
+    
+    <p style="font-size: 11px; margin-top: 20px; color: #64748b; text-align: center;">
+        Data tersimpan secara lokal di browser Anda. Gunakan tombol PDF untuk laporan resmi.
+    </p>
+</div>
+
+<script>
+    const { jsPDF } = window.jspdf;
+    let daftarSiswa = JSON.parse(localStorage.getItem('phiQu_sikap')) || [];
+
+    function renderTabel() {
+        const body = document.getElementById('bodyTabel');
+        body.innerHTML = '';
+        daftarSiswa.forEach((siswa, index) => {
+            let total = parseInt(siswa.s1) + parseInt(siswa.s2) + parseInt(siswa.s3) + parseInt(siswa.s4) + parseInt(siswa.s5);
+            body.innerHTML += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><input type="text" value="${siswa.nama}" placeholder="Nama Siswa" onchange="updateData(${index}, 'nama', this.value)"></td>
+                    <td>${createSelect(index, 's1', siswa.s1)}</td>
+                    <td>${createSelect(index, 's2', siswa.s2)}</td>
+                    <td>${createSelect(index, 's3', siswa.s3)}</td>
+                    <td>${createSelect(index, 's4', siswa.s4)}</td>
+                    <td>${createSelect(index, 's5', siswa.s5)}</td>
+                    <td style="font-weight:bold; background:#f8fafc;">${total}</td>
+                </tr>`;
+        });
+    }
+
+    function createSelect(index, key, value) {
+        return `
+            <select onchange="updateData(${index}, '${key}', this.value)">
+                <option value="3" ${value == 3 ? 'selected' : ''}>3</option>
+                <option value="2" ${value == 2 ? 'selected' : ''}>2</option>
+                <option value="1" ${value == 1 ? 'selected' : ''}>1</option>
+            </select>`;
+    }
+
+    function tambahSiswa() {
+        daftarSiswa.push({ nama: '', s1: 3, s2: 3, s3: 3, s4: 3, s5: 3 });
+        renderTabel();
+    }
+
+    function updateData(index, key, val) {
+        daftarSiswa[index][key] = val;
+        renderTabel();
+    }
+
+    function simpanData() {
+        localStorage.setItem('phiQu_sikap', JSON.stringify(daftarSiswa));
+        alert('Data berhasil disimpan ke memori browser!');
+    }
+
+    function generatePDF() {
+    if (daftarSiswa.length === 0) return alert("Belum ada data!");
+    const doc = new jsPDF();
+    
+    const img = new Image();
+    img.src = '../foto/logo.png';
+    doc.addImage(img, 'PNG', 14, 10, 18, 18);
+
+    doc.setFontSize(15);
+    doc.setFont("helvetica", "bold");
+    doc.text("LAPORAN PENILAIAN SIKAP PESERTA DIDIK", 105, 18, { align: "center" });
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Mata Pelajaran: Fisika (Gelombang Bunyi)", 105, 24, { align: "center" });
+    // Menambahkan Info Skala
+    doc.setFont("helvetica", "bolditalic");
+    doc.text("Kriteria Skor: 3 (Baik), 2 (Cukup), 1 (Kurang)", 105, 29, { align: "center" });
+
+    doc.line(14, 33, 196, 33);
+
+    const bodyData = daftarSiswa.map((s, i) => {
+        let total = parseInt(s.s1) + parseInt(s.s2) + parseInt(s.s3) + parseInt(s.s4) + parseInt(s.s5);
+        return [i + 1, s.nama, s.s1, s.s2, s.s3, s.s4, s.s5, total];
+    });
+
+    doc.autoTable({
+        head: [['No', 'Nama Siswa', 'Jujur', 'Disiplin', 'Tj. Jawab', 'Santun', 'P. Diri', 'Total']],
+        body: bodyData,
+        startY: 38,
+        styles: { halign: 'center' },
+        headStyles: { fillColor: [77, 124, 44] }
+    });
+
+    doc.save(`Rekap_Sikap_${Date.now()}.pdf`);
+}
+
+    if(daftarSiswa.length === 0) tambahSiswa();
+    renderTabel();
+</script>
+
+</body>
+</html>

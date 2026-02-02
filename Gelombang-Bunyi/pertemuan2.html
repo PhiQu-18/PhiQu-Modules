@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>PhiQu - Gelombang Bunyi & Pemodelan Komputasi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" href="foto/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="foto/logo.png">
+  
+  <style>
+    :root {
+      --primary: #002d57;
+      --accent: #10b981;
+      --bg: #f8fafc;
+      --card-white: #ffffff;
+      --text-main: #1e293b;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 5px;
+      background: rgba(0,0,0,0.05);
+      z-index: 1001;
+    }
+    .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: 0.3s; }
+
+    /* Navigasi Hotspots */
+    .nav-hotspot {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 5%;
+      z-index: 1000;
+      cursor: pointer;
+    }
+    .left-zone { left: 0; }
+    .right-zone { right: 0; }
+
+    /* Slide Engine */
+    .viewport {
+      width: 100%;
+      max-width: 1100px;
+      height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+    .slide {
+      width: 100%;
+      height: auto;
+      max-height: 85vh;
+      background: var(--card-white);
+      border-radius: 16px;
+      padding: 30px;
+      display: none; /* Default sembunyi */
+      box-sizing: border-box;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      border: 1px solid #e2e8f0;
+      position: relative;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+      animation: slideIn 0.4s ease-out;
+    }
+
+    h1 { border: none; margin: 0 0 15px 0; font-size: clamp(20px, 4vh, 28px); color: var(--primary); line-height: 1.2; }
+    .header-section { text-align: center; margin-bottom: 20px; flex-shrink: 0; }
+    
+    .grid-2 { 
+      display: grid; 
+      grid-template-columns: 1.2fr 0.8fr; 
+      gap: 20px; 
+      align-items: stretch;
+    }
+
+    .theory-box {
+      background: #f1f5f9;
+      padding: 20px;
+      border-radius: 12px;
+      border-left: 5px solid var(--primary);
+      font-size: clamp(12px, 1.8vh, 14px);
+    }
+
+    .example-box {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    ul { margin: 10px 0; padding-left: 20px; }
+    li { margin-bottom: 8px; }
+
+    .btn-run {
+      margin-top: 15px;
+      padding: 14px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+    .btn-run:hover { background: #001a33; transform: translateY(-2px); }
+
+    @keyframes slideIn { 
+      from { opacity: 0; transform: scale(0.98); } 
+      to { opacity: 1; transform: scale(1); } 
+    }
+
+    .responsive-img {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+      body { overflow-y: auto; overflow-x: hidden; }
+      .grid-2 { grid-template-columns: 1fr; gap: 15px; }
+      .slide { height: auto; max-height: none; padding: 15px; }
+      .theory-box { padding: 15px; font-size: 12px; overflow-y: visible; }
+      .example-box { padding: 15px; }
+      .responsive-img { max-width: 100%; margin: 5px 0; }
+      h1 { font-size: clamp(18px, 3vh, 24px); }
+      .header-section { margin-bottom: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="nav-hotspot left-zone" onclick="moveSlide(-1)" title="Slide Sebelumnya"></div>
+<div class="nav-hotspot right-zone" onclick="moveSlide(1)" title="Slide Berikutnya"></div>
+
+<div class="viewport">
+
+  <div class="slide active">
+    <div class="header-section">
+      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+        Modul Fisika Digital
+      </span>
+      <h1>Analisis Gelombang Bunyi & <br> Implementasi Berpikir Komputasi</h1>
+      <p style="color: #64748b; font-size: 14px; margin: 5px 0;">Integrasi Konsep Fisika dengan Computational Thinking</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="theory-box">
+        <h3 style="margin-top: 0; font-size: 16px; color: var(--primary);">🎯 Tujuan Pembelajaran</h3>
+        <ul style="line-height: 1.5; color: #334155;">
+          <li><b>Karakteristik Bunyi:</b> Menjelaskan sifat gelombang longitudinal.</li>
+          <li><b>Persamaan Dasar:</b> Menerapkan rumus cepat rambat (v = f . λ).</li>
+          <li><b>Analisis Medium:</b> Membandingkan perambatan di gas, cair, padat.</li>
+          <li><b>Sumber Bunyi:</b> Menganalisis frekuensi dawai & pipa organa.</li>
+          <li><b>Efek Doppler:</b> Memodelkan pergeseran frekuensi matematis.</li>
+          <li><b>Intensitas:</b> Mengevaluasi taraf intensitas (dB) & pelayangan.</li>
+          <li><b>Aplikasi:</b> Menghubungkan akustik dengan teknologi modern.</li>
+        </ul>
+      </div>
+
+      <div style="flex: 1; position: relative; cursor: pointer; overflow: hidden; border-radius: 12px; border: 2px solid #3fb950; background-color: #000; min-height: 250px;" 
+     onclick="window.location.href='studio.html'">
+    
+    <img src="foto/nama_foto_anda.jpg" 
+         alt="Masuk ke Studio" 
+         style="width: 100%; height: 100%; object-fit: cover; transition: all 0.5s ease; opacity: 0.5; display: block;"
+         onmouseover="this.style.transform='scale(1.1)'; this.style.opacity='0.3'" 
+         onmouseout="this.style.transform='scale(1)'; this.style.opacity='0.5'">
+    
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; text-align: center; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        
+        <div style="border: 2px solid rgba(63, 185, 80, 0.8); padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.1); backdrop-filter: blur(2px);">
+            <img src="./foto/LKPD-Rendah.png" 
+                 style="width: 140px; height: 140px; object-fit: contain; filter: brightness(1.2) contrast(1.2); display: block;">
+        </div>
+        
+        <div style="color: #3fb950; font-size: 10px; font-weight: bold; margin-top: 8px; text-shadow: 0 0 10px rgba(0,0,0,1); background: rgba(0,0,0,0.6); padding: 2px 10px; border-radius: 20px;">
+            [ SCAN TO ENTER STUDIO ]
+        </div>
+    </div>
+
+    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: white; padding: 15px; font-size: 12px; text-align: center; font-family: sans-serif;">
+        <strong>Buka Terminal Fisika</strong> 🚀
+    </div>
+</div>
+    </div>
+  </div>
+  <div class="slide">
+    <div class="header-section">
+      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+        Materi 01
+      </span>
+      <h1>Pengertian & Karakteristik Gelombang Bunyi</h1>
+    </div>
+
+    <div class="grid-2">
+      <div class="theory-box" style="overflow-y: auto;">
+        <h3 style="margin-top: 0; font-size: 16px; color: var(--primary);">🔍 Definisi Dasar</h3>
+        <p style="margin-bottom: 15px;">
+          Gelombang bunyi adalah gelombang <b>longitudinal</b> yang merambat melalui medium (padat, cair, atau gas) dalam bentuk rapatan dan renggangan. Bunyi dihasilkan oleh benda yang bergetar.
+        </p>
+
+        <h3 style="font-size: 16px; color: var(--primary);">⚙️ Sifat-Sifat Gelombang Bunyi</h3>
+        <ul style="line-height: 1.6; color: #334155; margin-bottom: 0;">
+          <li><b>Refleksi:</b> Bunyi dapat memantul saat mengenai penghalang.</li>
+          <li><b>Refraksi:</b> Perubahan arah bunyi saat melewati medium berbeda kerapatan.</li>
+          <li><b>Diffraksi:</b> Bunyi mampu melewati celah sempit atau berbelok.</li>
+          <li><b>Interferensi:</b> Penguatan atau pelemahan bunyi akibat pertemuan dua gelombang.</li>
+        </ul>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="example-box" style="background: #f8fafc; border: 1px solid #cbd5e1; align-items: center; text-align: center;">
+          <h4 style="margin: 0 0 10px 0; color: #475569; font-size: 14px;">Visualisasi Perambatan</h4>
+          <div style="width: 100%; background: white; border-radius: 8px; padding: 10px; border: 1px solid #e2e8f0;">
+             
+                    <img src="foto/e.jpg" alt="Gelombang Longitudinal menunjukkan kompresi dan rarefaksi" class="responsive-img">
+                    
+            <p style="font-size: 11px; color: #64748b; margin-top: 8px;">
+              Molekul udara bergerak maju-mundur searah perambatan gelombang.
+            </p>
+          </div>
+          <div style="margin-top: 15px; text-align: left; width: 100%;">
+            <p style="font-size: 12px; color: #1e293b; line-height: 1.4;">
+              <b>Catatan Penting:</b><br>
+              Bunyi <b>tidak dapat</b> merambat di ruang hampa (vakum).
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="header-section">
+      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+        Materi 02
+      </span>
+      <h1>Cepat Rambat Bunyi pada Berbagai Medium</h1>
+    </div>
+
+    <div class="grid-2">
+      <div class="theory-box" style="overflow-y: auto;">
+        <h3 style="margin-top: 0; font-size: 16px; color: var(--primary);">📏 Persamaan Umum</h3>
+        <p>Secara umum, cepat rambat bunyi dirumuskan dengan:</p>
+        <div style="background: white; padding: 10px; border-radius: 8px; text-align: center; font-family: 'Times New Roman', serif; font-size: 1.2rem; margin: 10px 0; border: 1px solid #cbd5e1;">
+          v = s / t atau v = f . λ
+        </div>
+
+        <h3 style="font-size: 16px; color: var(--primary);">🧪 Faktor Medium</h3>
+        <p>Bunyi merambat dengan kecepatan berbeda tergantung kerapatan partikel mediumnya:</p>
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px;">
+          <tr style="background: var(--primary); color: white;">
+            <th style="padding: 8px; border: 1px solid #ddd;">Medium</th>
+            <th style="padding: 8px; border: 1px solid #ddd;">Faktor Penentu</th>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><b>Padat</b></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Modulus Young (E) & Massa Jenis (ρ)</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><b>Cair</b></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Modulus Bulk (B) & Massa Jenis (ρ)</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><b>Gas</b></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">Suhu Mutlak (T) & Konstanta Laplace</td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="example-box" style="background: #f8fafc; border: 1px solid #cbd5e1;">
+          <h4 style="margin: 0 0 10px 0; color: #475569; font-size: 14px;">Analisis Komparatif</h4>
+
+
+
+          <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px; margin-top: 10px;">
+            <p style="font-size: 12px; margin: 0; color: #92400e;">
+              <b>Prinsip Utama:</b><br>
+              v_{padat} > v_{cair} > v_{gas}<br>
+              Semakin rapat partikel medium, semakin cepat getaran dihantarkan.
+            </p>
+          </div>
+          <img src="foto/2.jfif" alt="Gelombang Longitudinal menunjukkan kompresi dan rarefaksi" class="responsive-img">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="header-section">
+      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+        Materi 03
+      </span>
+      <h1>Analisis Perambatan: Gas, Cair, & Padat</h1>
+    </div>
+
+    <div class="grid-2">
+      <div class="theory-box" style="overflow-y: auto;">
+        <h3 style="margin-top: 0; font-size: 16px; color: var(--primary);">📊 Mengapa Kecepatannya Berbeda?</h3>
+        <p style="font-size: 13px; line-height: 1.6;">
+          Kecepatan bunyi sangat bergantung pada seberapa efisien partikel medium berinteraksi untuk meneruskan energi getaran.
+        </p>
+
+        <ul style="font-size: 13px; color: #334155;">
+          <li><b>Zat Padat (~5000 m/s):</b> Jarak antar partikel sangat rapat dan ikatan atom sangat kuat, sehingga energi getaran berpindah sangat instan.</li>
+          <li><b>Zat Cair (~1500 m/s):</b> Partikel kurang rapat dibandingkan zat padat, namun masih cukup efisien untuk menghantarkan bunyi.</li>
+          <li><b>Zat Gas (~340 m/s):</b> Partikel sangat renggang dan sering bertumbukan secara acak, membuat transmisi energi paling lambat.</li>
+        </ul>
+
+        <div style="background: #e0f2fe; padding: 10px; border-radius: 8px; border-left: 4px solid #0284c7; margin-top: 10px;">
+          <p style="font-size: 12px; margin: 0; color: #0369a1;">
+            <b>Computational Thinking:</b><br>
+            Jika kita membuat algoritma simulasi, variabel <i>density</i> (ρ) dan <i>elasticity</i> (E/B) adalah input utama untuk menentukan output kecepatan (v).
+          </p>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="example-box" style="background: #f8fafc; border: 1px solid #cbd5e1; align-items: center; text-align: center;">
+          <h4 style="margin: 0 0 10px 0; color: #475569; font-size: 14px;">Model Partikel Medium</h4>
+
+          <div style="width: 100%; background: white; border-radius: 8px; padding: 10px; border: 1px solid #e2e8f0;">
+
+            <p style="font-size: 11px; color: #64748b; margin-top: 8px;">
+              <img src="foto/3.webp" alt="Gelombang Longitudinal menunjukkan kompresi dan rarefaksi" class="responsive-img">
+            </p>
+          </div>
+
+          <div style="margin-top: 10px; width: 100%; text-align: left;">
+            <p style="font-size: 12px; font-weight: bold; color: var(--primary);">Contoh Data Nyata (Udara 20°C):</p>
+            <code style="display: block; background: #1e293b; color: #f8fafc; padding: 8px; border-radius: 5px; font-size: 11px;">
+              // Pseudocode Logic <br>
+              IF medium == "Baja" THEN v = 5100;<br>
+              IF medium == "Air"  THEN v = 1480;<br>
+              IF medium == "Udara" THEN v = 343;
+            </code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="header-section">
+      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+        Materi 04
+      </span>
+      <h1>Analisis Frekuensi: Dawai & Pipa Organa</h1>
+    </div>
+
+    <div class="grid-2">
+      <div class="theory-box" style="overflow-y: auto;">
+        <h3 style="margin-top: 0; font-size: 16px; color: var(--primary);">🎸 1. Dawai (Senar)</h3>
+        <p>Frekuensi pada dawai mengikuti pola harmonik sederhana:</p>
+
+        <div style="background: white; padding: 10px; border-radius: 8px; font-family: 'Times New Roman', serif; font-size: 14px; margin: 10px 0; border: 1px solid #cbd5e1;">
+          f_n = v/λ = (n+1) v/2L <br>
+          <small>*n=0 (nada dasar), n=1 (nada atas 1), dst.</small>
+        </div>
+
+        <h3 style="font-size: 16px; color: var(--primary);">🎺 2. Pipa Organa</h3>
+        <ul style="font-size: 13px; color: #334155;">
+          <li><b>Terbuka:</b> Pola frekuensi sama dengan dawai (f_0 : f_1 : f_2 = 1 : 2 : 3).</li>
+          <li><b>Tertutup:</b> Hanya menghasilkan harmonik ganjil (f_0 : f_1 : f_2 = 1 : 3 : 5).</li>
+        </ul>
+
+        <div style="background: #fff; padding: 10px; border-radius: 8px; font-family: 'Times New Roman', serif; font-size: 14px; border: 1px solid #cbd5e1;">
+          Pipa Tertutup: f_n = (2n+1)v 4L
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="example-box" style="background: #f8fafc; border: 1px solid #cbd5e1;">
+          <h4 style="margin: 0 0 10px 0; color: #475569; font-size: 14px;">Logika Komputasi (Pattern Recognition)</h4>
+          <p style="font-size: 12px; line-height: 1.4;">
+            Dalam pemrograman, kita bisa menggunakan <b>Looping</b> untuk menentukan deret frekuensi:
+          </p>
+          <code style="display: block; background: #1e293b; color: #10b981; padding: 10px; border-radius: 5px; font-size: 11px;">
+            // Mencari frekuensi ke-n <br>
+            function getFreq(n, v, L, tipe) {<br>
+            &nbsp; if(tipe == "terbuka") return (n+1)*v / (2*L);<br>
+            &nbsp; if(tipe == "tertutup") return (2*n+1)*v / (4*L);<br>
+            }
+          </code>
+
+          <div style="margin-top: 15px; background: #f0fdf4; padding: 10px; border-radius: 8px; border: 1px solid #bbf7d0;">
+            <p style="font-size: 11px; color: #166534; margin: 0;">
+              <b>Eksperimen:</b> Perhatikan bagaimana panjang pipa (L) berbanding terbalik dengan frekuensi (f). Semakin panjang pipa, suara semakin rendah (ngebass).
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="header-section">
+      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+        Studi Kasus Interaktif
+      </span>
+      <h1>Simulasi Pipa Organa Terbuka</h1>
+    </div>
+
+    <div class="grid-2">
+      <div class="theory-box" style="overflow-y: auto;">
+        <h3 style="margin-top: 0; font-size: 16px; color: var(--primary);">📝 Cara Manual (Fisika)</h3>
+        <p style="font-size: 13px;"><b>Soal:</b> Sebuah pipa organa terbuka memiliki panjang 60 cm. Jika cepat rambat bunyi di udara adalah 340 m/s maka frekuensi pipa organa pada nada atas kedua adalah...</p>
+        
+        <div style="background: white; padding: 12px; border-radius: 8px; font-family: 'Times New Roman', serif; font-size: 15px; border: 1px solid #cbd5e1;">
+          f_n = (n+1)v (2L)
+          <br>f_2 = (2+1) 340 (2 . 0,6) = 850 Hz
+        </div>
+        
+        
+
+        <p style="font-size: 12px; margin-top: 10px; color: #64748b;">
+          <i>Cobalah mengubah nilai di terminal kanan untuk melihat bagaimana hasil frekuensi berubah secara otomatis!</i>
+        </p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="example-box" style="background: #1e293b; color: #e2e8f0; border: none; padding: 0; overflow: hidden;">
+          <div style="background: #334155; padding: 8px 15px; font-size: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <span>index.js - Interactive Terminal</span>
+            <div style="display: flex; gap: 5px;">
+              <div style="width: 10px; height: 10px; background: #ff5f56; border-radius: 50%;"></div>
+              <div style="width: 10px; height: 10px; background: #ffbd2e; border-radius: 50%;"></div>
+              <div style="width: 10px; height: 10px; background: #27c93f; border-radius: 50%;"></div>
+            </div>
+          </div>
+          
+          <div style="padding: 15px; font-family: 'Courier New', monospace; font-size: 13px;">
+            <div style="color: #94a3b8; margin-bottom: 10px;">// Ubah angka di bawah ini:</div>
+            <div><span style="color: #f472b6;">const</span> v = <input type="number" id="inputV" value="340" style="background: #0f172a; color: #fbbf24; border: 1px solid #334155; width: 60px; border-radius: 4px; padding: 2px;">;</div>
+            <div><span style="color: #f472b6;">const</span> L = <input type="number" id="inputL" value="0.6" step="0.1" style="background: #0f172a; color: #fbbf24; border: 1px solid #334155; width: 60px; border-radius: 4px; padding: 2px;">;</div>
+            <div><span style="color: #f472b6;">const</span> n = <input type="number" id="inputN" value="2" style="background: #0f172a; color: #fbbf24; border: 1px solid #334155; width: 60px; border-radius: 4px; padding: 2px;">;</div>
+            
+            <div style="color: #94a3b8; margin: 15px 0 5px 0;">// Kalkulasi otomatis:</div>
+            <div style="color: #38bdf8;">function <span style="color: #fbbf24;">hitung</span>(n, v, L) {</div>
+            <div style="padding-left: 20px; color: #38bdf8;">return (n + 1) * v / (2 * L);</div>
+            <div style="color: #38bdf8;">}</div>
+          </div>
+
+          <div id="terminalOutput" style="background: #0f172a; padding: 15px; border-top: 2px solid #334155; color: #27c93f; font-family: 'Courier New', monospace; font-size: 14px;">
+            > Output: 850 Hz
+          </div>
+        </div>
+        
+        <button class="btn-run" onclick="runSimulation()" style="background: #10b981;">
+          ▶ Run Code
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function runSimulation() {
+      const v = parseFloat(document.getElementById('inputV').value);
+      const L = parseFloat(document.getElementById('inputL').value);
+      const n = parseInt(document.getElementById('inputN').value);
+      const output = document.getElementById('terminalOutput');
+
+      if (isNaN(v) || isNaN(L) || isNaN(n) || L === 0) {
+        output.style.color = "#ff5f56";
+        output.innerText = "> Error: Input tidak valid!";
+      } else {
+        const res = (n + 1) * v / (2 * L);
+        output.style.color = "#27c93f";
+        output.innerText = "> Output: " + res.toFixed(2) + " Hz";
+      }
+    }
+
+    // Menambahkan event listener agar otomatis update saat diinput
+    document.querySelectorAll('.example-box input').forEach(input => {
+      input.addEventListener('input', runSimulation);
+    });
+  </script>
+
+  <div class="slide">
+    <div class="header-section">
+      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+        Analisis Lanjutan
+      </span>
+      <h1>Studi Kasus: Perubahan Ujung Pipa</h1>
+    </div>
+
+    <div class="grid-2">
+      <div class="theory-box" style="overflow-y: auto;">
+        <h3 style="margin-top: 0; font-size: 16px; color: var(--primary);">📝 Analisis Perbandingan</h3>
+        <p style="font-size: 13px;"><b>Soal:</b> Frekuensi nada atas kedua pipa organa terbuka adalah 450 Hz. Jika pipa organa tersebut ditutup, frekuensi nada atas ketiganya adalah …</p>
+        
+        <div style="background: white; padding: 12px; border-radius: 8px; font-family: 'Times New Roman', serif; font-size: 14px; border: 1px solid #cbd5e1; line-height: 1.6;">
+          <b>1. Cari nilai v/L dari Pipa Terbuka:</b><br>
+          f_2a = (2+1) v (2L) <br> 450 = (3v)/(2L) <br> v / 2L = 150 Hz<br>
+          <b>2. Hitung Nada Atas ke-3 Pipa Tertutup (n=3):</b><br>
+          f_{3b} = (2(3) + 1) v/4L <br> f_3 = (7)v/4L<br>
+          <b>3. Perhitungan Akhir</b>
+          v/4L = 1/2 (v/2L) <br> v/4L = 1/2 (150) = 75 Hz<br>
+          f_3 = 7 (75) = 525 Hz
+        </div>
+
+        
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div class="example-box" style="background: #1e293b; color: #e2e8f0; border: none; padding: 0; overflow: hidden;">
+        <div style="background: #334155; padding: 8px 15px; font-size: 11px; display: flex; justify-content: space-between;">
+          <span>Logic_Compare.js</span>
+          <span style="color: #10b981;">● Active</span>
+        </div>
+        
+        <div style="padding: 15px; font-family: 'Courier New', monospace; font-size: 12px;">
+          <div style="color: #94a3b8;">// Input Frekuensi Terbuka (n=2)</div>
+          <div>const f_open = <input type="number" id="fAwal" value="450" oninput="runCompareSim()" style="background: #0f172a; color: #fbbf24; border: 1px solid #334155; width: 60px; border-radius: 4px;">;</div>
+          
+          <div style="color: #94a3b8; margin-top: 10px;">// Target Nada Atas Pipa Tertutup</div>
+          <div>const n_target = <input type="number" id="nTarget" value="3" oninput="runCompareSim()" style="background: #0f172a; color: #fbbf24; border: 1px solid #334155; width: 45px; border-radius: 4px;">;</div>
+          
+          <div style="color: #38bdf8; margin-top: 15px;">
+            let vL = (f_open * 2) / 3;<br>
+            let hasil = (2 * n_target + 1) * vL / 4;
+          </div>
+        </div>
+
+        <div id="compareOutput" style="background: #0f172a; padding: 15px; border-top: 2px solid #334155; color: #27c93f; font-family: 'Courier New', monospace; font-size: 14px; font-weight: bold;">
+          > Result: 525 Hz
+        </div>
+      </div>
+
+      <div style="background: #f1f5f9; padding: 10px; border-radius: 8px; font-size: 11px; color: #475569; border-left: 4px solid var(--accent);">
+        <b>Insight Komputasi:</b><br>
+        Dengan memisahkan variabel v/L (Abstraksi), kita bisa menghitung frekuensi nada manapun meski medium atau panjang pipanya tidak diketahui secara eksplisit.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+    <div class="header-section">
+      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+        Materi 05
+      </span>
+      <h1>Efek Doppler & Pemodelan Kondisional</h1>
+    </div>
+
+    <div class="grid-2">
+      <div class="theory-box" style="overflow-y: auto;">
+        <h3 style="margin-top: 0; font-size: 16px; color: var(--primary);">🔊 Konsep Pergeseran</h3>
+        <p style="font-size: 13px;">Efek Doppler menjelaskan perubahan frekuensi bunyi yang terdengar akibat gerak relatif antara sumber bunyi dan pendengar.</p>
+
+        <div style="background: white; padding: 10px; border-radius: 8px; font-family: 'Times New Roman', serif; font-size: 1.1rem; border: 1px solid #cbd5e1; text-align: center; margin: 10px 0;">
+          f_p = v ± v_p / v ± v_s . f_s
+        </div>
+
+        <h3 style="font-size: 15px; color: var(--primary);">🤖 Aturan Tanda (Logic Gate)</h3>
+        <ul style="font-size: 12px; line-height: 1.4; color: #334155;">
+          <li><b>Pendengar Mendekat:</b> v_p (Kecepatan Pendengar) bernilai <b>(+)</b></li>
+          <li><b>Sumber Mendekat:</b> v_s (Kecepatan Sumber) bernilai <b>(-)</b></li>
+          <li><b>f_s (Frekuensi yang dipancarkan Sumber)</b></li>
+          <li>><b>v (Cepat Rambat Bunyi di Medium)</b></li>
+          <li><b>f_p (frekuensi yang didengar oleh pengamat)</b></li>
+          <li><i>Tips:</i> Jika menjauh, gunakan tanda sebaliknya.</li>
+          <li><i>Biasanya jika v tidak disebut secara spesifik, kita dapat menggunakan 340 m/s (kecepatan udara pada kondisi normal)</i></li>
+        </ul>
+        
+        
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="example-box" style="background: #1e293b; color: #e2e8f0; border: none; padding: 0; overflow: hidden;">
+          <div style="background: #334155; padding: 8px 15px; font-size: 11px; display: flex; justify-content: space-between;">
+            <span>Doppler_Simulator.js</span>
+            <span style="color: #38bdf8;">⚡ Live Preview</span>
+          </div>
+          
+          <div style="padding: 15px; font-family: 'Courier New', monospace; font-size: 12px;">
+            <div style="color: #94a3b8; margin-bottom: 8px;">// Input Parameter <br> // Kecepatan udara (v) = 340 m/s</div>
+            <div>fs = <input type="number" id="fs" value="1000" oninput="runDoppler()" style="width: 55px; background: #0f172a; color: #fbbf24; border: 1px solid #334155;"> Hz</div>
+            
+            <div style="margin-top: 10px;">
+              vp = <input type="number" id="vp" value="20" oninput="runDoppler()" style="width: 45px; background: #0f172a; color: #fbbf24; border: 1px solid #334155;"> m/s
+              <select id="modeP" onchange="runDoppler()" style="background: #0f172a; color: #38bdf8; border: none; font-size: 11px;">
+                <option value="plus">Mendekat (+)</option>
+                <option value="minus">Menjauh (-)</option>
+              </select>
+            </div>
+
+            <div style="margin-top: 5px;">
+              vs = <input type="number" id="vs" value="10" oninput="runDoppler()" style="width: 45px; background: #0f172a; color: #fbbf24; border: 1px solid #334155;"> m/s
+              <select id="modeS" onchange="runDoppler()" style="background: #0f172a; color: #38bdf8; border: none; font-size: 11px;">
+                <option value="minus">Mendekat (-)</option>
+                <option value="plus">Menjauh (+)</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="dopplerOutput" style="background: #0f172a; padding: 15px; border-top: 2px solid #334155; color: #27c93f; font-family: 'Courier New', monospace; font-size: 15px; font-weight: bold;">
+            > fp: 1090.91 Hz
+          </div>
+        </div>
+        
+        <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 10px; border-radius: 8px;">
+          <p style="font-size: 11px; color: #991b1b; margin: 0;">
+            <b>Algoritma:</b> Simulasi ini menggunakan <i>Conditional Logic</i> untuk menentukan apakah kecepatan harus menambah atau mengurangi pembilang/penyebut.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="header-section">
+      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+        Materi 06
+      </span>
+      <h1>Intensitas, Taraf Intensitas & Pelayangan</h1>
+    </div>
+
+    <div class="grid-2">
+      <div class="theory-box" style="overflow-y: auto;">
+        <h3 style="margin-top: 0; font-size: 16px; color: var(--primary);">🔊 Taraf Intensitas (dB)</h3>
+        <p style="font-size: 12px;">ntensitas bunyi adalah besarnya energi yang dibawa oleh gelombang bunyi per satuan luas dan waktu <b> dengan satuan Decibel (dB)</b>:</p>
+        
+        <div style="background: white; padding: 10px; border-radius: 8px; font-family: 'Times New Roman', serif; font-size: 1rem; border: 1px solid #cbd5e1; margin-bottom: 10px;">
+          TI = 10 log (I / I_0) <br>
+          <small>I_0 = 10^{-12} W/m^2</small>
+          <br>--------------------------<br>
+          <li>TI: Intensitas Bunyi (dB)</li>
+          <li>I: Intensitas per Satuan Luas (W/m²)</li>
+          <li>I_0: Intensitas Ambang Dengar Manusia(10⁻¹² W/m²)</li>
+        </div>
+
+        <h3 style="font-size: 16px; color: var(--primary);">🥁 Pelayangan Bunyi</h3>
+        <p style="font-size: 12px;">Terjadi jika dua sumber bunyi memiliki frekuensi sedikit berbeda. Selisihnya menghasilkan detak (beat).</p>
+        <div style="background: white; padding: 10px; border-radius: 8px; font-family: 'Times New Roman', serif; font-size: 1rem; border: 1px solid #cbd5e1;">
+          Δf = |f_1 - f_2|
+        </div>
+        
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="example-box" style="background: #f8fafc; border: 1px solid #cbd5e1;">
+          <h4 style="margin: 0 0 10px 0; color: #475569; font-size: 14px;">🧮 Logarithmic Calculator</h4>
+          <div style="font-size: 12px;">
+            <label>Jumlah Sumber Bunyi (n):</label>
+            <input type="number" id="inputN_TI" value="10" oninput="runTI()" style="width: 50px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
+            <p style="margin: 8px 0; color: #64748b; font-style: italic;">Jika 1 sumber = 60 dB, maka n sumber:</p>
+            <div id="tiOutput" style="background: var(--primary); color: white; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 16px;">
+              70.00 dB
+            </div>
+          </div>
+        </div>
+
+        <div class="example-box" style="background: #1e293b; color: #e2e8f0; border: none; padding: 15px;">
+          <h4 style="margin: 0 0 10px 0; color: #38bdf8; font-size: 14px;">💻 Beat Logic (JS)</h4>
+          <code style="font-size: 11px; color: #10b981;">
+            let f1 = 440; // Nada A<br>
+            let f2 = 442; // Sedikit sumbang<br>
+            let beat = Math.abs(f1 - f2);<br>
+            // Result: 2 Hz (2 detak/detik)
+          </code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide">
+    <div class="header-section">
+      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+        Materi 07 - Final
+      </span>
+      <h1>Integrasi Akustik & Teknologi Modern</h1>
+    </div>
+
+    <div class="grid-2">
+      <div class="theory-box" style="overflow-y: auto; font-size: 12.5px;">
+        <h3 style="margin-top: 0; font-size: 15px; color: var(--primary);">1. SONAR & Navigasi Laut</h3>
+        <p>Menggunakan prinsip <b>Refleksi</b>. Jarak (r) dihitung berdasarkan waktu pantul bunyi (Δt). Komputer membagi dua hasil kali kecepatan dan waktu karena bunyi menempuh perjalanan pergi-pulang.</p>
+        
+        
+
+        <h3 style="font-size: 15px; color: var(--primary);">2. Ultrasonografi (USG)</h3>
+        <p>Memanfaatkan gelombang <b>Ultrasonik</b> (>20.000 Hz). Perbedaan kerapatan organ tubuh menyebabkan pantulan bunyi yang berbeda, yang kemudian diolah algoritma menjadi citra visual (Piksel).</p>
+
+        <h3 style="font-size: 15px; color: var(--primary);">3. Nondestructive Testing (NDT)</h3>
+        <p>Mendeteksi keretakan mikro pada logam pesawat. Jika bunyi memantul lebih cepat dari kalkulasi normal (<b>Logic IF-THEN</b>), maka terdeteksi adanya celah udara/kerusakan.</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="example-box" style="background: #f1f5f9; border: 1px solid #cbd5e1;">
+          <h4 style="margin: 0 0 10px 0; color: #475569; font-size: 14px;">🎛️ Simulator Deteksi Objek</h4>
+          <div style="font-size: 12px; display: flex; flex-direction: column; gap: 8px;">
+            <div>
+              Medium: 
+              <select id="sonarMedium" onchange="runFinalSonar()" style="padding: 5px; border-radius: 4px; background: #fff; border: 1px solid #cbd5e1; font-size: 12px; width: 100%;">
+                <optgroup label="Zat Cair">
+                  <option value="1500" selected>Air Laut (1500 m/s)</option>
+                  <option value="1480">Air Tawar (1480 m/s)</option>
+                </optgroup>
+                <optgroup label="Zat Padat">
+                  <option value="5100">Baja/Besi (5100 m/s)</option>
+                  <option value="6000">Granit/Batuan (6000 m/s)</option>
+                  <option value="3100">Kayu Pinus (3100 m/s)</option>
+                </optgroup>
+                <optgroup label="Zat Gas">
+                  <option value="343">Udara 20°C (343 m/s)</option>
+                  <option value="965">Helium (965 m/s)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div>
+              Waktu Pantul (Δt): 
+              <input type="number" id="finalT" value="0.5" step="0.1" oninput="runFinalSonar()" style="width: 50px;"> detik
+            </div>
+            <div id="finalSonarRes" style="background: var(--primary); color: white; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; margin-top: 5px;">
+              Jarak Objek: 375 meter
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<div class="slide">
+    <div class="header-section">
+      <span style="color: #e11d48; font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+        Final Mission
+      </span>
+      <h1>Operasi: "The Silent Submarine"</h1>
+    </div>
+
+    <div class="grid-2" style="align-items: start;">
+      <div class="theory-box" style="overflow-y: auto; font-size: 13px; line-height: 1.6;">
+        <h3 style="margin-top: 0; color: #e11d48; font-size: 18px;">📋 Kasus Darurat</h3>
+        <p>
+          Sebuah kapal selam kehilangan daya navigasi. Sebagai ahli komputasi fisika, Anda diminta memproses data berikut untuk menentukan langkah evakuasi:
+        </p>
+        
+        <div style="background: #f8fafc; padding: 15px; border-radius: 10px; border-left: 4px solid #e11d48; margin: 10px 0;">
+          <ul style="margin: 0; padding-left: 15px; display: flex; flex-direction: column; gap: 8px;">
+            <li><b>Data 1:</b> Sinyal SONAR dikirim dan diterima kembali dalam <b>0.8 detik</b> (v = 1500 m/s).</li>
+            <li><b>Data 2:</b> Sinyal frekuensi asli kapal selam <b>500 Hz</b> terdeteksi oleh radar diam sebesar <b>510 Hz</b>.</li>
+            <li><b>Data 3:</b> Mesin cadangan menyala. Jika 1 mesin = <b>40 dB</b>, sensor mendeteksi total <b>50 dB</b>.</li>
+            <li><b>Data 4:</b> Terjadi fenomena <b>Pelayangan</b> antara sinyal kapal selam (510 Hz) dengan sinyal pengganggu (508 Hz).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+        <p style="font-weight: bold; color: #1e293b;">Tugas Anda: <br> Cobalah selesaikan kasus ini.</p>
+        <p style="font-size: 11px; color: #64748b; margin-bottom: 12px; font-weight: 600;">
+          📸 Scan atau Klik gambar untuk Lembar Kerja (LKS)
+        </p>
+  
+  <a href="halaman_tujuan.html" style="display: block; text-decoration: none; width: 100%; max-width: 280px;">
+    <div style="position: relative; 
+                background: #ffffff; 
+                padding: 15px; 
+                border-radius: 20px; 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+                transition: all 0.3s ease;
+                border: 2px solid #f1f5f9;
+                display: flex;
+                justify-content: center;
+                align-items: center;" 
+         onmouseover="this.style.transform='scale(1.02)'; this.style.borderColor='#e11d48';" 
+         onmouseout="this.style.transform='scale(1)'; this.style.borderColor='#f1f5f9';">
+      
+      <img src="./foto/logo.png" alt="Misi Penyelamatan" 
+           style="width: 100%; 
+                  height: auto; 
+                  max-height: 250px; 
+                  display: block; 
+                  object-fit: contain; 
+                  border-radius: 10px;">
+      
+      <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(225, 29, 72, 0.05); opacity: 0; transition: 0.3s; border-radius: 18px;" 
+           onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+      </div>
+    </div>
+  </a>
+</div>
+    </div>
+  </div>
+
+
+  <script>
+
+
+
+function runFinalSonar() {
+  const v = parseFloat(document.getElementById('sonarMedium').value);
+  const t = parseFloat(document.getElementById('finalT').value);
+  const output = document.getElementById('finalSonarRes');
+  const mediumName = document.getElementById('sonarMedium').options[document.getElementById('sonarMedium').selectedIndex].text;
+
+  if (!isNaN(t) && t > 0) {
+    const distance = (v * t) / 2;
+    output.innerText = "Jarak Objek: " + distance.toLocaleString() + " meter";
+    
+    // Logika Berpikir Komputasi (Kondisional)
+    if (v >= 3100 && t < 0.002) { 
+      // Jika pada zat padat waktu pantul terlalu cepat, indikasi retak/cacat material
+      output.style.background = "#ef4444"; 
+      output.innerText += " (⚠️ Struktur Tidak Solid!)";
+    } else if (v < 1000 && t > 10) {
+      // Jika di udara waktu terlalu lama, sinyal mungkin hilang
+      output.style.background = "#f59e0b";
+      output.innerText += " (⚠️ Sinyal Lemah)";
+    } else {
+      output.style.background = "#002d57"; 
+    }
+  } else {
+    output.innerText = "Masukkan Waktu Pantul";
+    output.style.background = "#64748b";
+  }
+}
+
+// Pastikan fungsi ini dipanggil saat window load
+window.addEventListener('load', () => {
+  // Panggil semua fungsi run yang ada
+  if(typeof runDoppler === "function") runDoppler();
+  if(typeof runTI === "function") runTI();
+  runFinalSonar();
+});
+
+    function runTI() {
+  const n = parseFloat(document.getElementById('inputN_TI').value);
+  const ti1 = 60; // Taraf intensitas satu sumber (dB) sebagai contoh
+  const output = document.getElementById('tiOutput');
+
+  if (!isNaN(n) && n > 0) {
+    // Rumus: TI_n = TI_1 + 10 log(n)
+    const tin = ti1 + 10 * Math.log10(n);
+    output.innerText = tin.toFixed(2) + " dB";
+  } else {
+    output.innerText = "---";
+  }
+}
+
+// Tambahkan ke event listener agar saat web dibuka langsung jalan
+window.addEventListener('load', () => {
+  runDoppler();
+  runTI();
+});
+
+    function runDoppler() {
+  const v = 340; // Cepat rambat bunyi default
+  const fs = parseFloat(document.getElementById('fs').value);
+  const vp = parseFloat(document.getElementById('vp').value);
+  const vs = parseFloat(document.getElementById('vs').value);
+  const modeP = document.getElementById('modeP').value;
+  const modeS = document.getElementById('modeS').value;
+  const output = document.getElementById('dopplerOutput');
+
+  if (!isNaN(fs) && !isNaN(vp) && !isNaN(vs)) {
+    // Implementasi Logika Kondisional (Computational Thinking)
+    const v_p_final = (modeP === "plus") ? vp : -vp;
+    const v_s_final = (modeS === "minus") ? -vs : vs;
+
+    const fp = fs * (v + v_p_final) / (v + v_s_final);
+    
+    output.innerText = "> fp: " + fp.toFixed(2) + " Hz";
+  } else {
+    output.innerText = "> fp: Invalid Input";
+  }
+}
+
+// Inisialisasi awal saat slide dimuat
+window.addEventListener('load', runDoppler);
+
+    // Tambahkan fungsi ini ke dalam tag <script> yang sudah ada
+    function runCompareSim() {
+  const fAwal = parseFloat(document.getElementById('fAwal').value);
+  const nTarget = parseInt(document.getElementById('nTarget').value);
+  const output = document.getElementById('compareOutput');
+  
+  if(!isNaN(fAwal) && !isNaN(nTarget)) {
+    // Rumus: v/L = (f_terbuka * 2) / (n_awal + 1)
+    // Karena soal menentukan n_awal = 2, maka (n_awal + 1) = 3
+    const vL = (fAwal * 2) / 3; 
+    
+    // Rumus Pipa Tertutup: f = (2n + 1) * v/4L
+    const result = (2 * nTarget + 1) * vL / 4;
+    
+    output.innerText = "> Result: " + Math.round(result) + " Hz";
+  } else {
+    output.innerText = "> Result: Invalid Input";
+  }
+}
+
+    // Listener otomatis
+    document.getElementById('fAwal').addEventListener('input', runCompareSim);
+    document.getElementById('nTarget').addEventListener('input', runCompareSim);
+  </script>
+
+</div>
+
+<script>
+  let currentIdx = 0;
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+
+  function moveSlide(step) {
+    if (currentIdx + step >= 0 && currentIdx + step < slides.length) {
+      slides[currentIdx].classList.remove('active');
+      currentIdx += step;
+      slides[currentIdx].classList.add('active');
+      updateProgress();
+    }
+  }
+
+  function updateProgress() {
+    const progress = ((currentIdx + 1) / slides.length) * 100;
+    progressBar.style.width = progress + '%';
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === "ArrowRight") moveSlide(1);
+    if (e.key === "ArrowLeft") moveSlide(-1);
+  });
+
+  updateProgress();
+</script>
+
+</body>
+</html>

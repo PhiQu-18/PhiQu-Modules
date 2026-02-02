@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubrik Presentasi - PhiQu</title>
+    <link rel="icon" href="../foto/logo.png" type="image/png">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #fdfdfd; margin: 0; padding: 20px; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 6px solid #4d7c2c; }
+        
+        /* Style Header Logo & Judul Sejajar */
+        .header-banner {
+            display: flex;
+            align-items: center;
+            position: relative;
+            margin-bottom: 10px;
+            min-height: 60px;
+        }
+        .instrumen-logo {
+            position: absolute;
+            left: 0;
+            width: 60px;
+            height: auto;
+        }
+        h2 { 
+            flex: 1;
+            color: #4d7c2c; 
+            text-align: center; 
+            margin: 0; 
+        }
+
+        .sub-title { text-align: center; color: #64748b; font-size: 14px; margin-bottom: 25px; }
+        
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 850px; }
+        th { background: #fbbf24; color: #000; padding: 12px; border: 1px solid #e2e8f0; font-size: 12px; }
+        td { border: 1px solid #e2e8f0; padding: 8px; text-align: center; }
+        
+        input[type="text"] { width: 90%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
+        select { padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: bold; }
+        
+        .btn-group { margin-top: 30px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        .btn-add { background: #3b82f6; }
+        .btn-save { background: #4d7c2c; }
+        .btn-pdf { background: #ef4444; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .legend { margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #f8fafc; padding: 15px; border-radius: 10px; font-size: 12px; border: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-banner">
+        <img src="../foto/logo.png" alt="Logo" class="instrumen-logo">
+        <h2>RUBRIK PENILAIAN PRESENTASI</h2>
+    </div>
+
+    <div class="sub-title">Materi: Gelombang Bunyi (Skala Skor 1 - 4)</div>
+    
+    <div class="table-wrapper">
+        <table id="tabelPresentasi">
+            <thead>
+                <tr>
+                    <th style="width: 40px;">No</th>
+                    <th>Nama Peserta Didik</th>
+                    <th>Info</th>
+                    <th>Gaya</th>
+                    <th>Bantah</th>
+                    <th>Topik</th>
+                    <th>Etika</th>
+                    <th style="width: 60px;">Skor</th>
+                    <th style="width: 60px;">Nilai</th>
+                </tr>
+            </thead>
+            <tbody id="bodyTabel"></tbody>
+        </table>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-add" onclick="tambahSiswa()">➕ Tambah Baris</button>
+        <button class="btn btn-save" onclick="simpanData()">💾 Simpan Data</button>
+        <button class="btn btn-pdf" onclick="generatePDF()">📄 Download PDF</button>
+    </div>
+
+    <div class="legend">
+        <div>
+            <strong>Aspek Penilaian:</strong>
+            <ul style="padding-left: 15px; margin: 5px 0;">
+                <li><strong>Info:</strong> Kejelasan & akurasi informasi</li>
+                <li><strong>Gaya:</strong> Kemampuan komunikasi & antusiasme</li>
+                <li><strong>Bantah:</strong> Kemampuan merespon pertanyaan</li>
+                <li><strong>Topik:</strong> Kedalaman penguasaan materi</li>
+                <li><strong>Etika:</strong> Sikap menghormati audiens</li>
+            </ul>
+        </div>
+        <div>
+            <strong>Kriteria Nilai:</strong>
+            <ul style="padding-left: 15px; margin: 5px 0;">
+                <li>4 = Sangat Baik</li>
+                <li>3 = Baik</li>
+                <li>2 = Cukup</li>
+                <li>1 = Kurang</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    const { jsPDF } = window.jspdf;
+    let dataPresentasi = JSON.parse(localStorage.getItem('phiQu_presentasi')) || [];
+
+    function renderTabel() {
+        const body = document.getElementById('bodyTabel');
+        body.innerHTML = '';
+        dataPresentasi.forEach((siswa, index) => {
+            let total = parseInt(siswa.a) + parseInt(siswa.b) + parseInt(siswa.c) + parseInt(siswa.d) + parseInt(siswa.e);
+            let nilai = Math.round((total / 20) * 100);
+            body.innerHTML += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><input type="text" value="${siswa.nama}" placeholder="Nama Siswa" onchange="updateData(${index}, 'nama', this.value)"></td>
+                    <td>${createSelect(index, 'a', siswa.a)}</td>
+                    <td>${createSelect(index, 'b', siswa.b)}</td>
+                    <td>${createSelect(index, 'c', siswa.c)}</td>
+                    <td>${createSelect(index, 'd', siswa.d)}</td>
+                    <td>${createSelect(index, 'e', siswa.e)}</td>
+                    <td style="background:#f1f5f9; font-weight:bold;">${total}</td>
+                    <td style="font-weight:bold; color:#4d7c2c; background:#f0fdf4;">${nilai}</td>
+                </tr>`;
+        });
+    }
+
+    function createSelect(index, key, value) {
+        let options = '';
+        for(let i=4; i>=1; i--) options += `<option value="${i}" ${value == i ? 'selected' : ''}>${i}</option>`;
+        return `<select onchange="updateData(${index}, '${key}', this.value)">${options}</select>`;
+    }
+
+    function tambahSiswa() {
+        dataPresentasi.push({ nama: '', a: 4, b: 4, c: 4, d: 4, e: 4 });
+        renderTabel();
+    }
+
+    function updateData(index, key, val) {
+        dataPresentasi[index][key] = val;
+        renderTabel();
+    }
+
+    function simpanData() {
+        localStorage.setItem('phiQu_presentasi', JSON.stringify(dataPresentasi));
+        alert('Data Presentasi berhasil disimpan!');
+    }
+
+    function generatePDF() {
+    if (dataPresentasi.length === 0) return alert("Data kosong!");
+    const doc = new jsPDF();
+
+    const img = new Image();
+    img.src = '../foto/logo.png';
+    doc.addImage(img, 'PNG', 14, 10, 18, 18);
+
+    doc.setFontSize(15);
+    doc.setFont("helvetica", "bold");
+    doc.text("LAPORAN PENILAIAN PRESENTASI", 105, 18, { align: "center" });
+    
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "italic");
+    // Menambahkan Informasi Skala & Aspek
+    doc.text("Skala: 4 (Sangat Baik), 3 (Baik), 2 (Cukup), 1 (Kurang)", 105, 24, { align: "center" });
+    doc.text("Aspek: Info (Akurasi), Gaya (Komunikasi), Bantah (Respon), Topik (Penguasaan), Etika (Sikap)", 105, 28, { align: "center" });
+
+    doc.line(14, 32, 196, 32);
+
+    const tableData = dataPresentasi.map((s, i) => {
+        let total = parseInt(s.a) + parseInt(s.b) + parseInt(s.c) + parseInt(s.d) + parseInt(s.e);
+        let nilai = Math.round((total / 20) * 100);
+        return [i + 1, s.nama, s.a, s.b, s.c, s.d, s.e, total, nilai];
+    });
+
+    doc.autoTable({
+        head: [['No', 'Nama Siswa', 'Info', 'Gaya', 'Bantah', 'Topik', 'Etika', 'Total', 'Nilai']],
+        body: tableData,
+        startY: 36,
+        styles: { halign: 'center', fontSize: 9 },
+        headStyles: { fillColor: [77, 124, 44] }
+    });
+
+    doc.save(`Hasil_Presentasi_${Date.now()}.pdf`);
+}
+
+    if(dataPresentasi.length === 0) tambahSiswa();
+    renderTabel();
+</script>
+</body>
+</html>

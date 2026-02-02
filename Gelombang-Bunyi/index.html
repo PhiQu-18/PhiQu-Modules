@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>PhiQu-M’s (Gelombang Bunyi)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="icon" href="foto/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="foto/logo.png">
+
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #f4f6f8;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+
+    /* ================= FULLSCREEN BACKGROUND LOGO ================= */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      /* Path gambar sesuai struktur Anda */
+      background-image: url('foto/1.png');
+      background-repeat: no-repeat;
+      background-position: center 70%;
+      /* Mengatur besar logo (80% dari layar) */
+      background-size: 70vh; 
+      /* Transparansi agar teks tetap terbaca tajam */
+      opacity: 0.7; 
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* ================= SPLASH ================= */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, #1e3a8a, #020617);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      z-index: 9999;
+      animation: fadeOut 1s ease forwards;
+      animation-delay: 2.6s;
+      text-align: center;
+    }
+
+    .splash-logo {
+      width: 120px;
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      70% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    /* ================= HEADER ================= */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #0f172a;
+      color: white;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .header-left:hover {
+      transform: scale(1.05);
+    }
+
+    .header-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #020617;
+      padding: 4px;
+      transition: transform 0.5s ease;
+    }
+
+    .header-logo:hover {
+      transform: rotate(360deg);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background: rgba(255,255,255,.15);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .nav-btn:hover {
+      transform: scale(1.05);
+      background: rgba(255,255,255,.25);
+    }
+
+    .nav-btn:active {
+      transform: scale(0.95);
+    }
+
+    .nav-btn.primary {
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    }
+
+    /* ================= MAIN CONTENT ================= */
+    main {
+      max-width: 1100px;
+      margin: auto;
+      padding: 10px 10px;
+      position: relative;
+      min-height: calc(100vh - 70px);
+    }
+
+    /* GRID CONTAINER UNTUK CARD */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-top: 40px;
+    }
+
+    /* DESAIN CARD UTAMA */
+    /* ===================== INFO CARD SYSTEM ===================== */
+/* ===================== INFO CARD SYSTEM (LEBIH RAPAT) ===================== */
+  .info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px; /* Celah antar card diperkecil */
+  margin-top: 10px; /* Jarak dari judul diperkecil */
+  }
+
+.info-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 15px; /* Padding dalam card diperkecil */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.info-card h3 {
+  margin: 0 0 10px 0; /* Margin judul lebih rapat */
+  color: #002d57;
+  border-bottom: 2px solid #0ea5e9;
+  padding-bottom: 5px;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0; /* Menghilangkan margin luar list */
+}
+
+.info-list li {
+  margin-bottom: 6px; /* Jarak antar baris list diperkecil */
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.3;
+}
+
+.info-list li b {
+  color: #0f172a;
+  font-size: 11px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.cp-text {
+  font-size: 13px;
+  text-align: justify;
+  color: #64748b;
+  line-height: 1.5;
+  margin-top: 8px; /* Jarak teks CP diperkecil */
+}
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+    }
+
+    .card-icon {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+
+    .feature-card h3 {
+      margin: 10px 0;
+      color: #0f172a;
+    }
+
+    .feature-card p {
+      font-size: 15px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    /* ================= MODAL ================= */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,.8);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: white;
+      max-width: 420px;
+      width: 100%;
+      border-radius: 16px;
+      padding: 26px;
+      text-align: center;
+      position: relative;
+      animation: slideIn 0.3s ease-out;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .close-btn {
+      position: absolute;
+      right: 14px;
+      top: 10px;
+      cursor: pointer;
+      font-size: 22px;
+      color: #94a3b8;
+    }
+
+    .logo-pair {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .logo-pair img { width: 60px; }
+    .phi-symbol { font-size: 30px; font-weight: bold; color: #1e3a8a; }
+
+    #mobileModal { z-index: 10000; }
+  </style>
+</head>
+
+<body>
+
+<div id="introModal" class="modal">
+  <div class="modal-content">
+    <h3>📌 Inti Kegiatan Pembelajaran</h3>
+    <p>Kita sudah memasuki bagian <b>inti kegiatan pembelajaran</b>. Jadi, pastikan sudah melakukan kegiatan seperti <b>Berdoa, Absensi Siswa dan lainnya.</b> Kalo sudah langsung tekan lanjutkan!</p>
+    <button class="nav-btn primary" onclick="goToInti()">Lanjutkan</button>
+  </div>
+</div>
+
+<div id="splash">
+  <img src="foto/logo.png" class="splash-logo">
+  <h2 style="margin-top:20px; letter-spacing: 1px;">PhiQu MyModule’s</h2>
+</div>
+
+<header>
+  <div class="header-left" onclick="openDownloadModal()">
+    <img src="foto/logo.png" class="header-logo">
+    <div>
+      <small style="opacity: 0.8;">PhiQu MyModule’s</small><br>
+      <strong>Gelombang Bunyi</strong>
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <button class="nav-btn" onclick="openAbout()">❓ Tentang</button>
+    <button class="nav-btn" onclick="openHelp()">🆘 Bantuan</button>
+    <button class="nav-btn primary" onclick="startLearning()">🚀 Mulai</button>
+  </div>
+</header>
+
+
+
+
+<main>
+  <main id="mainContent">
+  <div style="text-align: center; margin-bottom: 40px;">
+    <h1 style="color: #0f172a; margin-bottom: 5px;">Informasi Umum Modul</h1>
+  </div>
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>🪪 Identitas Modul</h3>
+      <ul class="info-list">
+        <li><b>Penyusun:</b> Muammar MD </li>
+        <li><b>Instansi:</b> UIN Imam Bonjol Padang</li>
+        <li><b>Tahun:</b> 2026</li>
+        <li><b>Jenjang:</b> SMA / MA</li>
+        <li><b>Fase/Kelas:</b> F / XI / II</li>
+        <li><b>Materi:</b> Gelombang & Bunyi</li>
+        <li><b>Alokasi:</b> 2 x 45 Menit</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>🎯 Kompetensi Awal</h3>
+      <ul class="info-list">
+        <li>🔹 Peserta didik telah memahami tentang defenisi dan karakteristik sebuah gelombang mekanik dan stasioner secara umum, serta sebab munculnya bunyi.</li>
+        <li>🔹 Peserta didik telah mengetahui dan mengenal jenis gelombang mekanik dan stasioner.</li>
+        <li>🔹 Peserta didik telah memahami besaran-besaran pada gelombang.</li>
+        <li>🔹 Peserta didik telah mengetahui tentang sifat-sifat gelombang mekanik dan stasioner serta pemamfaatan sederhananya dalam kehidupan sehari-hari.</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>🌟 Profil Pelajar</h3>
+      <ul class="info-list">
+        <li>✅ Beriman & Bertakwa kepada Tuhan Yang Maha Esa</li>
+        <li>✅ Berakhlak Mulia</li>
+        <li>✅ Mandiri & Kreatif</li>
+        <li>✅ Bernalar Kritis</li>
+        <li>✅ Bergotong-Royong</li>
+      </ul>
+    </div>
+
+    <div class="info-card" style="grid-column: 1 / -1;">
+      <h3>📖 Capaian Pembelajaran</h3>
+      <p class="cp-text">
+        Pada akhir fase F, peserta didik mampu menerapkan konsep dan prinsip vektor kedalam 
+kinematika dan dinamika gerak, usaha dan energi, fluida, getaran harmonis, gelombang bunyi 
+dan gelombang cahaya dalam menyelesaikan masalah, serta menerapkan prinsip dan konsep 
+energi kalor dan termodinamika dengan berbagai perubahannya  dalam  mesin  kalor.  Peserta  
+didik  mampu menerapkan konsep dan prinsip kelistrikan (baik statis maupun dinamis)  dan  
+kemagnetan  dalam  berbagai  penyelesaian  masalah dan berbagai produk teknologi, 
+menerapkan konsep dan prinsip gejala gelombang elektromagnetik dalam menyelesaikan 
+masalah. Peserta didik mampu menganalisis keterkaitan antara berbagai besaran fisis pada teori 
+relativitas khusus, gejala kuantum dan menunjukkan penerapan konsep fisika inti dan 
+radioaktivitas dalam kehidupan sehari-hari dan teknologi. Peserta didik mampu memberi 
+penguatan pada aspek fisika sesuai dengan minat untuk ke perguruan tinggi yang berhubungan 
+dengan bidang fisika. Melalui kerja ilmiah juga dibangun sikap ilmiah dan profil pelajar 
+pancasila khususnya mandiri, inovatif, bernalar kritis, kreatif dan bergotong royong.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h3>🎯 Materi Pembelajaran</h3>
+      <ul class="info-list">
+        <li>🔹 Cepat Rambat Bunyi</li>
+        <li>🔹 Sumber Bunyi: Dawai dan Pipa Organa</li>
+        <li>🔹 Efek Doppler</li>
+        <li>🔹 Pelayangan Bunyi</li>
+        <li>🔹 Aplikasi Gelombang Bunyi</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>🌟 Sarana dan Prasarana</h3>
+      <ul class="info-list">
+        <li>✅ Papan tulis, spidol, serta alat tulis lainnya</li>
+        <li>✅ proyektor/infokus, gawai/handphone, buku teks fisika kelas XI SMA/MA, jaringan internet dan referensi lain yang mendukung</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>🎯 Target Peserta Didik</h3>
+      <ul class="info-list">
+        <li>🔹 peserta didik reguler pi/pa/kelas XI reguler yang tidak ada kesulitan dalam mencerna dan memahami materi ajar</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>🌟 Model, Metode dan Pendekatan Pembelajaran</h3>
+      <ul class="info-list">
+        <li>✅ Model pembelajaran: Problem Basic Learning</li>
+        <li>✅ Metode Pembelajaran: Ceramah, Tanya-jawab dan diskusi berkelompok</li>
+        <li>✅ Pendekatan: Student Center Learning dengan Teaching at the Right Level (untuk pengorganisasian siswa)</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>🌟 Assesmen</h3>
+      <ul class="info-list">
+        <li> Guru melakukan penilaian untuk menilai ketercapaian tujuan pembelajaran dengan:</li>
+        <li>✅ Assesmen Formatif: sepanjang kegiatan proses pembelajaran berupa: Penilaian presentasi, penilaian kuis, penilaian tertulis, unjuk kerja serta keaktifan selama pembelajaran</li>
+        <li>✅ Assesmen Sumatif: dengan bentuk tes digital</li>
+      </ul>
+    </div>
+
+  </div>
+  <main id="mainContent">
+    <div style="text-align: center; margin-bottom: 20px;">
+      <h1 style="color: #0f172a; margin-bottom: 5px;">Komponen Inti</h1>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card" style="grid-column: 1 / -1;">
+        <h3 style="background: #4d7c2c; color: white; padding: 10px; border-radius: 8px 8px 0 0; border-bottom: none;">
+          🎯 A. TUJUAN KEGIATAN PEMBELAJARAN
+        </h3>
+        
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;">
+            <thead>
+              <tr style="background: #ffff00; text-align: left;">
+                <th style="padding: 12px; border: 1px solid #ddd; width: 45%;">Tujuan Pembelajaran</th>
+                <th style="padding: 12px; border: 1px solid #ddd; width: 55%;">Alur Tujuan Pembelajaran</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 12px; border: 1px solid #ddd; vertical-align: top; text-align: justify; line-height: 1.6;">
+                  Setelah mempelajari tentang gelombang bunyi, peserta didik diharapkan dapat menentukan persamaan cepat rambat gelombang bunyi, menganalisa beberapa sumber-sumber bunyi (dawal dan pipa organa), menerapkan persamaan efek Doppler dalam pemecahan masalah, menentukan hubungan antara besaran yang memengaruhi frekuensi gelombang pada dawal dan pipa organa, menentukan jumlah layangan bunyi tiap detik, menentukan intensitas bunyi dan taraf intensitas bunyi, dan menerapkan konsep dan prinsip gelombang bunyi pada teknologi.
+                </td>
+                <td style="padding: 12px; border: 1px solid #ddd; vertical-align: top; line-height: 1.6;">
+                  <ol style="padding-left: 20px; margin: 0;">
+                    <li>Peserta didik mampu menjelaskan terkait pengertian dan karakteristik gelombang bunyi (C2)</li>
+                    <li>Peserta didik mampu mengetahui dan memahami serta menerapkan tentang konsep cepat rambat gelombang bunyi dalam persamaan untuk pemecahan masalah sederhana (C3)</li>
+                    <li>Peserta didik mampu menganalisa kecepatan rambat gelombang bunyi dalam medium yang berbeda-beda (C4)</li>
+                    <li>Peserta didik mampu mendeskripsikan serta menganalisa beberapa sumber bunyi baik berupa dawai maupun pipa organa (C4)</li>
+                    <li>Peserta didik mampu mendeskripsikan, menerapkan serta menganalisa terkait persamaan efek Doppler dalam pemecahan masalah sehari-hari yang dimatematikkan (C4)</li>
+                    <li>Peserta didik mampu memahami, mendeskripsikan serta mengevaluasi terkait pemecahan masalah yang berkaitan dengan peristiwa pelayangan bunyi dan taraf intensitas bunyi (C5)</li>
+                    <li>Peserta didik mampu mengkaitkan serta menerapkan konsep serta prinsip terkait gelombang bunyi pada kehidupan sehari-hari dan teknologi (C5)</li>
+                  </ol>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="info-card">
+      <h3>🌟 Pemahaman Bermakna</h3>
+      <ul class="info-list">
+        <p>
+          Peserta didik dapat memahami kaitan gelombang bunyi dengan kehidupannya seperti penggunaan Hp dan lainnya serta peserta didik mempunyai keterampilan dalam memamfaatkan teknologi seperti aplikasi di Handphone, laboratorium virtual dan alat-alat elektronik akan dikembangkan didalam beberapa aktivitas yang berlandaskan konsep dan prinsip gelombang bunyi, seperti alat-alat elektronik.
+        </p>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>🌟 Pertanyaan Pemantik</h3>
+      <ul class="info-list">
+        <li>✅ Pernahkah kalian berdiri dipinggir jalan dan mendengar ambulans lewat dengan kecepatan tinggi? Mengapa suara sirine terdengar melengking saat mendekati kita, tetapi menjadi "rendah" saat setelah melewati kita?</li>
+        <li>✅ Jika suara sirine yang kita dengar berubah karena ambulansnya bergerak. dan kamu ingin membuat simulasi komputer tentang kejadian ini, komponen apa saja yang harus kamu siapkan? apakah cukup hanya dengan ambulans saja, atau kamu juga butuh data kecepatan dan posisi pendengarnya?</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>🌟 Kegiatan Pembelajaran</h3>
+      <ul class="info-list">
+        <p> Persiapan Pembelajaran Oleh Guru</p>
+          <li>🔹 Melakukan pembukaan dengan salam dan berdoa untuk memulai pembelajaran.</li>
+          <li>🔹 Memperhatikan lingkungan dalam kelas dalam keadaan bersih dan rapi.</li>
+          <li>🔹 Memperhatikan keadaan siswa, pakaian dan atribut pakaian sudah rapi</li>
+          <li>🔹 Menyusun semua instrumen pembelajaran</li>
+      </ul>
+    </div>
+  </div>
+
+      <main id="mainContent">
+        <div class="info-card" style="display: block;"> <div class="info-card" style="padding: 0; overflow: hidden; border: none; background: white;">
+          
+          <div style="background: #4d7c2c; color: white; padding: 10px; font-weight: bold; text-align: center;">
+            PERTEMUAN 1
+          </div>
+          <div style="background: #22c55e; color: white; padding: 8px; font-weight: bold; text-align: center; font-size: 14px;">
+            KEGIATAN PENDAHULUAN
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.5;">
+              <thead>
+                <tr style="background: #fbbf24; color: #000;">
+                  <th style="padding: 10px; border: 1px solid #ddd; width: 5%;">No</th>
+                  <th style="padding: 10px; border: 1px solid #ddd; width: 40%;">Kegiatan Guru</th>
+                  <th style="padding: 10px; border: 1px solid #ddd; width: 40%;">Kegiatan Siswa</th>
+                  <th style="padding: 10px; border: 1px solid #ddd; width: 15%;">Waktu</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background: #e2e8f0; font-weight: bold; text-align: center;">
+                  <td colspan="4" style="padding: 5px; border: 1px solid #ddd;">Orientasi</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">
+                    Guru mengucapkan <span style="background: #ffff00;">salam dan memperhatikan kebersihan kelas</span> bebas dari sampah dan debu.
+                  </td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">
+                    Peserta didik menjawab salam serta duduk dengan rapi di tempat masing-masing serta siap-siap untuk belajar.
+                  </td>
+                  <td rowspan="4" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle; background: #fff;">
+                    5- 10 Menit
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">
+                    Guru meminta peserta didik untuk memimpin <span style="background: #ffff00;">doa</span> bersama untuk memulai pembelajaran.
+                  </td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">
+                    Peserta didik berdoa bersama-sama. <br>
+                    <em style="font-size: 11px; color: #1e3a8a; background: #e0f2fe; padding: 2px; display: block; margin-top: 5px;">
+                      (Profil Pelajar Pancasila: Beriman dan bertaqwa kepada Tuhan YME)
+                    </em>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">
+                    Guru mengecek kehadiran peserta didik.
+                  </td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">
+                    Peserta didik merespon terkait namanya yang disebutkan oleh guru.
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">4</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">
+                    Guru membangun kesadaran diri peserta didik menggunakan teknik STOP: 
+                    <em>"tarik nafas dalam-dalam dan melepaskan perlahan"</em>.
+                  </td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">
+                    Peserta didik mengikuti arahan guru untuk rileks dan melakukan peregangan otot santai.
+                  </td>
+                </tr>
+
+                <tr style="background: #e2e8f0; font-weight: bold; text-align: center;">
+                  <td colspan="4" style="padding: 5px; border: 1px solid #ddd;">Pemberian Acuan</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">5</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">
+                    Guru menyampaikan tujuan pembelajaran pada pertemuan pertama konsep gelombang bunyi: <br>
+                    <strong style="background: #ffff00; font-size: 11px; padding: 2px;">Tujuan Pembelajaran Pertemuan Pertama:</strong>
+                    <ol style="margin: 0; padding-left: 20px; font-size: 12px; color: #334155; line-height: 1.4;">
+                      <li>Peserta didik mampu menjelaskan terkait pengertian dan karakteristik gelombang bunyi (C2)</li>
+                      <li>Peserta didik mampu mengetahui, memahami, dan menerapkan konsep cepat rambat gelombang bunyi dalam persamaan (C3)</li>
+                      <li>Peserta didik mampu menganalisa kecepatan rambat gelombang bunyi dalam medium berbeda (C4)</li>
+                      <li>Peserta didik mampu mendeskripsikan serta menganalisa sumber bunyi dawai dan pipa organa (C4)</li>
+                      <li>Peserta didik mampu mendeskripsikan dan menganalisa persamaan efek Doppler (C4)</li>
+                      <li>Peserta didik mampu mendeskripsikan perubahan frekuensi secara kuantitatif dan hubungannya dengan resonansi (C5)</li>
+                      <li>Peserta didik mampu mengevaluasi pemecahan masalah pelayangan bunyi dan taraf intensitas bunyi (C5)</li>
+                      <li>Peserta didik mampu mengkaitkan konsep gelombang bunyi pada kehidupan sehari-hari dan teknologi (C5)</li>
+                    </ol>
+                  </td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">
+                    Peserta didik menyimak tujuan pembelajaran yang akan dicapai.
+                  </td>
+                  <td style="padding: 10px; border: 1px solid #ddd;"></td>
+                </tr>
+                <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">6</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">
+                Guru menyampaikan <b>model pembelajaran, metode, pendekatan</b>, serta cara penilaian pada materi konsep gelombang bunyi.
+              </td>
+              <td style="padding: 10px; border: 1px solid #ddd;">
+                Peserta didik menyimak model, metode, pendekatan pembelajaran, dan cara penilaian pada materi konsep gelombang bunyi.
+              </td>
+              <td style="padding: 10px; border: 1px solid #ddd;"></td>
+            </tr>
+            <tr>
+  <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">7</td>
+  <td style="padding: 10px; border: 1px solid #ddd;">
+    Guru menyampaikan garis besar cakupan materi dan kegiatan yang akan dilakukan.
+    <strong style="background: #ffff00; font-size: 11px; padding: 2px; display: block; margin-top: 5px;">Garis Besar Materi:</strong>
+    <ul style="margin: 0; padding-left: 20px; font-size: 12px; color: #334155;">
+      <li>🔹 Cepat Rambat Bunyi</li>
+      <li>🔹 Sumber Bunyi: Dawai dan Pipa Organa</li>
+      <li>🔹 Efek Doppler</li>
+      <li>🔹 Pelayangan Bunyi</li>
+      <li>🔹 Aplikasi Gelombang Bunyi</li>
+    </ul>
+  </td>
+  <td style="padding: 10px; border: 1px solid #ddd;">
+    Peserta didik menyimak garis besar cakupan materi tentang gelombang bunyi.
+  </td>
+  <td style="padding: 10px; border: 1px solid #ddd;"></td>
+</tr>
+
+<tr>
+  <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">8</td>
+  <td style="padding: 10px; border: 1px solid #ddd;">
+    Guru memberikan kesepakatan berupa kontrak dalam pembelajaran dengan peserta didik.
+  </td>
+  <td style="padding: 10px; border: 1px solid #ddd;">
+    Peserta didik membuat kesepakatan dengan guru mengenai kegiatan pada pembelajaran.
+  </td>
+  <td style="padding: 10px; border: 1px solid #ddd;"></td>
+</tr>
+
+<tr>
+  <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">9</td>
+  <td style="padding: 10px; border: 1px solid #ddd;">
+    Guru memberikan pertanyaan dengan mengaitkan materi sebelumnya (konsep dasar, karakteristik, dan jenis gelombang) dengan materi yang akan dipelajari.
+  </td>
+  <td style="padding: 10px; border: 1px solid #ddd;">
+    Peserta didik menyimak dan merespon yang disampaikan oleh guru.
+  </td>
+  <td style="padding: 10px; border: 1px solid #ddd;"></td>
+</tr>
+
+<tr>
+  <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">10</td>
+  <td style="padding: 10px; border: 1px solid #ddd;">
+    Guru menggali pengetahuan awal dengan pertanyaan pemantik: 
+    <li><em>"Pernahkah kalian berdiri dipinggir jalan dan mendengar ambulans lewat dengan kecepatan tinggi? Mengapa suara sirine terdengar melengking saat mendekati kita, tetapi menjadi "rendah" saat setelah melewati kita?"</em></li>
+    <li><em>"Jika suara sirine yang kita dengar berubah karena ambulansnya bergerak. dan kamu ingin membuat simulasi komputer tentang kejadian ini, komponen apa saja yang harus kamu siapkan? apakah cukup hanya dengan ambulans saja, atau kamu juga butuh data kecepatan dan posisi pendengarnya?"</em></li>
+  </td>
+  <td style="padding: 10px; border: 1px solid #ddd;">
+    Peserta didik menyimak dan merespon pertanyaan (Harapan Guru: "Karena mobil ambulans bergerak").
+  </td>
+  <td style="padding: 10px; border: 1px solid #ddd;"></td>
+</tr>
+
+<tr>
+  <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">11</td>
+  <td style="padding: 10px; border: 1px solid #ddd;">
+    Guru memotivasi semangat belajar peserta didik dan memberikan sebuah vidio yang berkaitan langsung dengan materi gelombang bunyi.
+    <br><br>
+    <div style="text-align: center;">
+      <img src="foto/Vidio-awal.png" alt="Scan Video" style="width: 80px; height: 80px; border: 1px solid #ccc; padding: 5px; border-radius: 4px;">
+      <p style="font-size: 10px; margin-top: 5px; color: #64748b;">(Scan untuk melihat video)</p>
+      <a href="inti.html" style="text-decoration: none;">
+        <button style="margin-top: 10px; background: #0ea5e9; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 9px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" 
+                onmouseover="this.style.background='#0284c7'" 
+                onmouseout="this.style.background='#0ea5e9'">
+            PUTAR VIDEO
+        </button>
+    </a>
+    </div>
+  </td>
+  <td style="padding: 10px; border: 1px solid #ddd;">
+    Peserta didik menyimak motivasi dan menonton video yang ditampilkan oleh guru.
+  </td>
+  <td style="padding: 10px; border: 1px solid #ddd;"></td>
+</tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+<div class="info-card" style="display: block; padding: 0; overflow: hidden; border: none; background: white; margin-top: 20px;">
+  <div style="background: #a2d149; color: black; padding: 10px; font-weight: bold; text-align: center; border: 1px solid #ddd;">
+    KEGIATAN INTI
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.5;">
+      <thead>
+        <tr style="background: #fbbf24; color: #000;">
+          <th style="padding: 10px; border: 1px solid #ddd; width: 5%;">NO</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 15%;">SINTAKS/ Langkah PBL</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 35%;">AKTIVITAS GURU</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 35%;">AKTIVITAS PESERTA DIDIK</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 10%;">DURASI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: top;">12.</td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            Orientasi peserta didik terhadap masalah dan mengorganisasikan peserta didik untuk belajar.
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <li>Melaksanakan <span style="background: #00ff00; padding: 2px;">asesmen diagnostik</span> terkait materi konsep gelombang bunyi.</li>
+              <li>Setelah menonton vidio yang ditampilkan guru, peserta didik melakukan assesmen diagnostik awal berdasarkan vidio yang diberikan.</li>
+                <div style="margin-top: 10px; margin-left: 15px;">
+                  <div style="display: inline-block; text-align: center; background: #f8fafc; padding: 8px; border: 1px dashed #cbd5e1; border-radius: 8px;">
+                    <img src="foto/diagnostik-awal.png" alt="Scan Asesmen" style="width: 80px; height: 80px; display: block; margin: 0 auto;">
+                    <span style="font-size: 9px; color: #64748b; font-weight: bold; display: block; margin-top: 4px;">SCAN ASESMEN</span>
+                    <a href="./diagnostik awal/awal.html" style="text-decoration: none;">
+                        <button style="margin-top: 10px; background: #64748b; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 9px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" 
+                                onmouseover="this.style.background='#475569'" 
+                                onmouseout="this.style.background='#64748b'">
+                            MULAI SCAN
+                        </button>
+                    </a>
+                  </div>
+                </div>
+              <li>Guru membagi siswa kedalam tiga kelompok berdasarkan hasil tes diagnostik awal.</li>
+              <li>Pembagian kelompok disesuaikan dengan tingkatan kemampuan (rendah, sedang, dan tinggi) berdasarkan hasil tes diagnostik.
+                <div style="background: #ffff00; padding: 5px; margin-top: 5px; font-style: italic;">
+                  (Pendekatan TaRL Diferensiasi Proses Pembagian kelompok sesuai tingkat kemampuan)
+                </div>
+              </li>
+              <li>Mengarahkan peserta didik untuk mengerjakan LKPD berdasarkan tingkatnya.</li>
+
+                <div style="display: flex; gap: 15px; margin-top: 12px; margin-left: 15px; flex-wrap: wrap;">
+                  
+                  <div style="text-align: center; background: #fff5f5; padding: 8px; border: 1px dashed #feb2b2; border-radius: 8px; width: 95px;">
+                    <img src="foto/LKPD-Rendah.png" alt="LKPD Rendah" style="width: 75px; height: 75px; display: block; margin: 0 auto;">
+                    <span style="font-size: 9px; color: #c53030; font-weight: bold; display: block; margin-top: 5px;">LKPD <br> (RENDAH)</span>
+                    <a href="./diagnostik awal/lkpd-rendah.html" style="text-decoration: none;">
+                        <button style="margin-top: 10px; background: #f56565; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" 
+                                onmouseover="this.style.background='#c53030'" 
+                                onmouseout="this.style.background='#f56565'">
+                            BUKA →
+                        </button>
+                    </a>
+                  </div>
+
+                  <div style="text-align: center; background: #fffaf0; padding: 8px; border: 1px dashed #fbd38d; border-radius: 8px; width: 95px;">
+                    <img src="foto/LKPD-Sedang.png" alt="LKPD Sedang" style="width: 75px; height: 75px; display: block; margin: 0 auto;">
+                    <span style="font-size: 9px; color: #af6449; font-weight: bold; display: block; margin-top: 5px;">LKPD <br> (SEDANG)</span>
+                    <a href="./diagnostik awal/lkpd-sedang.html" style="text-decoration: none;">
+                        <button style="margin-top: 10px; background: #e96262; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" 
+                                onmouseover="this.style.background='#c53030'" 
+                                onmouseout="this.style.background='#f56565'">
+                            BUKA →
+                        </button>
+                    </a>
+                  </div>
+
+                  <div style="text-align: center; background: #f0fff4; padding: 8px; border: 1px dashed #9ae6b4; border-radius: 8px; width: 95px;">
+                    <img src="foto/LKPD-Tinggi.png" alt="LKPD Tinggi" style="width: 75px; height: 75px; display: block; margin: 0 auto;">
+                    <span style="font-size: 9px; color: #276749; font-weight: bold; display: block; margin-top: 5px;">LKPD <br> (TINGGI)</span>
+                    <a href="./diagnostik awal/lkpd-tinggi.html" style="text-decoration: none;">
+                        <button style="margin-top: 10px; background: #48bb78; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" 
+                                onmouseover="this.style.background='#276749'" 
+                                onmouseout="this.style.background='#48bb78'">
+                            BUKA →
+                        </button>
+                  </div>
+
+                </div>
+            </ul>
+            
+            <div style="background: #00ff00; padding: 5px; margin-top: 10px; font-weight: bold;">
+              Aktivitas lanjutan guru:
+            </div>
+            <ol style="margin: 5px 0 0 15px; padding: 0;">
+              <li>Membimbing semua kelompok siswa mengerjakan LKPD</li>
+              <li>Bimbingan intens untuk kelompok dengan kemampuan rendah</li>
+            </ol>
+
+            <div style="background: #00ff00; padding: 5px; margin-top: 10px; font-weight: bold;">
+              Penerapan TaRL untuk peserta didik yang berada pada fase perkembangan low (Slow Leaner):
+            </div>
+            <ol style="margin: 5px 0 0 15px; padding: 0;">
+              <li>Guru menanyakan kesulitan atau hambatan yang dihadapi peserta didik.</li>
+              <li>Bimbingan intens untuk kelompok low</li>
+              <li>Guru memjelaskan materi yang masih kurang dipahami siswa</li>
+            </ol>
+
+
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <li>Melaksanakan asesmen diagnostik konsep gelombang bunyi.</li>
+              <li>Peserta didik membentuk kelompok berdasarka tingkat kemampuan</li>
+              <li>Peserta didik mengikuti arahan guru dan mengerjakan LKPD</li>
+            </ul>
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: top;">
+            70 Menit
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: top;">13.</td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            Membimbing penyelidikan individu atau kelompok.
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <span style="background: #00ff00; padding: 2px;">Kolaborasi Computational Thinking</span>
+              <li>Guru membagi siswa kedalam tiga kelompok dengan tingkatan yang sama.</li>
+              <li>Guru membagikan LKPD dan Mengarahkan setiap kelompok untuk membahas LKPD tersebut</li>
+              <li>Guru membimbing siswa untuk berdiskusi tentang konsep gelombang bunyi berdasarkan LKPD</li>
+              <li>Memberikan bantuan kepada peserta didik jika mengalami masalah dalam mengerjakan LKPD</li>
+            </ul>
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <li>Peserta didik duduk secara berkelompok dan mulai berdiskusi terkait materi dengan LKPD yang berikan.</li>
+              <li>Peserta didik mengeksplor berbagai macam referensi yeng terkait dengan materi dari berbagai sumber.</li>
+            </ul>
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: top;">
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: top;">14.</td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            Mengembangkan, menganalisis dan mengevaluasi proses pemecahan masalah.
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <span style="background: #00ff00; padding: 2px;">Demonstrasi Kontekstual</span>
+              <li>Mengarahkan peserta didik untuk mempresentasikan hasil diskusi pada LKPD 1, 2 dan 3.</li>
+              <li>Guru meminta peserta didik lain untuk menanggapi mengenai presentasi setiap kelompok.</li>
+              <li>Memberikan apresiasi terhadap kelompok yang presentasi.</li>
+              <li>Meminta peserta didik untuk merefleksikan apa yang telah dipelajari</li>
+            </ul>
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <li>Peserta didik melakukan presentasi didepan kelas berdasarkan modul kelompoknya dan kelompok lain menanggapi penampilan kelompoknya</li>
+              <li>Peserta didik memberikan tanggapan dan pertanyaan kepada kelompok yang tampil presentasi.</li>
+              <li>Peserta didik merefleksikan apa yang telah dipelajari.</li>
+            </ul>
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: top;">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="info-card" style="display: block; padding: 0; overflow: hidden; border: none; background: white; margin-top: 20px;">
+  <div style="background: #a2d149; color: black; padding: 10px; font-weight: bold; text-align: center; border: 1px solid #ddd;">
+    KEGIATAN PENUTUP
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.5;">
+      <thead>
+        <tr style="background: #fbbf24; color: #000;">
+          <th style="padding: 10px; border: 1px solid #ddd; width: 5%;">No</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 40%;">Kegiatan Guru</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 40%;">Kegiatan Peserta Didik</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 15%;">Waktu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: top;">15.</td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            Membimbing peserta didik mengambil manfaat pembelajaran hari ini.
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <li>Menyampaikan pendapat masing-masing mengenai manfaat belajar mengenai usaha dalam kehidupan sehari-hari.</li>
+            </ul>
+          </td>
+          <td rowspan="4" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle; background: #fff;">
+            5 - 10 menit
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: top;">16.</td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            Mengarahkan peserta didik untuk melakukan refleksi terhadap pembelajaran dengan memberikan beberapa pertanyaan refleksi peserta didik.
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <li>Melakukan refleksi terhadap diri masing-masing terkait pembelajaran hari ini <i>"peserta didik menjawab pertanyaan refleksi yang diberikan oleh guru"</i>.</li>
+            </ul>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: top;">17.</td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            Menyampaikan materi yang akan dipelajari pada pertemuan berikutnya.
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <li>Mendengarkan dan mencatat penjelasan guru.</li>
+              <li>Dapat bertanya apabila ada pertanyaan.</li>
+            </ul>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: top;">18.</td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            Menyampaikan pesan pada siswa untuk selalu belajar dan jangan pantang menyerah.
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;"></td>
+        </tr>
+
+        <tr style="background: #f8fafc; font-weight: bold;">
+          <td colspan="2" style="padding: 10px; border: 1px solid #ddd; text-align: left;">Total Waktu</td>
+          <td colspan="2" style="padding: 10px; border: 1px solid #ddd; text-align: left;">90 menit</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="info-card" style="display: block; padding: 0; overflow: hidden; border: none; background: white; margin-top: 20px;">
+  <div style="background: #e7f706; color: black; padding: 10px; font-weight: bold; text-align: center; border: 1px solid #ddd;">
+    Rubrik Penilaian
+  </div>
+  <div><p>Rubrik Assesmen Diagnostik</p></div>
+
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.5;">
+      <thead>
+        <tr style="background: #fbbf24; color: #000;">
+          <th style="padding: 10px; border: 1px solid #ddd; width: 15%;">Skor</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 15%;">Kategori</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 40%;">Rencana Tindak Lanjut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            Dibawah rata-rata (0-45)
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <p>Belum Paham</p>
+            </ul>
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <li>Memberikan tugas tambahan untuk memperkuat pemahaman.</li>
+              <li>Melakukan konsultasi individu dengan peserta didik yang kurang paham.</li>
+            </ul>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            rata-rata (46-60)
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <p>Sudah memahami dasar gelombang bunyi</p>
+            </ul>
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <li>Di ajar dikelas</li>
+            </ul>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            Diatas rata-rata (61-100)
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <p>Sudah sangat memahami gelombang bunyi</p>
+            </ul>
+          </td>
+          <td style="padding: 10px; border: 1px solid #ddd; vertical-align: top;">
+            <ul style="margin: 0; padding-left: 15px; list-style-type: disc;">
+              <li>Memberikan tantangan tambahan untuk memperdalam pemahaman.</li>
+              <li>Mendorong peserta didik untuk membantu teman sekelas yang kesulitan.</li>
+            </ul>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div><p>Rubrik Penlaian sikap siswa</p></div>
+
+<div class="info-card" style="display: block; padding: 0; overflow: hidden; border: none; background: white; margin-top: 20px;">
+  <div style="background: #4d7c2c; color: white; padding: 10px; font-weight: bold; text-align: center; border: 1px solid #ddd;">
+    INSTRUMEN PENILAIAN SIKAP
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.5;">
+      <thead>
+        <tr style="background: #fbbf24; color: #000;">
+          <th style="padding: 10px; border: 1px solid #ddd; width: 5%;">No.</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 20%;">Aspek</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 10%;">Skor</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 65%;">Kriteria Penilaian</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">1</td>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Jujur</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Dapat dipercaya dalam perkataan, tindakan, dan pekerjaan</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Kurang dapat dipercaya dalam perkataan, tindakan, dan pekerjaan</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Tidak dapat dipercaya dalam perkataan, tindakan, dan pekerjaan</td>
+        </tr>
+
+        <tr>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">2</td>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Disiplin</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Dapat menunjukkan perilaku tertib dan patuh pada berbagai ketentuan dan peraturan</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Kurang dapat menunjukkan perilaku tertib dan patuh pada berbagai ketentuan dan peraturan</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Tidak dapat menunjukkan perilaku tertib dan patuh pada berbagai ketentuan dan peraturan</td>
+        </tr>
+
+        <tr>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">3</td>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Tanggung Jawab</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Dapat melaksanakan tugas dan kewajibannya, yang seharusnya dia lakukan terhadap diri sendiri, masyarakat, lingkungan, negara, dan Tuhan YME</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Kurang dapat melaksanakan tugas dan kewajibannya, yang seharusnya dia lakukan terhadap diri sendiri, masyarakat, lingkungan, negara, dan Tuhan YME</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Tidak dapat melaksanakan tugas dan kewajibannya, yang seharusnya dia lakukan terhadap diri sendiri, masyarakat, lingkungan, negara, dan Tuhan YME</td>
+        </tr>
+        <tr>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">4</td>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Toleransi</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Memiliki sikap dan tindakan yang menghargai keberagaman latar belakang, pandangan, dan keyakinan.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Kurang memiliki sikap dan tindakan yang menghargai keberagaman latar belakang, pandangan, dan keyakinan.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Tidak memiliki sikap dan tindakan yang menghargai keberagaman latar belakang, pandangan, dan keyakinan.</td>
+        </tr>
+
+        <tr>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">5</td>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Gotong Royong</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Dapat bekerja bersama dengan orang lain untuk mencapai tujuan bersama dengan saling berbagi tugas dan tolong-menolong secara ikhlas.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Kurang dapat bekerja bersama dengan orang lain untuk mencapai tujuan bersama dengan saling berbagi tugas dan tolong-menolong secara ikhlas.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Tidak dapat bekerja bersama dengan orang lain untuk mencapai tujuan bersama dengan saling berbagi tugas dan tolong-menolong secara ikhlas.</td>
+        </tr>
+
+        <tr>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">6</td>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Santun</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Memiliki sikap baik dalam pergaulan baik dalam berbahasa maupun bertingkah laku.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Kurang memiliki sikap baik dalam pergaulan baik dalam berbahasa maupun bertingkah laku.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Tidak memiliki sikap baik dalam pergaulan baik dalam berbahasa maupun bertingkah laku.</td>
+        </tr>
+
+        <tr>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">7</td>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Percaya Diri</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Memiliki suatu keyakinan atas kemampuannya sendiri untuk melakukan kegiatan atau tindakan.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Kurang memiliki keyakinan atas kemampuannya sendiri untuk melakukan kegiatan atau tindakan.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Tidak memiliki keyakinan atas kemampuannya sendiri untuk melakukan kegiatan atau tindakan.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-top: 2px solid #ddd; text-align: center;">
+    <p style="font-size: 16px; font-weight: bold; margin: 0;">
+      Nilai = Skor yang diperoleh / Skor maksimal × 100%
+    </p>
+  </div>
+</div>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="info-card" style="display: block; padding: 0; overflow: hidden; border: none; background: white; margin-top: 20px;">
+  <div style="background: #4d7c2c; color: white; padding: 10px; font-weight: bold; text-align: center; border: 1px solid #ddd;">
+    INSTRUMEN PENILAIAN OBSERVASI SELAMA DISKUSI DAN PRESENTASI
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.5;">
+      <thead>
+        <tr style="background: #fbbf24; color: #000;">
+          <th style="padding: 10px; border: 1px solid #ddd; width: 5%;">No.</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 25%;">Aspek</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 10%;">Skor</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 60%;">Kriteria Penilaian</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">1</td>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Kerjasama dalam kelompok (A)</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Dapat bekerjasama dalam kelompok</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Kurang dapat bekerjasama dalam kelompok</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Tidak dapat bekerjasama dalam kelompok</td>
+        </tr>
+
+        <tr>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">2</td>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Keaktifan dalam menyelesaikan tugas (B)</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Aktif dalam menyelesaikan tugas</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Kurang aktif dalam menyelesaikan tugas</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Tidak aktif dalam menyelesaikan tugas</td>
+        </tr>
+
+        <tr>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">3</td>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Keberanian tanya Jawab (C)</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Sering bertanya dan menjawab pertanyaan</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Pernah bertanya dan menjawab pertanyaan</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Tidak pernah bertanya dan menjawab pertanyaan</td>
+        </tr>
+
+        <tr>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">4</td>
+          <td rowspan="3" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Peduli Lingkungan (D)</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Sering membersihkan sampah yang ada di sekitarnya</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Kadang-kadang membersihkan sampah yang ada di sekitarnya</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Tidak pernah membersihkan sampah yang ada di sekitarnya</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-top: 2px solid #ddd; text-align: center;">
+    <p style="font-size: 16px; font-weight: bold; margin: 0;">
+      Nilai = Skor yang diperoleh / Skor maksimal × 100%
+    </p>
+  </div>
+</div>
+
+<div class="info-card" style="display: block; padding: 0; overflow: hidden; border: none; background: white; margin-top: 20px;">
+  <div style="background: #4d7c2c; color: white; padding: 10px; font-weight: bold; text-align: center; border: 1px solid #ddd;">
+    RUBRIK PENILAIAN OBSERVASI PRESENTASI PESERTA DIDIK DALAM KELOMPOK
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.5;">
+      <thead>
+        <tr style="background: #fbbf24; color: #000;">
+          <th style="padding: 10px; border: 1px solid #ddd; width: 5%;">No.</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 20%;">Aspek</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 10%;">Skor</th>
+          <th style="padding: 10px; border: 1px solid #ddd; width: 65%;">Kriteria Penilaian</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="4" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">1</td>
+          <td rowspan="4" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Informasi</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">4</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Semua informasi yang disajikan dalam diskusi sudah jelas, akurat dan menyeluruh.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Sebagian besar informasi yang disajikan dalam diskusi sudah jelas, akurat dan menyeluruh.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Sebagian besar informasi yang disajikan dalam diskusi jelas dan akurat, namun biasanya tidak menyeluruh.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Informasi memiliki beberapa ketidakakuratan atau biasanya tidak jelas.</td>
+        </tr>
+
+        <tr>
+          <td rowspan="4" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">2</td>
+          <td rowspan="4" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Gaya Presentasi</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">4</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Siswa secara konsisten menggunakan gerak tubuh, kontak mata, nada suara dan tingkat antusiasme dengan cara yang tetap memperhatikan khalayak.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Siswa biasanya menggunakan gerak tubuh, kontak mata, nada suara dan tingkat antusiasme dengan cara yang tetap memperhatikan khalayak.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Siswa terkadang menggunakan gerak tubuh, kontak mata, nada suara dan tingkat antusiasme dengan cara yang tetap memperhatikan khalayak.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Siswa memiliki gaya presentasi yang tidak memperhatikan khalayak.</td>
+        </tr>
+
+        <tr>
+          <td rowspan="4" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">3</td>
+          <td rowspan="4" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Bantahan</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">4</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Semua argumen kontra akurat, relevan dan kuat.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Sebagian besar argumen kontra akurat, relevan, dan kuat.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Sebagian besar argumen kontra akurat dan relevan, namun beberapa di antaranya lemah.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Argumen kontra tidak akurat dan / atau relevan.</td>
+        </tr>
+
+        <tr>
+          <td rowspan="4" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">4</td>
+          <td rowspan="4" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Pengertian Topik</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">4</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Siswa dengan jelas memahami topik secara mendalam dan mempresentasikan informasi / gagasan dan / atau pendapat secara meyakinkan.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Siswa dengan jelas memperdulikan topik secara mendalam dan mempresentasikan informasi / gagasan dan / atau pendapat dengan mudah.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Siswa sepertinya memahami pokok-pokok topik dan menyajikannya dengan mudah.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Siswa tidak menunjukkan pemahaman yang memadai tentang topik tersebut.</td>
+        </tr>
+
+        <tr>
+          <td rowspan="4" style="padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle;">5</td>
+          <td rowspan="4" style="padding: 10px; border: 1px solid #ddd; vertical-align: middle; font-weight: bold;">Menghormati Peserta Didik Lain</td>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">4</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Semua pernyataan, bahasa tubuh, dan tanggapan sesuai dan sopan dalam bahasa.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">3</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Pernyataan dan tanggapan dihormati dan menggunakan bahasa yang sesuai, namun bahasa tubuh terkadang tidak ada.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">2</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Sebagian besar pernyataan dan tanggapan dihormati dan dalam bahasa yang sesuai, namun ada satu ucapan sarkastik.</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">1</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Pernyataan, tanggapan dan / atau bahasa tubuh secara konsisten tidak menghormati.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-top: 2px solid #ddd; text-align: center;">
+    <p style="font-size: 16px; font-weight: bold; margin: 0;">
+      Nilai = skor yang diperoleh / skor maksimal × 100%
+    </p>
+  </div>
+</div>
+
+<div class="info-card" style="display: block; padding: 0; overflow: hidden; border: none; background: white; margin-top: 20px;">
+  <div style="background: #4d7c2c; color: white; padding: 10px; font-weight: bold; text-align: center; border: 1px solid #ddd;">
+    PEMBELAJARAN REMEDIAL DAN PENGAYAAN
+  </div>
+
+  <div style="padding: 15px;">
+    <div style="margin-bottom: 20px;">
+      <h4 style="color: #c53030; border-bottom: 2px solid #feb2b2; padding-bottom: 5px;">A. Remedial</h4>
+      <p style="font-size: 14px; text-align: justify;">
+        Peserta didik yang belum mencapai Kriteria Ketercapaian Tujuan Pembelajaran (KKTP) diberikan bimbingan perorangan atau kelompok sesuai dengan kesulitan yang dihadapi. Materi remedial difokuskan pada konsep yang belum dipahami (contoh: Efek Doppler atau Pipa Organa).
+      </p>
+      <div style="background: #fff5f5; border: 1px dashed #feb2b2; padding: 10px; border-radius: 8px; display: inline-block;">
+        <span style="font-size: 12px; font-weight: bold; color: #c53030;">Tugas Remedial:</span>
+        <ul style="font-size: 13px; margin: 5px 0 0 0; padding-left: 20px;">
+          <li>Mempelajari kembali materi di modul/video pembelajaran.</li>
+          <li>Mengerjakan ulang latihan soal yang belum benar.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <h4 style="color: #276749; border-bottom: 2px solid #9ae6b4; padding-bottom: 5px;">B. Pengayaan</h4>
+      <p style="font-size: 14px; text-align: justify;">
+        Peserta didik yang sudah mencapai KKTP diberikan materi tambahan yang lebih kompleks atau diminta menjadi tutor sebaya bagi temannya yang membutuhkan bantuan.
+      </p>
+      <div style="background: #f0fff4; border: 1px dashed #9ae6b4; padding: 10px; border-radius: 8px; display: inline-block;">
+        <span style="font-size: 12px; font-weight: bold; color: #276749;">Kegiatan Pengayaan:</span>
+        <ul style="font-size: 13px; margin: 5px 0 0 0; padding-left: 20px;">
+          <li>Menganalisis fenomena gelombang bunyi pada teknologi medis.</li>
+          <li>Menyelesaikan soal-soal olimpiade fisika terkait gelombang bunyi.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="info-card" style="display: block; padding: 0; overflow: hidden; border: none; background: white; margin-top: 20px;">
+  <div style="background: #fbbf24; color: black; padding: 10px; font-weight: bold; text-align: center; border: 1px solid #ddd;">
+    REFLEKSI PESERTA DIDIK DAN GURU
+  </div>
+
+  <div style="padding: 15px;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+      <tr style="background: #f8fafc;">
+        <th style="border: 1px solid #ddd; padding: 10px; width: 50%;">Refleksi Peserta Didik</th>
+        <th style="border: 1px solid #ddd; padding: 10px; width: 50%;">Refleksi Guru</th>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 10px; vertical-align: top;">
+          <ul style="margin: 0; padding-left: 15px;">
+            <li>Bagian mana yang paling menarik dari materi hari ini?</li>
+            <li>Apa kendala yang saya hadapi saat praktikum/diskusi?</li>
+            <li>Seberapa paham saya mengenai konsep cepat rambat bunyi (Skala 1-10)?</li>
+          </ul>
+        </td>
+        <td style="border: 1px solid #ddd; padding: 10px; vertical-align: top;">
+          <ul style="margin: 0; padding-left: 15px;">
+            <li>Apakah seluruh siswa mencapai tujuan pembelajaran?</li>
+            <li>Kendala apa yang muncul saat proses pembelajaran di kelas?</li>
+            <li>Apa yang akan saya perbaiki pada pertemuan berikutnya?</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+</div>
+
+<div class="info-card" style="display: block; padding: 0; overflow: hidden; border: none; background: white; margin-top: 20px;">
+  <div style="background: #4d7c2c; color: white; padding: 10px; font-weight: bold; text-align: left; border: 1px solid #ddd;">
+    C. GLOSARIUM
+  </div>
+
+  <div style="padding: 15px;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.6;">
+      <tr>
+        <td style="vertical-align: top; width: 120px; font-weight: bold; padding: 5px 0;">Bunyi</td>
+        <td style="vertical-align: top; width: 20px; padding: 5px 0;">:</td>
+        <td style="padding: 5px 0; text-align: justify;">Sesuatu yang terdengar (didengar) atau ditangkap oleh telinga.</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top; font-weight: bold; padding: 5px 0;">Dawai</td>
+        <td style="vertical-align: top; padding: 5px 0;">:</td>
+        <td style="padding: 5px 0; text-align: justify;">Kawat atau tali yang apabila digetarkan akan menghasilkan bunyi.</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top; font-weight: bold; padding: 5px 0;">Efek Doppler</td>
+        <td style="vertical-align: top; padding: 5px 0;">:</td>
+        <td style="padding: 5px 0; text-align: justify;">Peristiwa terjadinya perubahan frekuensi bunyi yang diterima oleh pendengar akan berubah jika terjadi gerak relatif antara sumber bunyi dan pendengar.</td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top; font-weight: bold; padding: 5px 0;">Gelombang</td>
+        <td style="vertical-align: top; padding: 5px 0;">:</td>
+        <td style="padding: 5px 0; text-align: justify;">Getaran yang merambat dari satu titik ke titik lainnya melalui media ruang hampa.</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="info-card" style="display: block; padding: 0; overflow: hidden; border: none; background: white; margin-top: 20px;">
+  <div style="background: #4d7c2c; color: white; padding: 10px; font-weight: bold; text-align: left; border: 1px solid #ddd;">
+    D. DAFTAR PUSTAKA
+  </div>
+
+  <div style="padding: 20px;">
+    <div style="font-size: 14px; line-height: 1.8; color: #1e293b;">
+      <p style="margin: 0 0 15px 0; padding-left: 30px; text-indent: -30px;">
+        Kanginan, Marthen. 2017. <i>Fisika Untuk SMA/MA Kelas XI</i>. Jakarta: Erlangga.
+      </p>
+      <p style="margin: 0 0 15px 0; padding-left: 30px; text-indent: -30px;">
+        Lasmi, Ni Ketut. 2020. <i>Fisika Untuk SMA/MA Kelas XI</i>. Jakarta: Erlangga.
+      </p>
+      <p style="margin: 0 0 15px 0; padding-left: 30px; text-indent: -30px;">
+        Pujianto, dkk. 2016. <i>Buku Siswa Fisika Untuk SMA/MA Kelas XI</i>. Klaten: Intan Pariwara.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="info-card" style="display: block; padding: 25px; background: white; margin-top: 30px; border-top: 4px solid #4d7c2c; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+  <h3 style="text-align: center; color: #4d7c2c; margin-bottom: 25px; font-family: sans-serif;">Akses Cepat Instrumen & Rubrik</h3>
+  
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+
+    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; text-align: center; background: #f8fafc;">
+      <p style="font-size: 14px; font-weight: bold; margin-bottom: 15px; color: #334155;">Penilaian Sikap</p>
+      <div style="background: white; padding: 10px; display: inline-block; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+        <img src="foto/sikap.png" alt="QR Sikap" style="width: 100px; height: 100px; display: block;">
+      </div>
+      <a href="instrumen/penilaian-sikap.html" target="_blank" 
+         style="display: block; width: 100%; padding: 12px; background: #4d7c2c; color: white; text-decoration: none; border-radius: 8px; font-size: 12px; font-weight: bold;">
+        Buka Instrumen
+      </a>
+    </div>
+
+    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; text-align: center; background: #f8fafc;">
+      <p style="font-size: 14px; font-weight: bold; margin-bottom: 15px; color: #334155;">Observasi Diskusi</p>
+      <div style="background: white; padding: 10px; display: inline-block; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+        <img src="foto/observasi.png" alt="QR Observasi" style="width: 100px; height: 100px; display: block;">
+      </div>
+      <a href="instrumen/observasi-diskusi.html" target="_blank" 
+         style="display: block; width: 100%; padding: 12px; background: #4d7c2c; color: white; text-decoration: none; border-radius: 8px; font-size: 12px; font-weight: bold;">
+        Buka Instrumen
+      </a>
+    </div>
+
+    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; text-align: center; background: #f8fafc;">
+      <p style="font-size: 14px; font-weight: bold; margin-bottom: 15px; color: #334155;">Rubrik Presentasi</p>
+      <div style="background: white; padding: 10px; display: inline-block; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+        <img src="foto/presentasi.png" alt="QR Presentasi" style="width: 100px; height: 100px; display: block;">
+      </div>
+      <a href="instrumen/rubrik-presentasi.html" target="_blank" 
+         style="display: block; width: 100%; padding: 12px; background: #4d7c2c; color: white; text-decoration: none; border-radius: 8px; font-size: 12px; font-weight: bold;">
+        Buka Instrumen
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<div style="text-align: center; margin: 40px 0;">
+  <button class="nav-btn primary" onclick="window.location.href='index.html'" style="padding: 15px 40px; font-size: 16px; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    🏠 Kembali ke Beranda
+  </button>
+</div>
+
+      </div>
+</main>
+
+
+
+
+<div id="aboutModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeAbout()">×</span>
+    <div class="logo-pair">
+      <img src="foto/logo.png">
+      <span class="phi-symbol">Φ</span>
+      <img src="foto/logo.png">
+    </div>
+    <h3>Tentang Modul</h3>
+    <p>Modul pembelajaran interaktif fisika berpendakatan Teaching at the Right Level terintegrasi coding ini dibuat untuk pemenuhan skripsi <br><h5>Muammar MD (2214080057)</h5></br> dengan penelitian yang berjudul <br><h3>Pengembangan Modul Interaktif Fisika Berpendekatan TaRL Terintegrasi Coding Terhadap Computational Thinking Siswa</h3> Terimakasih Sudah Berkunjung..</p>
+    <button class="nav-btn primary" onclick="window.open('/physics-module/penelitian/Penelitian_PhiQu.pdf')">
+      📄 Lihat Penelitian
+    </button>
+  </div>
+</div>
+
+<div id="helpModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeHelp()">×</span>
+    <h3>Bantuan Penggunaan</h3>
+    <p style="text-align: left; display: inline-block;">
+      🔹 Klik logo untuk mengunduh modul PDF<br>
+      🔹 Gunakan menu “Mulai” untuk pembelajaran<br>
+      🔹 Instrumen Rubrik Penilaian ada Di Akhir Modul<br>
+      🔹 Direkomendasikan dibuka di laptop
+    </p>
+  </div>
+</div>
+
+<div id="downloadModal" class="modal">
+  <div class="modal-content">
+    <h3>Unduh Modul</h3>
+    <p>Anda akan mengunduh modul PDF untuk dipelajari secara offline.</p>
+    <div style="display:flex; gap:12px; justify-content:center; margin-top:16px;">
+      <button class="nav-btn primary" onclick="downloadPDF()">Ya, Unduh</button>
+      <button class="nav-btn" style="color:#64748b" onclick="closeDownloadModal()">Batal</button>
+    </div>
+  </div>
+</div>
+
+<div id="mobileModal" class="modal">
+  <div class="modal-content">
+    <h3 style="color: #e11d48;">⚠️ Perangkat Tidak Didukung</h3>
+    <p>Untuk pengalaman belajar yang optimal,<br><b>PhiQu MyModule’s</b> direkomendasikan dibuka menggunakan <b>laptop / komputer</b>.</p>
+    <p style="font-size:14px; opacity:.7;">Silakan buka kembali melalui perangkat layar besar.</p>
+  </div>
+</div>
+
+<script>
+  const pdfPath = "modul/Modul_Gelombang_dan_Bunyi.pdf";
+
+  function isMobile() {
+    return window.innerWidth < 992;
+  }
+
+  function startLearning() {
+    if (isMobile()) {
+      document.getElementById("mobileModal").style.display = "flex";
+    } else {
+      document.getElementById("introModal").style.display = "flex";
+    }
+  }
+
+  function openAbout(){ document.getElementById("aboutModal").style.display="flex"; }
+  function closeAbout(){ document.getElementById("aboutModal").style.display="none"; }
+  function openHelp(){ document.getElementById("helpModal").style.display="flex"; }
+  function closeHelp(){ document.getElementById("helpModal").style.display="none"; }
+  function openDownloadModal(){ document.getElementById("downloadModal").style.display="flex"; }
+  function closeDownloadModal(){ document.getElementById("downloadModal").style.display="none"; }
+
+  function downloadPDF(){
+    const a = document.createElement("a");
+    a.href = pdfPath;
+    a.download = "Modul_Gelombang_dan_Bunyi.pdf";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    closeDownloadModal();
+  }
+
+  window.onclick = e => {
+    ["aboutModal","helpModal","downloadModal","mobileModal","introModal"].forEach(id=>{
+      const modal = document.getElementById(id);
+      if(e.target === modal) modal.style.display="none";
+    });
+  };
+
+  function goToInti() {
+    window.location.href = "inti.html";
+  }
+</script>
+
+</body>
+</html>

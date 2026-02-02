@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Inti Kegiatan | PhiQu MyModule’s</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="foto/logo.png">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #f4f6f8;
+      color: #0f172a;
+    }
+
+    /* ================= FULLSCREEN BACKGROUND LOGO ================= */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('foto/1.png');
+      background-repeat: no-repeat;
+      background-position: center 70%;
+      background-size: 50vh;
+      opacity: 0.15; /* Disesuaikan agar tidak mengganggu teks */
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    header {
+      background: #020617;
+      color: white;
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    /* Link Header Style */
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+      width: fit-content;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .header-content:hover {
+      opacity: 0.8;
+      transform: translateX(3px);
+    }
+
+    .header-content img {
+      width: 40px;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 24px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.08);
+      margin-bottom: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    h2 { margin-top: 0; color: #1e3a8a; }
+
+    /* ===== VIDEO SIZE CONTROL ===== */
+    .video-wrapper {
+      position: relative;
+      padding-top: 56.25%; /* Rasio 16:9 agar video tidak terpotong */
+      max-width: 100%;
+      margin: 15px auto;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .video-wrapper video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .primary-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: linear-gradient(135deg,#38bdf8,#0ea5e9);
+      color: white;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .primary-btn:hover {
+      transform: scale(1.02);
+      filter: brightness(1.1);
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+    }
+
+    /* MODAL */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 400px;
+      text-align: center;
+      animation: slideIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <a href="index.html" class="header-content">
+    <img src="foto/logo.png" alt="Logo">
+    <strong>Inti Kegiatan Pembelajaran</strong>
+  </a>
+</header>
+
+<main>
+  <div class="card">
+    <h2>🎥 Video Pembelajaran</h2>
+    <p>
+      Perhatikan video berikut untuk memahami konsep dasar tentang gelombang bunyi. 
+      <b>Jangan lupa catat hal-hal penting yang Anda temukan ya! 😁</b>
+    </p>
+
+    <div class="video-wrapper">
+      <video controls preload="metadata">
+        <source src="vidio/1.mp4" type="video/mp4">
+        Browser Anda tidak mendukung pemutaran video.
+      </video>
+    </div>
+
+    <button class="primary-btn" onclick="goToDiagnostic()">
+      Mulai Diagnostik Awal
+    </button>
+  </div>
+</main>
+
+<div id="mobileModal" class="modal">
+  <div class="modal-content">
+    <h3 style="color: #e11d48;">⚠️ Perangkat Tidak Mendukung</h3>
+    <p>
+      Mohon maaf, bagian inti pembelajaran ini hanya dapat 
+      diakses melalui <b>Laptop atau Komputer</b> untuk pengalaman belajar yang optimal.
+    </p>
+    <button class="primary-btn" onclick="window.location.href='index.html'">Kembali ke Beranda</button>
+  </div>
+</div>
+
+<script>
+  function isMobile(){
+    return window.innerWidth < 992;
+  }
+
+  window.onload = () => {
+    if (isMobile()) {
+      document.getElementById("mobileModal").style.display = "flex";
+    }
+  }
+
+  function goToDiagnostic(){
+    window.location.href = 'diagnostik.html';
+  }
+</script>
+
+</body>
+</html>

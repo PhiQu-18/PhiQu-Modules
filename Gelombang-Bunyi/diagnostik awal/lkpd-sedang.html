@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKPD Jalur Cakap - PhiQu</title>
+    <link rel="icon" href="../foto/logo.png" type="image/png">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #4d7c2c;
+            --primary-light: #ecfdf5;
+            --bg: #f1f5f9;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border-top: 10px solid var(--primary);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header img { width: 80px; }
+
+        .identity-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-size: 11px; font-weight: 700; color: #64748b; }
+        .input-group input { padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; }
+
+        .misi-section {
+            background: var(--primary-light);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .misi-image {
+            width: 100%;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid white;
+        }
+
+        .task-card { margin-bottom: 25px; }
+        .task-card label { display: block; font-weight: 700; margin-bottom: 10px; color: var(--primary); }
+        
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .btn-pdf {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 20px;
+            width: 100%;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-pdf:hover { background: #dc2626; transform: translateY(-3px); }
+
+        .ct-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .ct-card { background: #f8fafc; padding: 15px; border-radius: 10px; border-left: 5px solid #fbbf24; text-align: left; }
+
+        /* Styles from 2 test.html */
+        .sound-lab-container { background: #0f172a; max-width: 750px; width: 100%; border-radius: 20px; box-shadow: 0 0 50px rgba(59, 130, 246, 0.3); padding: 30px; text-align: center; border: 1px solid #1e293b; margin: 30px auto; }
+        .sound-lab-container h2 { color: #3b82f6; margin-bottom: 5px; }
+        .sound-lab-container p { font-size: 12px; color: #64748b; margin-bottom: 20px; }
+        .sound-lab-container .warning { color: #ef4444; font-weight: bold; display: none; animation: blink 0.5s infinite; margin-bottom: 10px; font-size: 14px; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
+        .sound-lab-container button#startBtn { width:100%; padding:18px; margin-bottom:20px; border-radius:10px; border:none; background:#2563eb; color:white; font-weight:bold; cursor:pointer; font-size: 14px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .sound-lab-container button#startBtn:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .stage { background: #000; border-radius: 15px; padding: 20px; margin-bottom: 20px; position: relative; border: 2px solid #3b82f6; box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.2); }
+        .stage canvas { width: 100%; height: 180px; }
+        .hp-icon { font-size: 80px; transition: 0.05s; color: #3b82f6; display: block; margin-bottom: 10px; }
+        .controls { margin-top: 25px; text-align: left; display: grid; gap: 20px; }
+        .control-group { display: flex; flex-direction: column; gap: 10px; background: rgba(30, 41, 59, 0.5); padding: 15px; border-radius: 12px; border: 1px solid #1e293b; }
+        .input-row { display: flex; align-items: center; gap: 15px; }
+        .controls label { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+        .controls label i { color: #3b82f6; font-size: 14px; }
+        .controls input[type="range"] { flex-grow: 1; cursor: pointer; accent-color: #3b82f6; }
+        .num-input { width: 90px; background: #020617; border: 1px solid #3b82f6; color: #3b82f6; padding: 8px; border-radius: 6px; font-weight: bold; text-align: center; font-family: 'Inter', sans-serif; outline: none; }
+        .medium-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Akan otomatis menyesuaikan jumlah tombol */
+            gap: 10px; 
+            margin: 25px 0; 
+        }
+        .medium-btn { border: 1px solid #334155; border-radius: 10px; padding: 15px; cursor: pointer; background: #1e293b; color: #fff; transition: 0.3s; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .medium-btn i { font-size: 20px; color: #94a3b8; }
+        .medium-btn:hover { border-color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+        .medium-btn.active { border-color: #3b82f6; background: #2563eb; box-shadow: 0 0 15px rgba(37, 99, 235, 0.4); }
+        .medium-btn.active i { color: white; }
+        .info-panel { background: #020617; padding: 20px; border-radius: 12px; border-left: 4px solid #3b82f6; text-align: left; font-size: 13px; line-height: 1.8; }
+        .info-panel i { width: 20px; color: #3b82f6; margin-right: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="header">
+        <img id="logo-phiqu" src="../foto/logo.png" alt="PhiQu">
+        <div style="text-align: right">
+            <h1 style="margin:0; color: var(--primary)">LKPD PHIQU</h1>
+            <span style="color: #64748b">Jalur Cakap (Sedang)</span>
+        </div>
+    </header>
+
+    <div class="identity-card">
+        <div class="input-group">
+            <label>Nama Lengkap</label>
+            <input type="text" id="nama" placeholder="Nama Anda...">
+        </div>
+        <div class="input-group">
+            <label>Kelas</label>
+            <input type="text" id="kelas" placeholder="Contoh: XI-1">
+        </div>
+        <div class="input-group">
+            <label>Kelompok</label>
+            <input type="text" id="kelompok" placeholder="Nama Kelompok...">
+        </div>
+        <div class="input-group">
+            <label>Skor Awal</label>
+            <input type="text" id="skor-display" readonly>
+        </div>
+    </div>
+
+    <div class="ct-grid">
+        <div class="ct-card"><h4>Dekomposisi</h4><p id="sc-dekomposisi">0%</p></div>
+        <div class="ct-card"><h4>Pengenalan Pola</h4><p id="sc-pola">0%</p></div>
+        <div class="ct-card"><h4>Abstraksi</h4><p id="sc-abstraksi">0%</p></div>
+        <div class="ct-card"><h4>Algoritma</h4><p id="sc-algoritma">0%</p></div>
+    </div>
+
+    <section class="misi-section">
+        <h3 style="margin-top:0">🔍 Soal Cerita</h3>
+        <p id="teks-soal-cerita">Pada proyek pemeliharaan infrastruktur bawah tanah, efisiensi komunikasi dan pengendalian kebisingan sangat bergantung pada jenis material bangunan. Struktur utama terowongan terdiri dari beton bertulang dan rangka baja. Dalam sebuah observasi, ditemukan bahwa gangguan mekanis (seperti hantaman alat kerja) pada lantai beton menghasilkan transmisi energi yang berbeda jika dibandingkan dengan transmisi melalui kolom udara di dalam terowongan. <br>Anda ditugaskan sebagai analis teknis untuk melakukan simulasi perambatan gelombang bunyi menggunakan Sound Engineering Lab. Fokus utama Anda adalah memetakan bagaimana koefisien medium (α) memengaruhi energi yang diterima di titik pengamatan dan menyusun rekomendasi teknis berdasarkan data tersebut.</p>
+        
+        
+        <img id="img-misi" src="../foto/1.jpeg" class="misi-image" alt="Ilustrasi">
+    </section>
+
+    <div class="sound-lab-container">
+        <h2 style="color: #3b82f6; margin-bottom: 5px;"><i class="fas fa-wave-square"></i> SOUND ENGINEERING LAB</h2>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">SMA Physics Computational Precision Tool</p>
+
+        <p id="warnText" class="warning"><i class="fas fa-exclamation-triangle"></i> DANGER: PAIN THRESHOLD REACHED!</p>
+
+        <button id="startBtn">
+            <i class="fas fa-power-off"></i> BOOT SYSTEM & AUDIO ENGINE
+        </button>
+
+        <div class="stage">
+            <div class="hp-icon" id="hp"><i class="fas fa-mobile-alt"></i></div>
+            <canvas id="oscCanvas"></canvas>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label><i class="fas fa-italic"></i> Frekuensi (f) - Hertz</label>
+                <div class="input-row">
+                    <input type="range" id="fSlider" min="20" max="20000" step="1" value="440">
+                    <input type="number" id="fInput" class="num-input" min="20" max="20000" value="440">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label><i class="fas fa-volume-up"></i> Taraf Intensitas (TI) - Decibel</label>
+                <div class="input-row">
+                    <input type="range" id="dbSlider" min="0" max="125" step="0.1" value="60">
+                    <input type="number" id="dbInput" class="num-input" min="0" max="125" step="0.1" value="60">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label><i class="fas fa-ruler-horizontal"></i> Jarak Pengamat (r) - Meter</label>
+                <div class="input-row">
+                    <input type="range" id="rSlider" min="0.1" max="50" step="0.1" value="1">
+                    <input type="number" id="rInput" class="num-input" min="0.1" max="50" step="0.1" value="1">
+                </div>
+            </div>
+        </div>
+
+        <div class="medium-grid">
+            <div class="medium-btn active" onclick="setMedium('Udara', 1, this)">
+                <i class="fas fa-wind"></i> UDARA (α=1)
+            </div>
+
+            <div class="medium-btn" onclick="setMedium('Air', 0.5, this)">
+                <i class="fas fa-tint"></i> AIR (α=0.5)
+            </div>
+
+            <div class="medium-btn" onclick="setMedium('Kayu', 0.1, this)">
+                <i class="fas fa-tree"></i> KAYU (α=0.1)
+            </div>
+
+            <div class="medium-btn" onclick="setMedium('Kaca', 0.03, this)">
+                <i class="fas fa-square"></i> KACA (α=0.03)
+            </div>
+
+            <div class="medium-btn" onclick="setMedium('Baja', 0.01, this)">
+                <i class="fas fa-cube"></i> BAJA (α=0.01)
+            </div>
+
+            <div class="medium-btn" onclick="setMedium('Beton', 0.05, this)">
+                <i class="fas fa-border-all"></i> BETON (α=0.05)
+            </div>
+
+            <div class="medium-btn" onclick="setMedium('Hampa', 0, this)" style="border-color: #ef4444;">
+                <i class="fas fa-volleyball-ball"></i> HAMPA (α=0)
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div><i class="fas fa-chart-line"></i> Intensitas Akhir (I): <span id="iRes" style="color: #fafbfd;">0</span> W/m²</div>
+            <div><i class="fas fa-arrows-alt-h"></i> Panjang Gelombang (λ): <span id="lRes" style="color: #f5f5f5;">0</span> m</div>
+            <div><i class="fas fa-info-circle"></i> Status: <span id="catRes">Normal</span></div>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <p>Analisis & Keselamatan dan Kesehatan Kerja (K3)</p>
+        <label id="q1-text">1. [Dekomposis] Tentukan variabel bebas, terikat, dan kontrol dalam eksperimen membandingkan medium BETON dan AIR di dalam terowongan.</label>
+        <textarea id="ans1" placeholder="Jawaban..."></textarea>
+    </div>
+
+    <div class="task-card">
+        <label id="q2-text">2. [Pengenalan Pola]: Buatlah perbandingan Intensitas (I) untuk UDARA, BETON, dan BAJA pada Taraf Intensitas 90 dB. Analisis hubungan antara nilai α yang semakin kecil dengan besarnya energi yang diterima.</label>
+        <textarea id="ans2" placeholder="Jawaban..."></textarea>
+    </div>
+
+    <div class="task-card">
+        <label id="q3-text">3. [Algoritma]: Susunlah prosedur penentuan "Zona Bahaya" di terowongan. Pada jarak berapa (r) status di lab berubah menjadi DANGEROUS NOISE jika bekerja di atas medium BETON?</label>
+        <textarea id="ans3" placeholder="Jawaban..."></textarea>
+    </div>
+
+    <div class="task-card">
+        <label id="q4-text">4. [Abstraksi]: Jelaskan mengapa bentuk gelombang pada oscilloscope terlihat lebih tinggi/besar saat berpindah dari Udara ke Baja, padahal angka desibel (dB) sumbernya sama. Hubungkan dengan konsep efisiensi transmisi energi.</label>
+        <textarea id="ans4" placeholder="Jawaban..."></textarea>
+    </div>
+
+    <button class="btn-pdf" onclick="generateProPDF()">💾 Simpan Hasil Ke PDF</button>
+</div>
+
+<script>
+    window.onload = function() {
+    // Mengambil data dari sessionStorage
+    const data = JSON.parse(sessionStorage.getItem('skorPhiQu'));
+    if (data) {
+        // Mengisi identitas skor
+        document.getElementById('skor-display').value = (data.total || 0) + " Poin";
+        
+        // Mengisi Grid Skor CT di layar (pastikan nama properti sesuai dengan yang disimpan)
+        document.getElementById('sc-dekomposisi').innerText = (data.dekomposisi || 0) + "%";
+        document.getElementById('sc-pola').innerText = (data.pola || 0) + "%";
+        document.getElementById('sc-abstraksi').innerText = (data.abstraksi || 0) + "%";
+        document.getElementById('sc-algoritma').innerText = (data.algoritma || 0) + "%";
+    }
+    };
+
+function generateProPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // --- 1. AMBIL DATA DARI UI ---
+    const dataCT = JSON.parse(sessionStorage.getItem('skorPhiQu')) || { total: 0, dekomposisi: 0, pola: 0, abstraksi: 0, algoritma: 0 };
+    const nama = document.getElementById('nama').value || "Siswa";
+    const kelas = document.getElementById('kelas').value || "-";
+    const kelompok = document.getElementById('kelompok').value || "-";
+    
+    // Data Teknis Lab
+    const labFreq = document.getElementById('fInput').value;
+    const labDb = document.getElementById('dbInput').value;
+    const labDist = document.getElementById('rInput').value;
+    const labIntense = document.getElementById('iRes').innerText;
+    const labWave = document.getElementById('lRes').innerText;
+    const labStatus = document.getElementById('catRes').innerText;
+    const activeMedium = document.querySelector('.medium-btn.active').innerText.split('(')[0].trim();
+
+    // --- 2. HEADER & IDENTITAS ---
+    const logo = document.getElementById('logo-phiqu');
+    try { doc.addImage(logo, 'PNG', 15, 12, 20, 20); } catch(e) {}
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(77, 124, 44);
+    doc.text("LAPORAN PRAKTIKUM PHIQU", 40, 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text("Topik: Perambatan Gelombang Bunyi dalam Terowongan", 40, 26);
+    doc.setDrawColor(77, 124, 44);
+    doc.setLineWidth(1);
+    doc.line(15, 35, 195, 35);
+
+    // Identitas Box
+    doc.setFillColor(248, 250, 252);
+    doc.rect(15, 40, 180, 25, 'F');
+    doc.setFontSize(10);
+    doc.setTextColor(0);
+    doc.text(`Nama     : ${nama}`, 20, 47);
+    doc.text(`Kelas      : ${kelas}`, 20, 53);
+    doc.text(`Kelompok : ${kelompok}`, 20, 59);
+    doc.text(`Skor Computational Thinking:`, 100, 47);
+    doc.setFont("helvetica", "normal");
+    doc.text(`- Dekomposisi: ${dataCT.dekomposisi}% | Pola: ${dataCT.pola}%`, 100, 53);
+    doc.text(`- Abstraksi: ${dataCT.abstraksi}% | Algoritma: ${dataCT.algoritma}%`, 100, 59);
+
+    // --- 3. DATA TEKNIS LABORATORIUM (Tabel Parameter) ---
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(59, 130, 246);
+    doc.text("I. PARAMETER LABORATORIUM DIGITAL", 15, 75);
+
+    doc.autoTable({
+        startY: 78,
+        head: [['Parameter', 'Nilai Input / Hasil Ukur']],
+        body: [
+            ['Medium Perantara (alpha)', activeMedium],
+            ['Frekuensi Sumber (f)', `${labFreq} Hz`],
+            ['Taraf Intensitas (TI)', `${labDb} dB`],
+            ['Jarak Pengamat (r)', `${labDist} meter`],
+            ['Intensitas Akhir (I)', `${labIntense} W/m2`],
+            ['Panjang Gelombang (lambda)', `${labWave} meter`],
+            ['Status Keamanan Audio', labStatus]
+        ],
+        theme: 'striped',
+        headStyles: { fillColor: [59, 130, 246] },
+        styles: { fontSize: 9 }
+    });
+
+    // --- 4. SNAPSHOT GELOMBANG ---
+    let ySnapshot = doc.lastAutoTable.finalY + 10;
+    doc.setFont("helvetica", "bold");
+    doc.text("II. VISUALISASI OSILOSKOP", 15, ySnapshot);
+    
+    const canvasObj = document.getElementById('oscCanvas');
+    const imgData = canvasObj.toDataURL('image/png');
+    doc.setFillColor(0, 0, 0); 
+    doc.rect(15, ySnapshot + 3, 180, 40, 'F');
+    doc.addImage(imgData, 'PNG', 15, ySnapshot + 3, 180, 40);
+
+    // --- 5. TUGAS ANALISIS (TABEL CT) ---
+    let yTask = ySnapshot + 55;
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(77, 124, 44);
+    doc.text("III. ANALISIS BERPIKIR KOMPUTASI (CT)", 15, yTask);
+
+    const listTugas = [
+        ["Dekomposisi", "Tentukan variabel bebas, terikat, dan kontrol dalam eksperimen membandingkan medium BETON dan AIR di dalam terowongan", document.getElementById('ans1').value],
+        ["Pengenalan Pola", "Buatlah perbandingan Intensitas (I) untuk UDARA, BETON, dan BAJA pada Taraf Intensitas 90 dB. Analisis hubungan antara nilai α yang semakin kecil dengan besarnya energi yang diterima.", document.getElementById('ans2').value],
+        ["Algoritma", "Susunlah prosedur penentuan \"Zona Bahaya\" di terowongan. Pada jarak berapa (r) status di lab berubah menjadi DANGEROUS NOISE jika bekerja di atas medium BETON", document.getElementById('ans3').value],
+        ["Abstraksi", "Jelaskan mengapa bentuk gelombang pada oscilloscope terlihat lebih tinggi/besar saat berpindah dari Udara ke Baja, padahal angka desibel (dB) sumbernya sama. Hubungkan dengan konsep efisiensi transmisi energi.", document.getElementById('ans4').value]
+    ];
+
+    doc.autoTable({
+        startY: yTask + 3,
+        head: [['Aspek CT', 'Topik Soal', 'Jawaban Siswa']],
+        body: listTugas,
+        theme: 'grid',
+        headStyles: { fillColor: [77, 124, 44] },
+        styles: { fontSize: 9, overflow: 'linebreak' },
+        columnStyles: {
+            0: { cellWidth: 30, fontStyle: 'bold' },
+            1: { cellWidth: 45 },
+            2: { cellWidth: 'auto' }
+        }
+    });
+
+    // --- 6. FOOTER ---
+    const pageCount = doc.internal.getNumberOfPages();
+    for(let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text(`Halaman ${i} dari ${pageCount} | PhiQu Digital Report | ${new Date().toLocaleString()}`, 15, 285);
+    }
+
+    doc.save(`Laporan_Eksperimen_Cakap_${nama}.pdf`);
+}
+//------
+
+    // JavaScript from 2 test.html
+    let audioCtx, osc, gainNode;
+    let isStarted = false;
+    let alpha = 1;
+
+    const canvas = document.getElementById('oscCanvas');
+    const ctx = canvas.getContext('2d');
+    const hp = document.getElementById('hp');
+    let offset = 0;
+
+    function initAudio() {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        osc = audioCtx.createOscillator();
+        gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.start();
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        isStarted = true;
+        document.getElementById('startBtn').style.display = 'none';
+        animate();
+    }
+
+    function syncInputs(sourceId, targetId) {
+        const val = document.getElementById(sourceId).value;
+        document.getElementById(targetId).value = val;
+        updateLogic();
+    }
+
+    function updateLogic() {
+        const f = parseFloat(document.getElementById('fInput').value);
+        const db = parseFloat(document.getElementById('dbInput').value);
+        const r = parseFloat(document.getElementById('rInput').value);
+
+        const i0 = 1e-12;
+        let intensitySource = i0 * Math.pow(10, db / 10);
+        let intensityReceived = (intensitySource / (r * r)) * alpha;
+
+        let dbFinal = 10 * Math.log10(intensityReceived / i0);
+        if (dbFinal < 0) dbFinal = 0;
+
+        document.getElementById('iRes').innerText = intensityReceived.toExponential(4);
+        document.getElementById('lRes').innerText = (340 / f).toFixed(4);
+
+        const warn = document.getElementById('warnText');
+        const cat = document.getElementById('catRes');
+        warn.style.display = dbFinal > 115 ? 'block' : 'none';
+
+        if(dbFinal > 120) { cat.innerText = "PAIN THRESHOLD"; cat.style.color = "#ef4444"; }
+        else if(dbFinal > 85) { cat.innerText = "DANGEROUS NOISE"; cat.style.color = "#f59e0b"; }
+        else { cat.innerText = "SAFE / NORMAL"; cat.style.color = "#10b981"; }
+
+        if(isStarted) {
+            osc.frequency.setTargetAtTime(f, audioCtx.currentTime, 0.05);
+            let volFactor = Math.min(dbFinal / 125, 1) * 0.4;
+            gainNode.gain.setTargetAtTime(volFactor, audioCtx.currentTime, 0.1);
+        }
+
+        hp.style.transform = `scale(${1 + (dbFinal/350)}) rotate(${Math.sin(offset)* (dbFinal/15)}deg)`;
+        return { f, dbFinal };
+    }
+
+    const sliders = ['fSlider', 'dbSlider', 'rSlider'];
+    const inputs = ['fInput', 'dbInput', 'rInput'];
+
+    sliders.forEach((s, idx) => {
+        document.getElementById(s).addEventListener('input', () => syncInputs(s, inputs[idx]));
+    });
+    inputs.forEach((i, idx) => {
+        document.getElementById(i).addEventListener('input', () => syncInputs(i, sliders[idx]));
+    });
+
+    function setMedium(m, a, b) {
+        alpha = a;
+        document.querySelectorAll('.medium-btn').forEach(btn => btn.classList.remove('active'));
+        b.classList.add('active');
+        updateLogic();
+    }
+
+    document.getElementById('startBtn').onclick = initAudio;
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const data = updateLogic();
+        ctx.beginPath();
+        ctx.strokeStyle = data.dbFinal > 110 ? '#ef4444' : '#3b82f6';
+        ctx.lineWidth = 1 + (data.dbFinal/30);
+
+        let step = data.f > 5000 ? 4 : 1;
+        for (let x = 0; x < canvas.width; x += step) {
+            let freqScale = data.f / 1000;
+            let y = (canvas.height / 2) + (data.dbFinal * 0.6) * Math.sin((x + offset) * (freqScale + 0.005));
+            ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        offset += 2;
+        requestAnimationFrame(animate);
+    }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+</body>
+</html>

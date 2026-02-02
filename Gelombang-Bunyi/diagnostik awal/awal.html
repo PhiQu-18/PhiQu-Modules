@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Diagnostik CT | PhiQu MyModule’s</title>
+    <link rel="icon" href="../foto/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #020617; 
+            --accent: #0ea5e9; 
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+        }
+
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; scroll-behavior: smooth; }
+
+        header {
+            background: var(--primary); color: white; padding: 14px 20px; position: sticky; top: 0; z-index: 1000;
+            display: flex; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .header-content { display: flex; align-items: center; gap: 12px; text-decoration: none; color: white; }
+        .header-content img { width: 35px; }
+
+        .container { 
+            max-width: 800px; margin: 30px auto; background: white; padding: 35px; 
+            border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-top: 10px solid var(--accent); 
+        }
+
+        .timer-bar { 
+            position: sticky; top: 75px; background: #fffbeb; z-index: 90; padding: 12px 20px; 
+            border: 1px solid #fef3c7; display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 25px; border-radius: 12px;
+        }
+        
+        #timer { font-weight: 800; color: var(--danger); font-size: 18px; }
+
+        .question-card { 
+            margin-bottom: 25px; padding: 20px; border: 1px solid #f1f5f9; 
+            border-radius: 16px; transition: 0.3s;
+        }
+        .question-card.active { border-color: var(--accent); background: #fcfdfe; }
+        .question-text { font-weight: 600; margin-bottom: 15px; display: block; font-size: 16px; line-height: 1.5; }
+
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option { 
+            display: flex; align-items: center; padding: 14px; border: 2px solid #f1f5f9; 
+            border-radius: 10px; cursor: pointer; transition: 0.2s; 
+        }
+        .option:hover { background: #f0f9ff; border-color: var(--accent); }
+        .option input { margin-right: 12px; transform: scale(1.2); }
+
+        .btn-submit { 
+            width: 100%; padding: 18px; background: var(--primary); color: white; 
+            border: none; border-radius: 14px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        #result-area { display: none; text-align: center; animation: fadeIn 0.8s ease; }
+        .recommendation-box { 
+            background: #f0f9ff; padding: 30px; border-radius: 20px; margin: 25px 0; border: 2px solid var(--accent); 
+        }
+
+        .ct-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
+        .ct-card { 
+            background: #f8fafc; padding: 15px; border-radius: 12px; text-align: left;
+            border-bottom: 4px solid #cbd5e1;
+        }
+        .ct-card h4 { margin: 0 0 5px 0; font-size: 11px; color: #64748b; text-transform: uppercase; }
+        .ct-score { font-weight: 800; font-size: 22px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 600px) { .ct-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="../index.html" class="header-content">
+        <img src="../foto/logo.png" alt="Logo">
+        <strong>Modul Digital PhiQu</strong>
+    </a>
+</header>
+
+<div class="container">
+    <div class="timer-bar" id="timer-display">
+        <span>⏱️ Waktu Tersisa:</span>
+        <span id="timer">05:00</span>
+    </div>
+
+    <div id="quiz-intro" style="text-align: center; margin-bottom: 30px;">
+        <h2 style="color: var(--primary);">Tes Diagnostik CT</h2>
+        <p style="color: #64748b;">Hasil ini akan menentukan jalur LKPD yang paling pas untuk tingkat pemahamanmu.</p>
+    </div>
+
+    <form id="quiz-form">
+        <div id="quiz-container"></div>
+        <button type="button" class="btn-submit" onclick="validateAndCalculate()">Analisis Kemampuan Saya</button>
+    </form>
+
+    <div id="result-area">
+        <h2 style="color: var(--primary)">Hasil Diagnostik</h2>
+        <div id="total-score-display" style="font-size: 64px; font-weight: 900; color: var(--accent);">0</div>
+        
+        <div class="recommendation-box">
+            <h3 style="margin: 0; font-size: 12px; color: #64748b; text-transform: uppercase;">Rekomendasi Jalur:</h3>
+            <p id="rekomendasi-teks" style="font-weight: 800; font-size: 26px; color: var(--primary); margin: 8px 0;"></p>
+            <p id="deskripsi-jalur" style="font-size: 14px; color: #475569; line-height: 1.5;"></p>
+        </div>
+
+        <div class="ct-grid">
+            <div class="ct-card" id="card-dekomposisi"><h4>Dekomposisi</h4><div class="ct-score" id="sc-dekomposisi">0%</div></div>
+            <div class="ct-card" id="card-pola"><h4>Pengenalan Pola</h4><div class="ct-score" id="sc-pola">0%</div></div>
+            <div class="ct-card" id="card-abstraksi"><h4>Abstraksi</h4><div class="ct-score" id="sc-abstraksi">0%</div></div>
+            <div class="ct-card" id="card-algoritma"><h4>Algoritma</h4><div class="ct-score" id="sc-algoritma">0%</div></div>
+        </div>
+        
+        <button id="btn-next" class="btn-submit" style="background: var(--accent); margin-top: 30px;">Mulai Belajar Sekarang →</button>
+    </div>
+</div>
+
+<script>
+    // Konfigurasi Soal & Bobot CT
+    const questions = [
+        { q: "Jika kamu membandingkan suara saat berenang didalam air dan saat berada didarat, manakah pernyataan yang paling benar?", options: ["Bunyi merambat lebih cepat di air daripada di udara", "Kecepatan bunyi di air dan udara selalu sama", "Bunyi tidak bisa merambat di dalam air", "Bunyi merambat lebih cepat di udara daripada di air", "Bunyi tidak dapat terdengar di keduanya"], ans: 0, cat: "pola", weight: 8 },
+        { q: "Jika kamu ingin menghitung jarak sebuah tebing dengan cara berteriak dan mendengarkan gema, urutan langkah mana yang paling tepat?", options: ["1.Matikan stopwatch saat berteriak. 2. Nyalakan stopwatch saat gema terdengar.", "1.Berteriak tanpa menghitung waktu. 2. Tebak jaraknya berdasarkan kerasnya suara gema.", "1.Berteriak dan nyalakan stopwatch. 2. Matikan stopwatch saat gema terdengar. 3. Kalikan waktu dengan kecepatan bunyi lalu bagi dua.", "1.Berteriak dan hitung jumlah gema yang muncul. 2. Kalikan jumlah gema dengan tinggi tebing.", "Berteriak dan langsung pulang kerumah"], ans: 2, cat: "algoritma", weight: 12 },
+        { q: "Bayangkan kamu sedang berdiri di pinggir pantai saat hujan dan ingin menghitung seberapa jauh posisi petir dari tempatmu berdiri. Agar tugas menghitung jarak ini menjadi lebih mudah, kamu harus memecahnya menjadi beberapa informasi kecil yang perlu dicari tahu. Manakah di bawah ini yang merupakan dua informasi paling penting yang kamu butuhkan?", options: ["Warna cahaya kilat dan jenis pohon yang tersambar petir.", "Waktu (detik) antara terlihatnya kilat dengan suara guntur, serta kecepatan bunyi di udara.", "Nama pantai tempat kamu berdiri dan ramalan cuaca untuk esok hari.", "Suhu air laut dan jumlah orang yang ada di sekitar pantai saat itu.", "Berapa kali kilat muncul dalam satu menit dan arah angin bertiup."], ans: 1, cat: "dekomposisi", weight: 10 },
+        { q: "Seorang ilmuwan ingin meneliti mengapa suara sirine ambulans terdengar lebih cempreng saat mendekat. Informasi manakah yang paling relevan (penting) untuk diperhatikan?", options: ["Merek ban yang digunakan oleh mobil ambulans tersebut.", "Harga sirine yang dipasang pada mobil ambulans.", "Nama pengemudi ambulans dan rumah sakit tujuannya.", "Warna cat mobil ambulans dan jenis lampu sirine yang digunakan.", "Perubahan frekuensi gelombang bunyi karena pergerakan sumber bunyi."], ans: 4, cat: "abstraksi", weight: 12 },
+        { q: "Suara tidak terdengar di luar angkasa karena...", options: ["Dingin", "Tidak ada medium (Hampa)", "Banyak kawah", "Gravitasi rendah", "Jauh"], ans: 1, cat: "dekomposisi", weight: 10 },
+        { q: "Jika suhu udara naik, maka kecepatan bunyi akan...", options: ["Meningkat", "Menurun", "Tetap", "Hilang", "Berhenti"], ans: 0, cat: "pola", weight: 8 },
+        { q: "Kamu ingin melakukan percobaan \"Telepon Kaleng\" dengan temanmu untuk membuktikan bahwa bunyi merambat melalui benang (zat padat). Agar suara temanmu terdengar dengan jelas di kalengmu, urutan langkah manakah yang paling benar?" ,options: ["1. Hubungkan dua kaleng dengan benang. 2. Tarik benang sampai tegang/kencang. 3. Mintalah teman berbicara di satu sisi.", "1. Biarkan benang kendur dan menyentuh tanah. 2. Berteriaklah ke arah kaleng yang kosong. 3. Gunting benang menjadi potongan kecil.", "1. Masukkan air ke dalam kaleng. 2. Rendam benang di dalam air tersebut. 3. Tunggu sampai benang menjadi sangat basah.", "1. Tutup lubang kaleng dengan selotip rapat-rapat. 2. Berdirilah saling membelakangi tanpa benang. 3. Berbisiklah dengan pelan.", "1. Ukur panjang benang menggunakan penggaris. 2. Warnai kaleng dengan cat warna-warni agar terlihat bagus."], ans: 0, cat: "algoritma", weight: 12 },
+        { q: "Saat kamu ingin menjelaskan mengapa bunyi merambat lebih cepat pada besi dibandingkan udara, informasi manakah yang paling penting untuk kamu perhatikan?", options: ["Harga besi yang lebih mahal daripada udara.", "Warna besi yang berkilau dan udara yang bening.", "Kerapatan partikel atau molekul di dalam besi.", "Bentuk besi, apakah berbentuk kotak atau bulat.", "Berat total besi jika ditimbang dengan timbangan."], ans: 2, cat: "abstraksi", weight: 12 },
+        { q: "Kerapatan partikel: Padat > Cair > Gas. Maka bunyi tercepat di benda...", options: ["Gas", "Padat", "Cair", "Hampa", "Lunak"], ans: 1, cat: "pola", weight: 8 },
+        { q: "Jika kamu ingin membuktikan bahwa bunyi merambat paling cepat pada zat padat (besi) dibandingkan gas (udara), bagian penting mana yang harus kamu siapkan?", options: ["Warna cat pada besi dan jenis parfum yang ada di udara.", "Dua jenis medium yang berbeda (besi dan udara) serta sumber bunyi yang sama.", "Berat total besi dalam kilogram dan volume udara dalam liter.", "Nama pabrik pembuat besi dan ramalan cuaca hari ini.", "Daftar lagu yang akan diputar melalui besi tersebut."], ans: 1, cat: "dekomposisi", weight: 8 }
+    ];
+
+    let timeLeft = 300;
+    let timerInterval;
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            let mins = Math.floor(timeLeft / 60), secs = timeLeft % 60;
+            document.getElementById('timer').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            if (timeLeft <= 0) calculateResult();
+        }, 1000);
+    }
+
+    function loadQuiz() {
+        const container = document.getElementById('quiz-container');
+        questions.forEach((item, index) => {
+            let optionsHtml = item.options.map((opt, i) => `
+                <label class="option"><input type="radio" name="q${index}" value="${i}"> ${opt}</label>
+            `).join('');
+            container.innerHTML += `<div class="question-card" id="card-${index}"><span class="question-text">${index+1}. ${item.q}</span><div class="options">${optionsHtml}</div></div>`;
+        });
+        document.querySelectorAll('input[type="radio"]').forEach(input => {
+            input.addEventListener('change', (e) => document.getElementById(e.target.name.replace('q', 'card-')).classList.add('active'));
+        });
+        startTimer();
+    }
+
+    function validateAndCalculate() {
+        const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+        if (answered < questions.length && timeLeft > 0) {
+            if (!confirm("Beberapa soal belum dijawab. Yakin ingin selesai?")) return;
+        }
+        calculateResult();
+    }
+
+    function calculateResult() {
+        clearInterval(timerInterval);
+        let totalScore = 0;
+        let ctStats = {
+            dekomposisi: { benar: 0, totalWeight: 0 },
+            pola: { benar: 0, totalWeight: 0 },
+            abstraksi: { benar: 0, totalWeight: 0 },
+            algoritma: { benar: 0, totalWeight: 0 }
+        };
+
+        questions.forEach((item, index) => {
+            ctStats[item.cat].totalWeight += item.weight;
+            const sel = document.querySelector(`input[name="q${index}"]:checked`);
+            if (sel && parseInt(sel.value) === item.ans) {
+                totalScore += item.weight;
+                ctStats[item.cat].benar += item.weight;
+            }
+        });
+
+        const analysis = {
+            total: totalScore,
+            dekomposisi: Math.round((ctStats.dekomposisi.benar / ctStats.dekomposisi.totalWeight) * 100),
+            pola: Math.round((ctStats.pola.benar / ctStats.pola.totalWeight) * 100),
+            abstraksi: Math.round((ctStats.abstraksi.benar / ctStats.abstraksi.totalWeight) * 100),
+            algoritma: Math.round((ctStats.algoritma.benar / ctStats.algoritma.totalWeight) * 100)
+        };
+
+        sessionStorage.setItem('skorPhiQu', JSON.stringify(analysis));
+        showUI(analysis);
+    }
+
+    function showUI(data) {
+        document.getElementById('quiz-form').style.display = 'none';
+        document.getElementById('quiz-intro').style.display = 'none';
+        document.getElementById('timer-display').style.display = 'none';
+        document.getElementById('result-area').style.display = 'block';
+        document.getElementById('total-score-display').innerText = data.total;
+
+        let level, target, desc;
+        if (data.total >= 75) {
+            level = "JALUR MAHIR"; target = "lkpd-tinggi.html";
+            desc = "Kamu memiliki kemampuan CT yang sangat kuat! Kamu siap menganalisis data perambatan bunyi yang lebih kompleks.";
+        } else if (data.total >= 50) {
+            level = "JALUR CAKAP"; target = "lkpd-sedang.html";
+            desc = "Kerja bagus! Kamu sudah memahami konsep dasar. Jalur ini akan membantumu bereksperimen dengan berbagai medium.";
+        } else {
+            level = "JALUR DASAR"; target = "lkpd-rendah.html";
+            desc = "Tetap semangat! Jalur ini akan membantumu memahami dasar perambatan bunyi dengan langkah-langkah yang mudah.";
+        }
+
+        document.getElementById('rekomendasi-teks').innerText = level;
+        document.getElementById('deskripsi-jalur').innerText = desc;
+        document.getElementById('btn-next').onclick = () => window.location.href = target;
+
+        ['dekomposisi', 'pola', 'abstraksi', 'algoritma'].forEach(cat => {
+            const score = data[cat];
+            const el = document.getElementById(`sc-${cat}`);
+            el.innerText = score + "%";
+            el.style.color = score >= 80 ? '#10b981' : (score >= 60 ? '#f59e0b' : '#ef4444');
+            document.getElementById(`card-${cat}`).style.borderBottomColor = el.style.color;
+        });
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    window.onload = loadQuiz;
+</script>
+</body>
+</html>
