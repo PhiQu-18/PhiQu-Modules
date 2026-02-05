@@ -86,6 +86,36 @@
             box-sizing: border-box;
         }
 
+        
+        .btn-next {
+    background: #4d7c2c; /* Warna hijau primer */
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 18px;
+    width: 100%;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: 800;
+    margin-top: 15px;
+    transition: 0.3s;
+    border: 2px solid #3d6323;
+    box-sizing: border-box;
+}
+
+.btn-next:hover {
+    background: #3d6323;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(77, 124, 44, 0.3);
+}
+
+.btn-next i {
+    font-size: 20px;
+}
+
         .btn-pdf {
             background: #ef4444;
             color: white;
@@ -282,6 +312,16 @@
     </div>
 
     <button class="btn-pdf" onclick="generateProPDF()">💾 Simpan Hasil Ke PDF</button>
+
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #e2e8f0;">
+        <a href="../pertemuan2.html" class="btn-next">
+            <div class="btn-content">
+                <span class="btn-subtitle">MISI BERIKUTNYA</span>
+                <span class="btn-title">PERTEMUAN 2: Karakteristik Gelombang Bunyi</span>
+            </div>
+            <i class="fas fa-chevron-circle-right"></i>
+        </a>
+    </div>
 </div>
 
 <script>
