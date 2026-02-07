@@ -159,6 +159,27 @@
       h1 { font-size: clamp(18px, 3vh, 24px); }
       .header-section { margin-bottom: 15px; }
     }
+
+    @media (max-width: 480px) {
+      body { padding: 5px; }
+      .viewport { padding: 0 5px; }
+      .slide { padding: 5px; border-radius: 10px; }
+      .header-section { margin-bottom: 5px; }
+      h1 { font-size: clamp(14px, 2vh, 18px); }
+      .grid-2 { gap: 5px; }
+      .theory-box { padding: 8px; font-size: 10px; line-height: 1.3; }
+      .example-box { padding: 8px; }
+      .responsive-img { max-width: 100%; height: auto; margin: 3px 0; }
+      .btn-run { padding: 10px; font-size: 12px; }
+      .nav-hotspot { width: 10%; } /* Lebih lebar untuk touch */
+      .progress-container { height: 4px; }
+      /* Terminal adjustments */
+      .example-box .terminal { font-size: 10px; }
+      input[type="number"], select { font-size: 13px; padding: 4px; } /* Prevent zoom */
+      code { font-size: 9px; }
+      .quran-box { font-size: 11px; }
+      .arabic { font-size: 14px; }
+    }
   </style>
 </head>
 <body>
@@ -234,30 +255,30 @@
           Gelombang bunyi adalah gelombang <b>longitudinal</b> yang merambat melalui medium (padat, cair, atau gas) dalam bentuk rapatan dan renggangan. Bunyi dihasilkan oleh benda yang bergetar.
         </p>
 
-        <h3 style="font-size: 16px; color: var(--primary);">⚙️ Sifat-Sifat Gelombang Bunyi</h3>
+        <h3 style="font-size: 17px; color: var(--primary);">⚙️ Sifat-Sifat Gelombang Bunyi</h3>
         <ul style="line-height: 1.6; color: #334155; margin-bottom: 0;">
           <li><b>Refleksi:</b> Bunyi dapat memantul saat mengenai penghalang.</li>
           <li><b>Refraksi:</b> Perubahan arah bunyi saat melewati medium berbeda kerapatan.</li>
           <li><b>Diffraksi:</b> Bunyi mampu melewati celah sempit atau berbelok.</li>
           <li><b>Interferensi:</b> Penguatan atau pelemahan bunyi akibat pertemuan dua gelombang.</li>
         </ul>
+        <div style="margin-top: 15px; text-align: left; width: 100%;">
+            <p style="font-size: 12px; color: #1e293b; line-height: 1.4;">
+              <b>Catatan Penting:</b><br>
+              Bunyi <b>tidak dapat</b> merambat di ruang hampa (vakum).
+            </p>
+          </div>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 10px;">
         <div class="example-box" style="background: #f8fafc; border: 1px solid #cbd5e1; align-items: center; text-align: center;">
           <h4 style="margin: 0 0 10px 0; color: #475569; font-size: 14px;">Visualisasi Perambatan</h4>
-          <div style="width: 100%; background: white; border-radius: 8px; padding: 10px; border: 1px solid #e2e8f0;">
+          <div style="width: 100%; background: white; border-radius: 8px; padding: 8px; border: 1px solid #e2e8f0;">
              
                     <img src="foto/e.jpg" alt="Gelombang Longitudinal menunjukkan kompresi dan rarefaksi" class="responsive-img">
                     
             <p style="font-size: 11px; color: #64748b; margin-top: 8px;">
               Molekul udara bergerak maju-mundur searah perambatan gelombang.
-            </p>
-          </div>
-          <div style="margin-top: 15px; text-align: left; width: 100%;">
-            <p style="font-size: 12px; color: #1e293b; line-height: 1.4;">
-              <b>Catatan Penting:</b><br>
-              Bunyi <b>tidak dapat</b> merambat di ruang hampa (vakum).
             </p>
           </div>
         </div>
@@ -324,7 +345,7 @@
 
   <div class="slide">
     <div class="header-section">
-      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">
         Materi 03
       </span>
       <h1>Analisis Perambatan: Gas, Cair, & Padat</h1>
@@ -343,12 +364,16 @@
           <li><b>Zat Gas (~340 m/s):</b> Partikel sangat renggang dan sering bertumbukan secara acak, membuat transmisi energi paling lambat.</li>
         </ul>
 
-        <div style="background: #e0f2fe; padding: 10px; border-radius: 8px; border-left: 4px solid #0284c7; margin-top: 10px;">
-          <p style="font-size: 12px; margin: 0; color: #0369a1;">
-            <b>Computational Thinking:</b><br>
-            Jika kita membuat algoritma simulasi, variabel <i>density</i> (ρ) dan <i>elasticity</i> (E/B) adalah input utama untuk menentukan output kecepatan (v).
-          </p>
-        </div>
+        <div style="margin-top: 10px; width: 100%; text-align: left;">
+            <p style="font-size: 12px; font-weight: bold; color: var(--primary);">Contoh Data Nyata (Udara 20°C):</p>
+            <code style="display: block; background: #1e293b; color: #f8fafc; padding: 8px; border-radius: 5px; font-size: 11px;">
+              // Pseudocode Logic <br>
+              IF medium == "Baja" THEN v = 5100;<br>
+              IF medium == "Air"  THEN v = 1480;<br>
+              IF medium == "Udara" THEN v = 343;
+            </code>
+          </div>
+
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -360,16 +385,6 @@
             <p style="font-size: 11px; color: #64748b; margin-top: 8px;">
               <img src="foto/3.webp" alt="Gelombang Longitudinal menunjukkan kompresi dan rarefaksi" class="responsive-img">
             </p>
-          </div>
-
-          <div style="margin-top: 10px; width: 100%; text-align: left;">
-            <p style="font-size: 12px; font-weight: bold; color: var(--primary);">Contoh Data Nyata (Udara 20°C):</p>
-            <code style="display: block; background: #1e293b; color: #f8fafc; padding: 8px; border-radius: 5px; font-size: 11px;">
-              // Pseudocode Logic <br>
-              IF medium == "Baja" THEN v = 5100;<br>
-              IF medium == "Air"  THEN v = 1480;<br>
-              IF medium == "Udara" THEN v = 343;
-            </code>
           </div>
         </div>
       </div>
@@ -758,64 +773,107 @@
   </div>
 
 
-<div class="slide">
-    <div class="header-section">
-      <span style="color: #e11d48; font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
-        Integrasi Ayat Alquran
+          <div class="slide">
+  <style>
+    .finish-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      gap: 20px;
+    }
+
+    .wave-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 350px;
+      margin-bottom: 10px;
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .wave-wrapper:hover {
+      transform: scale(1.05);
+    }
+
+    .wave-wrapper img {
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 45, 87, 0.2);
+    }
+
+    .finish-title {
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: content-box;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+
+    .btn-final {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      text-decoration: none;
+      padding: 18px 45px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .btn-final:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4);
+      background: white;
+      color: #10b981;
+      border-color: #10b981;
+    }
+
+    .btn-final svg {
+      transition: transform 0.3s ease;
+    }
+
+    .btn-final:hover svg {
+      transform: translateX(5px);
+    }
+
+    @media (max-width: 480px) {
+      .wave-wrapper { max-width: 250px; }
+      .btn-final { padding: 14px 30px; font-size: 15px; width: 80%; }
+    }
+  </style>
+
+  <div class="finish-container">
+    <div class="header-section" style="margin-bottom: 0;">
+      <span style="color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">
+        PhiQu Module's
       </span>
-      <h1>Al-Quran Surah Huud [11]:67</h1>
+      <h1 class="finish-title">Eksplorasi Gelombang Hampir Selesai</h1>
+      <p style="color: #64748b; font-size: 14px; max-width: 450px; margin: 10px auto;">
+        Kita sudah masuk ke pembahasan terakhir. Selanjutnya kita akan membahas integrasi Al-Quran tentang <b>Gelombang Bunyi</b>. Setelah itu kita akan menyelesaikan soal akhir.
+      </p>
     </div>
 
-    <div class="grid-2" style="align-items: start;">
-      <div class="theory-box" style="overflow-y: auto; font-size: 13px; line-height: 1.6;">
-        <h3 style="margin-top: 0; color: #e11d48; font-size: 18px;">📋 Integrasi Ayat Alquran</h3>
-          <div class="quran-box">
-          <span class="arabic">وَاَخَذَ الَّذِيْنَ ظَلَمُوا الصَّيْحَةُ فَاَصْبَحُوْا فِيْ دِيَارِهِمْ جٰثِمِيْنَۙ ۝٦٧</span> 
-            <p><i>"Dan satu <b>suara (bunyi)</b> keras yang mengguntur menimpa orang-orang yang zalim itu, lalu mereka <b>mati bergelimpangan</b> di rumahnya"</i> (Q.S. Huud : 67)</p>
-          </div>
-        <div style="background: #f8fafc; padding: 15px; border-radius: 10px; border-left: 4px solid #e11d48; margin: 10px 0;">
-          <ul style="margin: 0; padding-left: 15px; display: flex; flex-direction: column; gap: 8px;">
-            <li><b>Bunyi adalah Energi</b>: Suara bukan sekedar fenomena pendengaran, tetapi merupakan perpindahan energi (energi mekanik)</li>
-            <li><b>Batasan</b>: Ada batas fisik yang dapat diterima oleh tubuh manusia terhadap tekanan gelombang (Taraf Intensitas)</li>
-            <li><b>Ayat Kauniyah</b>: Allah menunjukkan bahwa hukum alam (bunyi) yang biasa kita dengar sehari-hari dalam skala kecil, dapat menjadi kekuatan yang luar biasa dahsyat jika energinya ditingkatkan</li>
-          </ul>
-        </div>
-      </div>
-
-      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-        <p style="font-weight: bold; color: #1e293b;">Tugas Anda: <br> Cobalah selesaikan kasus ini.</p>
-        <p style="font-size: 11px; color: #64748b; margin-bottom: 12px; font-weight: 600;">
-          📸 Scan atau Klik gambar untuk Lembar Kerja (LKS)
-        </p>
-  
-  <a href="halaman_tujuan.html" style="display: block; text-decoration: none; width: 100%; max-width: 280px;">
-    <div style="position: relative; 
-                background: #ffffff; 
-                padding: 15px; 
-                border-radius: 20px; 
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-                transition: all 0.3s ease;
-                border: 2px solid #f1f5f9;
-                display: flex;
-                justify-content: center;
-                align-items: center;" 
-         onmouseover="this.style.transform='scale(1.02)'; this.style.borderColor='#e11d48';" 
-         onmouseout="this.style.transform='scale(1)'; this.style.borderColor='#f1f5f9';">
+    <div class="wave-wrapper">
       
-      <img src="./foto/logo.png" alt="Misi Penyelamatan" 
-           style="width: 100%; 
-                  height: auto; 
-                  max-height: 250px; 
-                  display: block; 
-                  object-fit: contain; 
-                  border-radius: 10px;">
-      
-      <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(225, 29, 72, 0.05); opacity: 0; transition: 0.3s; border-radius: 18px;" 
-           onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
-      </div>
+      <img src="./foto/logo.png" alt="Gelombang Bunyi Visual">
     </div>
-  </a>
+
+    <a href="akhir.html" class="btn-final">
+      Halaman Terakhir
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+    </a>
+  </div>
 </div>
+
+
     </div>
   </div>
 

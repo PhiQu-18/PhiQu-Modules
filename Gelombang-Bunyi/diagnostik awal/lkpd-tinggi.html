@@ -165,6 +165,148 @@
         .medium-btn.active i { color: white; }
         .info-panel { background: #020617; padding: 20px; border-radius: 12px; border-left: 4px solid #3b82f6; text-align: left; font-size: 13px; line-height: 1.8; }
         .info-panel i { width: 20px; color: #3b82f6; margin-right: 5px; }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    body {
+        padding: 20px 10px;
+    }
+
+    .container {
+        max-width: 100%;
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+    .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .header img {
+        width: 60px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .identity-card {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .input-group input {
+        padding: 12px;
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+
+    .ct-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .ct-card {
+        padding: 12px;
+        text-align: center;
+    }
+
+    .misi-section {
+        padding: 15px;
+    }
+
+    .misi-image {
+        margin: 10px 0;
+    }
+
+    .sound-lab-container {
+        padding: 20px;
+        margin: 20px auto;
+    }
+
+    .stage canvas {
+        height: 120px;
+    }
+
+    .hp-icon {
+        font-size: 60px;
+    }
+
+    .controls {
+        gap: 15px;
+    }
+
+    .control-group {
+        padding: 12px;
+    }
+
+    .input-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .num-input {
+        width: 100%;
+    }
+
+    .medium-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .medium-btn {
+        padding: 12px;
+        font-size: 10px;
+    }
+
+    .medium-btn i {
+        font-size: 18px;
+    }
+
+    .info-panel {
+        padding: 15px;
+        font-size: 12px;
+    }
+
+    .task-card textarea {
+        min-height: 80px;
+        padding: 12px;
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+
+    .btn-pdf, .btn-next {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    .btn-next .btn-content {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+
+    .header h1 {
+        font-size: 20px;
+    }
+
+    .sound-lab-container {
+        padding: 15px;
+    }
+
+    .medium-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .medium-btn {
+        padding: 10px;
+    }
+}
     </style>
 </head>
 <body>

@@ -27,6 +27,157 @@
     .image-placeholder { margin: 15px 0; text-align: center; font-style: italic; color: #64748b; font-size: 12px; }
     
     .print-only { display: none; }
+
+    /* Media Queries untuk Responsivitas Mobile */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 20px;
+        border-radius: 15px;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .header p {
+        font-size: 0.9rem;
+      }
+
+      .identity-section {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 12px;
+      }
+
+      .identity-field label {
+        font-size: 11px;
+      }
+
+      .identity-input {
+        padding: 6px;
+        font-size: 14px;
+      }
+
+      .quran-section {
+        padding: 15px;
+      }
+
+      .arabic {
+        font-size: 22px;
+      }
+
+      .card {
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+
+      .card h3 {
+        font-size: 13px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+
+      .ct-badge {
+        align-self: flex-start;
+      }
+
+      .input-box {
+        padding: 8px;
+        font-size: 13px;
+        margin-top: 6px;
+      }
+
+      .code-block {
+        padding: 12px;
+        font-size: 11px;
+      }
+
+      .image-placeholder {
+        font-size: 11px;
+        margin: 10px 0;
+      }
+
+      .no-print {
+        padding: 15px;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+
+      .container {
+        padding: 15px;
+        border-radius: 10px;
+      }
+
+      .header h1 {
+        font-size: 1.3rem;
+      }
+
+      .header p {
+        font-size: 0.8rem;
+      }
+
+      .identity-section {
+        padding: 10px;
+        gap: 10px;
+      }
+
+      .identity-field label {
+        font-size: 10px;
+      }
+
+      .identity-input {
+        padding: 5px;
+        font-size: 13px;
+      }
+
+      .quran-section {
+        padding: 12px;
+      }
+
+      .arabic {
+        font-size: 20px;
+      }
+
+      .card {
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+
+      .card h3 {
+        font-size: 12px;
+      }
+
+      .input-box {
+        padding: 6px;
+        font-size: 12px;
+      }
+
+      .code-block {
+        padding: 10px;
+        font-size: 10px;
+      }
+
+      .image-placeholder {
+        font-size: 10px;
+        margin: 8px 0;
+      }
+
+      .no-print {
+        padding: 12px;
+        font-size: 13px;
+      }
+    }
+
     @media print {
       .no-print { display: none; }
       .print-only { display: block; border-bottom: 1.5px solid #000; color: #1e3a8a; font-weight: bold; margin-top: 5px; min-height: 20px; }

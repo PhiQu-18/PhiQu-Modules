@@ -95,7 +95,103 @@
         .fn { color: var(--function); }
         .var { color: var(--variable); }
         .cmt { color: var(--comment); }
-        .res { color: var(--accent); font-weight: bold; }
+    .res { color: var(--accent); font-weight: bold; }
+
+    /* Media Queries untuk Responsivitas Mobile */
+    @media (max-width: 768px) {
+      body {
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+      }
+
+      .container {
+        flex-direction: column;
+        gap: 20px;
+        height: auto;
+      }
+
+      .blocks-panel {
+        flex: none;
+        height: auto;
+        padding: 15px;
+      }
+
+      .block-logic {
+        padding: 10px;
+        font-size: 13px;
+      }
+
+      .terminal-panel {
+        flex: none;
+        height: 300px;
+      }
+
+      #terminal {
+        padding: 15px;
+        font-size: 13px;
+      }
+
+      .input-area {
+        padding: 8px 15px;
+      }
+
+      .prompt {
+        margin-right: 8px;
+      }
+
+      #user-input {
+        font-size: 13px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 15px;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+      }
+
+      .container {
+        gap: 15px;
+      }
+
+      .blocks-panel {
+        padding: 12px;
+      }
+
+      .block-logic {
+        padding: 8px;
+        font-size: 12px;
+      }
+
+      .terminal-panel {
+        height: 250px;
+      }
+
+      #terminal {
+        padding: 12px;
+        font-size: 12px;
+      }
+
+      .input-area {
+        padding: 6px 12px;
+      }
+
+      .prompt {
+        margin-right: 6px;
+      }
+
+      #user-input {
+        font-size: 12px;
+      }
+    }
     </style>
 </head>
 <body>
