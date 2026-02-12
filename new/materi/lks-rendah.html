@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKS Rendah</title>
+    <link rel="icon" type="image/png" href="../foto/1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2fe; --secondary: #4facfe; --bg: #0f172a;
+            --dekom: #ff4757; --pola: #ffa502; --abs: #2ed573; --algo: #1e90ff;
+        }
+
+        body { background-color: var(--bg); color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .lks-container { max-width: 850px; width: 100%; background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        
+        .header { position: fixed; top: 0; left: 0; right: 0; background: var(--bg); z-index: 1000; padding: 5px 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); text-align: center; margin-bottom: 0; }
+        .logo { width: 35px; height: auto; margin-right: 8px; }
+
+        @media (max-width: 768px) {
+            .header { justify-content: flex-start; padding: 5px 10px; }
+        }
+        .sub-header { text-align: center; margin-bottom: 30px; }
+        .case-study { background: rgba(0, 242, 254, 0.1); padding: 20px; border-radius: 15px; border-left: 5px solid var(--primary); margin-bottom: 25px; }
+
+        /* Visualizer Wave */
+        .wave-container {
+            background: #000; height: 150px; border-radius: 15px; position: relative;
+            overflow: hidden; margin-bottom: 20px; border: 1px solid var(--primary);
+        }
+        canvas { width: 100%; height: 100%; }
+
+        .simulator-box {
+            background: rgba(0,0,0,0.3); padding: 25px; border-radius: 15px;
+            text-align: center; margin-bottom: 30px;
+        }
+        input[type=range] { width: 100%; margin: 15px 0; cursor: pointer; accent-color: var(--primary); }
+        
+        .vibrate-btn {
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white; border: none; padding: 12px 35px;
+            border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+
+        /* Quiz Style */
+        .question-card { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid transparent; }
+        .pillar-tag { font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 5px; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
+        
+        textarea, .code-input {
+            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid #444;
+            color: var(--primary); padding: 12px; border-radius: 8px; margin-top: 10px; font-family: inherit;
+        }
+
+        .code-block { background: #1e1e1e; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9rem; border: 1px solid #333; }
+        .submit-btn {
+            background: linear-gradient(45deg, #00b09b, #96c93d);
+            width: 100%; padding: 18px; border: none; border-radius: 12px;
+            color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-left">
+            <img src="../foto/1.png" alt="Logo Phi-R" class="logo">
+            <span>LKS Dasar</span>
+        </div>
+    </header>
+
+<div class="lks-container">
+    <div class="sub-header">
+        <p>Gunakan sensor HP-mu untuk memahami gelombang secara nyata</p>
+    </div>
+
+    <div class="wave-container">
+        <canvas id="waveCanvas"></canvas>
+    </div>
+
+    <div class="simulator-box">
+        <h4>🎛️ Kontrol Amplitudo & Energi</h4>
+        <input type="range" id="vibe-slider" min="100" max="1500" step="50" value="300">
+        <p>Energi Getaran: <span id="vibe-val">300</span> unit</p>
+        <button class="vibrate-btn" onclick="runVibration()">RASAKAN GETARAN HP</button>
+    </div>
+
+    <div class="case-study">
+        <strong>💡 Studi Kasus:</strong> Kamu adalah insinyur gempa. Kamu harus membedakan antara getaran kecil (getaran biasa) dan getaran besar (potensi tsunami) hanya melalui sensor di tanganmu.
+    </div>
+
+    <div id="quiz-lks">
+        <div class="question-card" style="border-color: var(--dekom)">
+            <span class="pillar-tag" style="background: var(--dekom)">Dekomposisi</span>
+            <p>Untuk memahami gelombang di atas, bagian-bagian kecil apa yang harus kita amati? (Sebutkan setidaknya 2, contoh: tinggi gelombang, jarak antar puncak, dll)</p>
+            <textarea id="ans-dekom" placeholder="Tuliskan komponen gelombang yang kamu temukan..."></textarea>
+        </div>
+
+        <div class="question-card" style="border-color: var(--pola)">
+            <span class="pillar-tag" style="background: var(--pola)">Pengenalan Pola</span>
+            <p>Geser slider ke 100 lalu ke 1500. Perhatikan perubahan pada grafik gelombang. Pola apa yang kamu temukan antara <b>Besar Energi</b> dan <b>Tinggi Gelombang (Amplitudo)</b>?</p>
+            <textarea id="ans-pola" placeholder="Semakin besar energi, maka gelombangnya akan..."></textarea>
+        </div>
+
+        <div class="question-card" style="border-color: var(--abs)">
+            <span class="pillar-tag" style="background: var(--abs)">Abstraksi</span>
+            <p>Jika kita ingin fokus hanya pada kekuatan gempa, hal mana yang <b>TIDAK RELEVAN</b> untuk kita perhatikan? (Contoh: merk HP, warna air laut, atau frekuensi getaran?)</p>
+            <textarea id="ans-abs" placeholder="Sebutkan hal yang tidak penting dalam pengamatan ini..."></textarea>
+        </div>
+
+        <div class="question-card" style="border-color: var(--algo)">
+            <span class="pillar-tag" style="background: var(--algo)">Algoritma</span>
+            <p>Lengkapi baris kode untuk membuat alarm peringatan dini (Getar 500ms, Jeda 200ms, Getar 500ms):</p>
+            <div class="code-block">
+                let alarmGempa = [500, <input type="text" id="ans-algo-1" style="width:40px; border:none; border-bottom:1px solid #fff; background:none; color:var(--primary); text-align:center;" placeholder="...">, <input type="text" id="ans-algo-2" style="width:40px; border:none; border-bottom:1px solid #fff; background:none; color:var(--primary); text-align:center;" placeholder="...">];<br>
+                navigator.vibrate(alarmGempa);
+            </div>
+        </div>
+    </div>
+
+    <button class="submit-btn" onclick="evaluateLKS()">SIMPAN HASIL & SELESAI</button>
+</div>
+
+
+
+<script>
+    // --- WAVE VISUALIZER LOGIC ---
+    const canvas = document.getElementById('waveCanvas');
+    const ctx = canvas.getContext('2d');
+    let animationId;
+    let offset = 0;
+
+    function drawWave() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const amplitude = document.getElementById('vibe-slider').value / 20;
+        const frequency = 0.02;
+        
+        ctx.beginPath();
+        ctx.strokeStyle = '#00f2fe';
+        ctx.lineWidth = 3;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#00f2fe';
+
+        for (let x = 0; x < canvas.width; x++) {
+            const y = canvas.height / 2 + Math.sin(x * frequency + offset) * amplitude;
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        offset += 0.1;
+        animationId = requestAnimationFrame(drawWave);
+    }
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    drawWave();
+
+    // --- INTERACTION LOGIC ---
+    const slider = document.getElementById('vibe-slider');
+    const valDisplay = document.getElementById('vibe-val');
+    slider.oninput = function() { valDisplay.innerHTML = this.value; }
+
+    function runVibration() {
+        const val = parseInt(slider.value);
+        if ("vibrate" in navigator) navigator.vibrate([val]);
+        else alert("Vibrate tidak didukung. Simulasi visual tetap berjalan!");
+    }
+
+    function evaluateLKS() {
+        let scores = { dekom: 0, pola: 0, abs: 0, algo: 0 };
+        
+        // Keywords detection
+        const q1 = document.getElementById('ans-dekom').value.toLowerCase();
+        if (['puncak', 'lembah', 'tinggi', 'jarak', 'amplitudo', 'frekuensi'].some(k => q1.includes(k))) scores.dekom = 100;
+
+        const q2 = document.getElementById('ans-pola').value.toLowerCase();
+        if (['tinggi', 'besar', 'naik', 'sebanding'].some(k => q2.includes(k))) scores.pola = 100;
+
+        const q3 = document.getElementById('ans-abs').value.toLowerCase();
+        if (['merk', 'warna', 'casing', 'abaikan'].some(k => q3.includes(k))) scores.abs = 100;
+
+        // Coding check
+        if (document.getElementById('ans-algo-1').value === "200" && 
+            document.getElementById('ans-algo-2').value === "500") scores.algo = 100;
+
+        saveProgress(scores);
+    }
+
+    function saveProgress(currentScores) {
+        let history = JSON.parse(localStorage.getItem('ct_history')) || [];
+        history.push({
+            label: "LKS Visual Gelombang",
+            date: new Date().toLocaleDateString('id-ID'),
+            folder: 'materi',
+            data: currentScores
+        });
+        localStorage.setItem('ct_history', JSON.stringify(history));
+
+        // Update current pilar for radar chart
+        Object.keys(currentScores).forEach(key => {
+            localStorage.setItem('ct_' + key, currentScores[key]);
+        });
+
+        alert("Jawaban terkirim! Kamu telah menyelesaikan modul eksperimen gelombang.");
+        window.location.href = "../materi2/index.html";
+    }
+</script>
+</body>
+</html>

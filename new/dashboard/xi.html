@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phi-R | Dashboard XI</title>
+    <link rel="icon" type="image/png" href="../foto/1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --accent: #10b981; 
+            --bg: #000a12;
+            --glass: rgba(255, 255, 255, 0.03); 
+            --border: rgba(255, 255, 255, 0.1);
+            --grad: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        body { 
+            margin: 0; background: var(--bg); color: white; 
+            font-family: 'Poppins', sans-serif; display: flex;
+            justify-content: center; min-height: 100vh; padding: 20px;
+        }
+
+        .container { width: 100%; max-width: 900px; animation: fadeIn 0.8s ease; }
+
+        /* HEADER SECTION */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 30px; margin-bottom: 50px; padding: 30px;
+            background: var(--glass); border-radius: 30px; border: 1px solid var(--border);
+        }
+
+        .welcome-text p { margin: 0; color: var(--accent); font-size: 14px; font-weight: 600; letter-spacing: 1px; }
+        .welcome-text h1 { margin: 0; font-size: 28px; font-weight: 800; }
+        .logo-small { width: 60px; filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.4)); }
+
+       /* Menu Grid Layout */
+    .menu-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+        gap: 20px; 
+    }
+
+    .module-card {
+        background: var(--glass);
+        border: 1px solid var(--border);
+        border-radius: 25px;
+        padding: 25px;
+        position: relative;
+        text-decoration: none;
+        color: white;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .module-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.07);
+        border-color: var(--accent);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(16, 185, 129, 0.1);
+    }
+
+    .module-card h3 { 
+        margin: 0 0 15px 0; 
+        color: var(--accent); 
+        font-size: 20px; 
+        font-weight: 800;
+    }
+
+    .module-card ul { 
+        margin: 0; 
+        padding-left: 18px; 
+        list-style-type: none; 
+    }
+
+    .module-card li {
+        font-size: 13px;
+        color: #94a3b8;
+        margin-bottom: 8px;
+        position: relative;
+    }
+
+    .module-card li::before {
+        content: '▹';
+        position: absolute;
+        left: -18px;
+        color: var(--accent);
+    }
+
+    /* Badge Label */
+    .badge {
+        align-self: flex-start;
+        padding: 5px 12px;
+        background: var(--grad);
+        border-radius: 50px;
+        font-size: 10px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+    }
+
+    .card-footer {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--accent);
+    }
+
+        /* Tombol Tanda Tanya */
+    .info-circle {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--glass);
+        color: var(--accent);
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .info-circle:hover {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 0 15px var(--accent-glow);
+        transform: scale(1.1);
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(8px);
+        display: none; /* Sembunyi secara default */
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+    .modal-content {
+        background: #001f3f;
+        border: 1px solid var(--border);
+        padding: 30px;
+        border-radius: 25px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        animation: modalSlide 0.4s ease-out;
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .modal-header h3 { margin: 0; color: var(--accent); font-size: 18px; }
+    .close-btn { background: none; border: none; color: #64748b; font-size: 24px; cursor: pointer; }
+    
+    .btn-paham {
+        margin-top: 20px;
+        width: 100%;
+        padding: 12px;
+        background: var(--grad);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    @keyframes modalSlide {
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+        /* TOMBOL BACK YANG KEREN */
+        .back-container { margin-top: 40px; display: flex; justify-content: center; }
+        .btn-exit {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 25px; background: rgba(239, 68, 68, 0.1);
+            color: #ef4444; text-decoration: none; border-radius: 15px;
+            font-size: 13px; font-weight: 700; border: 1px solid rgba(239, 68, 68, 0.2);
+            transition: 0.3s;
+        }
+        .btn-exit:hover { background: #ef4444; color: white; transform: scale(1.05); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="welcome-text">
+            <p id="labelRole">MEMUAT...</p>
+            <h1 id="userNameDisplay">Halo, Pengguna</h1>
+        </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <button class="info-circle" onclick="openModal()">?</button>
+            <img src="../foto/1.png" alt="Logo" class="logo-small">
+        </div>
+    </header>
+
+    <div id="helpModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Panduan Akses</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Selamat datang di <b>Phi-R</b>! Berikut panduan singkat untuk Anda:</p>
+                <ul style="text-align: left; font-size: 13px; color: #94a3b8; line-height: 1.8;">
+                    <li>Pilih modul materi yang tersedia di dashboard.</li>
+                    <li>Gunakan fitur simulasi interaktif untuk memahami konsep fisika.</li>
+                    <li>Jika mengalami kendala teknis, hubungi admin melalui tombol bantuan dibawah.</li>
+                </ul>
+                <button class="btn-paham" onclick="contactSupport()">BANTUAN</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="menu-grid">
+    <div class="module-card" onclick="location.href='../materi/index.html'">
+        <div>
+            <span class="badge">Modul Interaktif</span>
+            <h3>BAB 5. Gelombang, Bunyi dan Cahaya</h3>
+            <ul>
+                <li>Cepat Rambat & Efek Doppler</li>
+                <li>Dawai & Pipa Organa</li>
+                <li>Layangan & Taraf Intensitas</li>
+                <li>Sifat Gelombang Cahaya</li>
+                <li>Aplikasi Teknologi</li>
+            </ul>
+        </div>
+            
+        <div class="card-footer">
+            <span>Mulai Belajar</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+    </div>
+    ---
+    </div>
+    
+
+    <div class="back-container">
+        <a href="../index.html" class="btn-exit" onclick="clearSession()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            KELUAR PORTAL
+        </a>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        const savedName = localStorage.getItem('phiQu_nama') || 'User';
+        const savedJabatan = localStorage.getItem('phiQu_jabatan') || 'Siswa';
+        const savedKelas = localStorage.getItem('phiQu_kelas') || 'X';
+
+        // Mengubah "Halo, Pengguna" menjadi "Halo, [Nama]!"
+        document.getElementById('userNameDisplay').innerText = `Halo, ${savedName}!`;
+
+        // Baris di bawah ini yang menyebabkan error karena ID 'spanName' tidak ada di HTML Anda
+        // document.getElementById('spanName').innerText = savedName; 
+
+        // Mengubah "MEMUAT..." menjadi peran user
+        document.getElementById('labelRole').innerText = `${savedJabatan.toUpperCase()} KELAS ${savedKelas.toUpperCase()}`;
+    };
+
+    function clearSession() {
+        localStorage.removeItem('phiQu_nama');
+        localStorage.removeItem('phiQu_jabatan');
+        localStorage.removeItem('phiQu_kelas');
+    }
+
+    function openModal() {
+        document.getElementById('helpModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('helpModal').style.display = 'none';
+    }
+
+    // Menutup modal jika user klik di area luar kotak modal
+    window.onclick = function(event) {
+        const modal = document.getElementById('helpModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    function contactSupport() {
+    // 1. Ambil data nama agar pesan lebih personal
+    const savedName = localStorage.getItem('phiQu_nama') || 'User';
+    
+    // 2. Tutup modal terlebih dahulu
+    closeModal();
+
+    // 3. Setelan nomor WA (Ganti dengan nomor Anda, awali dengan 62)
+    const noWA = "6283182514910"; 
+    const pesan = `Halo Admin Phi-R, saya ${savedName}. Saya butuh bantuan teknis terkait portal ini.`;
+    
+    // 4. Buat URL WhatsApp
+    const urlWA = `https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}`;
+
+    // 5. Alihkan ke WhatsApp di tab baru agar dashboard tidak tertutup
+    window.open(urlWA, '_blank');
+}
+</script>
+
+</body>
+</html>

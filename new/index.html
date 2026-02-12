@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phi-R | by. PhiQu</title>
+    <link rel="icon" type="image/png" href="./foto/1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+    :root { 
+        --bg: #000a12;
+        --primary: #001f3f; 
+        --accent: #10b981; 
+        --accent-glow: rgba(16, 185, 129, 0.4);
+        --glass: rgba(255, 255, 255, 0.03); 
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --text-muted: #94a3b8;
+    }
+    
+    * { box-sizing: border-box; transition: all 0.3s ease; }
+
+    body { 
+        margin: 0; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        min-height: 100vh; 
+        font-family: 'Poppins', sans-serif; 
+        background: radial-gradient(circle at center, #001f3f, #000a12); 
+        color: white; 
+        overflow-x: hidden;
+        padding: 20px;
+    }
+
+    /* BINGKAI UTAMA */
+    .app-window {
+        display: flex;
+        width: 100%;
+        max-width: 1000px; 
+        height: 80vh; 
+        background: rgba(0, 13, 26, 0.6);
+        backdrop-filter: blur(25px);
+        border-radius: 40px;
+        border: 1px solid var(--glass-border);
+        overflow: hidden;
+        box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+        animation: fadeIn 1s ease;
+    }
+
+    /* PANEL KIRI: ACTIVITY FEED */
+    .left-panel {
+        flex: 1;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--glass-border);
+        background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+    }
+
+    .activity-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .status-dot {
+        width: 8px; height: 8px; background: var(--accent);
+        border-radius: 50%; box-shadow: 0 0 12px var(--accent);
+        animation: pulse 2s infinite;
+    }
+
+    .activity-title { 
+        font-size: 12px; font-weight: 800; letter-spacing: 2px; color: var(--accent);
+        text-transform: uppercase; margin: 0;
+    }
+
+    #userList { 
+        flex-grow: 1; overflow-y: auto; padding-right: 10px;
+        mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    }
+
+    .user-item {
+        background: var(--glass);
+        padding: 15px;
+        border-radius: 18px;
+        margin-bottom: 12px;
+        border: 1px solid var(--glass-border);
+        animation: slideIn 0.5s ease forwards;
+    }
+    .user-item h4 { margin: 0; font-size: 14px; color: #fff; }
+    .user-item p { margin: 5px 0 0; font-size: 11px; color: var(--text-muted); }
+
+    /* PANEL KANAN: LOGIN */
+    .right-panel {
+        flex: 1;
+        padding: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .header-login { text-align: center; margin-bottom: 35px; }
+    .logo-img { width: 80px; margin-bottom: 15px; filter: drop-shadow(0 0 15px var(--accent-glow)); }
+    .header-login h2 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+    .header-login p { margin: 5px 0 0; color: var(--text-muted); font-size: 13px; }
+
+    /* FORM FIELD */
+    input, select {
+        width: 100%; padding: 14px 18px; margin-bottom: 15px;
+        border-radius: 15px; border: 1px solid var(--glass-border);
+        background: rgba(0,0,0,0.4); color: rgb(1, 139, 121); outline: none;
+        font-size: 14px;
+    }
+    input:focus, select:focus { border-color: var(--accent); background: rgba(16, 185, 129, 0.05); }
+
+    button#submitBtn {
+        width: 100%; padding: 16px; background: var(--accent);
+        border: none; border-radius: 15px; color: rgb(255, 255, 255);
+        font-weight: 800; cursor: pointer; font-size: 15px;
+        box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+    }
+    button#submitBtn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px var(--accent-glow); }
+
+    /* FLOATING HELP BUTTON */
+    .help-trigger {
+        position: fixed; bottom: 30px; right: 30px; /* Pindah ke kanan agar tidak menumpuk di kiri pada mobile */
+        background: var(--glass); border: 1px solid var(--glass-border);
+        padding: 12px 20px; border-radius: 50px; cursor: pointer;
+        display: flex; align-items: center; gap: 10px; font-size: 13px;
+        backdrop-filter: blur(10px);
+        z-index: 100;
+    }
+    .help-trigger:hover { background: white; color: black; }
+
+    /* ANIMATIONS */
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* RESPONSIVE MOBILE */
+    @media (max-width: 850px) {
+        body { overflow-y: auto; padding: 15px; }
+        
+        .app-window { 
+            flex-direction: column; 
+            height: auto; 
+            border-radius: 30px; 
+            margin-bottom: 80px; /* Ruang untuk floating button */
+        }
+
+        /* Form Portal jadi di ATAS */
+        .right-panel { 
+            order: 1; 
+            padding: 40px 30px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        /* Live Presence jadi di BAWAH */
+        .left-panel { 
+            order: 2; 
+            border-right: none; 
+            padding: 30px; 
+            max-height: 450px; /* Agar tidak terlalu panjang */
+        }
+
+        /* Perbaikan input flex di mobile */
+        .right-panel div[style*="display: flex"] {
+            flex-direction: row; /* Tetap row agar jabatan & kelas sejajar kecuali layar sangat kecil */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .right-panel div[style*="display: flex"] {
+            flex-direction: column; /* Barulah di HP kecil jadi vertikal */
+        }
+    }
+</style>
+</head>
+<body>
+
+    <div class="app-window">
+        <div class="left-panel">
+            <div class="activity-header">
+                <div class="status-dot"></div>
+                <h3 class="activity-title">Sudah Terhubung</h3>
+            </div>
+            <div id="userList">
+                <p style="text-align:center; font-size:12px; color:var(--text-muted);">Menyinkronkan data...</p>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="header-login">
+                <img src="./foto/1.png" alt="Logo" class="logo-img">
+                <h2>Phi-R | by. PhiQu</h2>
+                <p>Interactive Physics Module</p>
+            </div>
+
+            <form id="loginForm">
+                <input type="text" name="nama" placeholder="Nama Lengkap" required>
+                <input type="text" name="sekolah" placeholder="Asal Sekolah" required>
+                
+                <div style="display: flex; gap: 10px;">
+                    <select name="jabatan" required>
+                        <option value="" disabled selected>Jabatan</option>
+                        <option value="Guru">Guru</option>
+                        <option value="Siswa">Siswa</option>
+                    </select>
+                    <select name="kelas" required>
+                        <option value="XI">XI</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="submitBtn">MASUK KEDALAM MODUL</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="help-trigger" onclick="showSupportPopUp()">
+        <span>❓ Bantuan Teknis</span>
+    </div>
+
+    <div id="supportOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); backdrop-filter:blur(15px); z-index:1000; align-items:center; justify-content:center;">
+        <div style="text-align:center; padding:40px; background:var(--glass); border:1px solid var(--glass-border); border-radius:30px; max-width:350px;">
+            <div style="width:40px; height:40px; border:3px solid var(--accent); border-top-color:transparent; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 20px;"></div>
+            <h3>Menghubungkan...</h3>
+            <p id="popName" style="font-size:13px; color:var(--text-muted);"></p>
+        </div>
+    </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycby4rfZZrAPVw7Q8LvUrEElG7gXrIV2O1JiKns9CIhyjaHyVoCOC1e0G_wm6ah4GrgM/exec';
+
+        // Load data kehadiran
+        window.onload = () => {
+            fetch(scriptURL + "?action=readAll")
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById('userList');
+                list.innerHTML = '';
+                data.slice(-10).reverse().forEach(u => {
+                    list.innerHTML += `<div class="user-item">
+                        <h4>${u.nama}</h4>
+                        <p>${u.sekolah} • ${u.jabatan} ${u.kelas}</p>
+                    </div>`;
+                });
+            }).catch(() => {
+                document.getElementById('userList').innerHTML = "Gagal memuat aktivitas.";
+            });
+        };
+
+        // Submit Form ke halaman kelas yang sesuai
+        document.getElementById('loginForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const fd = new FormData(e.target);
+            
+            // Ambil nilai kelas (X, XI, atau XII)
+            const kelasTerpilih = fd.get('kelas').toLowerCase(); // Menjadi 'x', 'xi', atau 'xii'
+
+            // Simpan data ke LocalStorage untuk dipanggil di halaman berikutnya
+            localStorage.setItem('phiQu_nama', fd.get('nama'));
+            localStorage.setItem('phiQu_jabatan', fd.get('jabatan'));
+            localStorage.setItem('phiQu_kelas', fd.get('kelas'));
+            localStorage.setItem('phiQu_sekolah', fd.get('sekolah'));
+
+            btn.innerHTML = "Mempersiapkan Modul...";
+            btn.disabled = true;
+
+            // 1. Kirim data ke Google Sheets (Presensi)
+            fetch(scriptURL, { method: 'POST', body: fd })
+            .then(() => { 
+                // 2. Arahkan ke halaman spesifik kelas di folder dashboard
+                window.location.href = `dashboard/${kelasTerpilih}.html`; 
+            })
+            .catch(() => { 
+                alert("Koneksi gagal, silakan coba lagi."); 
+                btn.innerHTML = "MASUK KEDALAM PORTAL";
+                btn.disabled = false; 
+            });
+        });
+
+        function showSupportPopUp() {
+            const name = document.querySelector('input[name="nama"]').value || "User";
+            document.getElementById('popName').innerText = "Mohon tunggu sebentar, " + name;
+            document.getElementById('supportOverlay').style.display = 'flex';
+            setTimeout(() => {
+                window.location.href = `https://wa.me/6283182514910?text=Halo Admin Phi-R, saya ${name}. Mohon bantuan teknis.`;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

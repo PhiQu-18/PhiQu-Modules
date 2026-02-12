@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gelombang, Bunyi dan Cahaya - Phi-R</title>
+    <link rel="icon" type="image/png" href="../foto/1.png">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <img src="../foto/1.png" alt="Logo Phi-R" class="logo">
+            <img src="../foto/1.png" alt="Logo Sekolah" class="logo"> <!-- Assuming same logo, can change -->
+        </div>
+        <div class="header-center">
+            <h1>Gelombang, Bunyi dan Cahaya</h1>
+        </div>
+        <div class="header-right">
+            <button class="home-btn" onclick="window.location.href='../dashboard/xi.html'">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+            </button>
+            <button class="help-btn" onclick="openModal()">?</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section id="section-0" class="section active">
+            <div class="content-wrapper">
+                <h2>Selamat Datang</h2>
+                <p>Modul interaktif tentang Gelombang, Bunyi, dan Cahaya. Mari kita eksplorasi konsep-konsep fisika ini bersama!</p>
+                <div class="illustration">
+                    <img src="../foto/1.png" alt="Ilustrasi" class="illus-img">
+                </div>
+            </div>
+        </section>
+
+        <section id="section-1" class="section">
+            <div class="content-wrapper">
+                <h2>Pendekatan, Alat dan Kemampuan yang Hendak Dicapai</h2>
+                <p>Klik Tombol Dibawah.</p>
+                <div class="interactive-buttons">
+                    <button class="interactive-btn" onclick="openTaRLModal()">Belajar dengan TaRL</button>
+                    <button class="interactive-btn" onclick="openCodingModal()">Belajar Coding</button>
+                    <button class="interactive-btn" onclick="openCTModal()">Bekerja dengan Komputer</button>
+                </div>
+                <div class="illustration">
+                    <img src="../foto/1.png" alt="Cahaya" class="illus-img">
+                </div>
+            </div>
+        </section>
+
+        <section id="section-2" class="section">
+            <div class="content-wrapper">
+                <h2>Tujuan Pembelajaran</h2>
+                <div class="learning-objectives">
+                    <p>Setelah mempelajari bab ini, kalian dapat menentukan persamaan cepat rambat gelombang bunyi, menerapkan persamaan efek Doppler dalam pemecahan masalah, menentukan hubungan antara besaran yang memengaruhi frekuensi gelombang pada dawai dan pipa organa, menentukan jumlah layangan bunyi tiap detik, menentukan intensitas bunyi dan taraf intensitas bunyi, menerapkan konsep dan sifat gelombang cahaya dalam pemecahan masalah, serta menerapkan konsep gelombang bunyi dan gelombang cahaya pada teknologi.</p>
+                </div>
+                <h2>Kata-Kata Kunci</h2>
+                <div class="keywords">
+                    <ul>
+                        <li>Gelombang</li>
+                        <li>Beda fase</li>
+                        <li>Bunyi</li>
+                        <li>Cahaya</li>
+                        <li>Intensitas</li>
+                        <li>Sifat gelombang</li>
+                        <li>Efek Doppler</li>
+                        <li>Difraksi</li>
+                        <li>Interferensi</li>
+                    </ul>
+                </div>
+                <div class="illustration">
+                    <img src="../foto/2.png" alt="Gelombang" class="illus-img">
+                </div>
+            </div>
+        </section>
+
+        <section id="section-3" class="section" style="padding: 0; margin: 0; overflow: hidden;">
+            <div class="content-wrapper" style="width: 100%; padding: 0;">
+                <div class="illustration" style="width: 100%; line-height: 0;">
+                    <img src="../foto/4.png" alt="Ilustrasi Cahaya Full" class="illus-img-full">
+                </div>
+            </div>
+        </section>
+
+        <section id="ct-dashboard" class="section" style="display: none; background: radial-gradient(circle, #1a1a2e 0%, #16213e 100%);">
+            <div class="content-wrapper" style="text-align: center;">
+                <div class="loader-container" style="margin-bottom: 30px;">
+                    <div class="loader-bar" id="sync-loader"></div>
+                    <p style="font-size: 0.9rem; color: #00f2fe; margin-top: 10px; letter-spacing: 2px;">MENGANALISIS KEMAMPUAN CT...</p>
+                </div>
+
+                <h2 style="color: #fff; margin-bottom: 5px;">Progress Pilar CT</h2>
+                <p style="color: #ccc; margin-bottom: 30px;">Analisis sementara berdasarkan aktivitas Anda</p>
+
+                <div class="ct-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                    <div class="card-ct" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,242,254,0.3);">
+                        <span style="font-size: 0.8rem; display: block; color: #aaa;">DEKOMPOSISI</span>
+                        <div id="score-dekom" style="font-size: 1.8rem; font-weight: 800; color: #00f2fe;">0</div>
+                    </div>
+                    <div class="card-ct" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,242,254,0.3);">
+                        <span style="font-size: 0.8rem; display: block; color: #aaa;">POLA</span>
+                        <div id="score-pola" style="font-size: 1.8rem; font-weight: 800; color: #00f2fe;">0</div>
+                    </div>
+                    <div class="card-ct" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,242,254,0.3);">
+                        <span style="font-size: 0.8rem; display: block; color: #aaa;">ABSTRAKSI</span>
+                        <div id="score-abs" style="font-size: 1.8rem; font-weight: 800; color: #00f2fe;">0</div>
+                    </div>
+                    <div class="card-ct" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,242,254,0.3);">
+                        <span style="font-size: 0.8rem; display: block; color: #aaa;">ALGORITMA</span>
+                        <div id="score-algo" style="font-size: 1.8rem; font-weight: 800; color: #00f2fe;">0</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-4" class="section">
+            <div class="content-wrapper">
+                <h2>Hubungan Getaran, Gelombang, dan Energi</h2>
+                
+                <div class="card" style="background: var(--glass); padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 5px solid #00f2fe;">
+                    <h3>1. Getaran: Titik Awal Segalanya</h3>
+            <p style="text-align: justify;">Setiap gelombang fisik pasti diawali oleh <strong>getaran</strong> atau usikan. Tanpa ada benda yang bergetar, tidak akan pernah ada gelombang. Getaran inilah yang memberikan "dorongan" pertama pada partikel medium di sekitarnya.</p>
+                </div>
+
+                <div class="card" style="background: var(--glass); padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 5px solid #4facfe;">
+                    <h3>2. Gelombang: Perambatan Tanpa Perpindahan Massa</h3>
+            <p style="text-align: justify;">Penting untuk dipahami: saat gelombang air laut bergerak ke pantai, molekul airnya <strong>tidak ikut berpindah</strong> ke pantai. Molekul air hanya bergerak naik-turun atau maju-mundur di titik setimbangnya. Yang bergerak maju adalah <strong>pola usikannya</strong>.</p>
+                </div>
+
+                
+
+                <div class="card" style="background: var(--glass); padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 5px solid #a8edea;">
+                    <h3>3. Energi: Yang Sebenarnya Berpindah</h3>
+            <p style="text-align: justify;">Jadi, apa yang dibawa gelombang dari satu tempat ke tempat lain? Jawabannya adalah <strong>Energi</strong>. Semakin kuat getaran sumbernya (amplitudo besar), maka semakin besar energi yang dialirkan. Itulah sebabnya gelombang tsunami yang sangat tinggi memiliki daya hancur yang luar biasa karena membawa energi yang sangat besar.</p>
+                </div>
+
+                <div class="illustration-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                    <div style="text-align: center;">
+                        <img src="../foto/pegas.jpg" alt="Getaran" class="illus-img" style="width: 100%; border-radius: 10px;">
+                        <p style="font-size: 0.8rem; margin-top: 5px; text-align: justify;"><i>Contoh Getaran pada Pegas</i></p>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="../foto/tali.jpg" alt="Energi Gelombang" class="illus-img" style="width: 100%; border-radius: 10px;">
+                        <p style="font-size: 0.8rem; margin-top: 5px; text-align: justify;"><i>Transmisi Energi pada Gelombang Tali</i></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section-5" class="section">
+            <div class="content-wrapper" style="text-align: center;">
+                <div class="card" style="background: var(--glass); padding: 40px; border-radius: 20px; border: 1px solid rgba(0,242,254,0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <div class="badge" style="background: #4facfe; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; display: inline-block; margin-bottom: 15px;">TAHAP 1: TES AWAL</div>
+                    
+                    <h2 style="color: #fff; font-weight: 800;">Siap Uji Kemampuan?</h2>
+                    <p style="color: #ccc; line-height: 1.6; margin-bottom: 25px;">
+                        Anda akan diarahkan ke halaman <strong>Asesmen Diagnostik</strong>. Hasil dari tes ini akan menentukan materi LKS (Rendah, Sedang, atau Mahir) yang paling sesuai dengan tingkat pemahaman Anda.
+                    </p>
+
+                    <div class="instruction-list" style="text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+                        <p style="margin-bottom: 10px; font-weight: 600; color: #00f2fe;">Instruksi Singkat:</p>
+                        <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: #ddd;">
+                            <li style="margin-bottom: 8px;">✅ Selesaikan 15 soal pilihan ganda.</li>
+                            <li style="margin-bottom: 8px;">✅ Fokus pada konsep Getaran & Gelombang.</li>
+                            <li style="margin-bottom: 8px;">✅ Jangan menutup halaman sebelum menekan tombol 'Selesai'.</li>
+                        </ul>
+                    </div>
+
+                    <button class="interactive-btn" 
+                            onclick="window.location.href='diagnostik.html'" 
+                            style="width: 100%; padding: 18px; font-size: 1.2rem; background: linear-gradient(45deg, #00f2fe, #4facfe); border: none; border-radius: 12px; cursor: pointer; color: white; font-weight: bold; transition: 0.3s;">
+                        BUKA HALAMAN DIAGNOSTIK
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Navigation Buttons -->
+    <button id="back-btn" class="floating-btn floating-left" onclick="navigate(-1)">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Kembali
+    </button>
+
+    <button id="next-btn" class="floating-btn floating-right" onclick="navigate(1)">
+        Selanjutnya
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+    </button>
+
+    <!-- Progress Indicator -->
+    <div class="progress-indicator">
+        <span id="current-slide">1</span> / 7
+    </div>
+
+    <!-- Modal for Help -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <h3>Bantuan</h3>
+            <h4>Tata Cara Penggunaan Modul Interaktif</h4>
+            <ol>
+                <li><strong>Navigasi Slide:</strong> Gunakan tombol 'Kembali' di kiri bawah untuk kembali ke slide sebelumnya dan tombol 'Selanjutnya' di kanan bawah untuk maju ke slide berikutnya.</li>
+                <li><strong>Indikator Progress:</strong> Lihat angka di bagian bawah layar untuk mengetahui slide mana yang sedang aktif (misalnya, 1 / 4 menunjukkan slide pertama dari empat slide).</li>
+                <li><strong>Tombol Home:</strong> Klik tombol rumah (ikon rumah) di header untuk kembali ke halaman utama.</li>
+                <li><strong>Bantuan:</strong> Klik tombol '?' di header untuk membuka bantuan ini.</li>
+                <li><strong>Navigasi Cepat:</strong> Anda dapat langsung mengklik tombol navigasi untuk berpindah slide tanpa harus melalui setiap slide satu per satu.</li>
+            </ol>
+            <p>Jika Anda mengalami kesulitan atau memiliki pertanyaan lain, hubungi admin melalui WhatsApp.</p>
+            <button onclick="contactSupport()">Hubungi Admin</button>
+        </div>
+    </div>
+
+    <!-- Modal for TaRL -->
+    <div id="tarl-modal" class="modal">
+        <div class="modal-content">
+            <h3>Belajar dengan TaRL</h3>
+            <p><strong>Apa itu TaRL?</strong></p>
+            <p>TaRL adalah singkatan dari "Teaching at the Right Level". Ini adalah cara belajar yang menyesuaikan tingkat kesulitan pelajaran dengan kemampuan siswa. Jadi, siswa tidak belajar materi yang terlalu mudah atau terlalu sulit.</p>
+            <p><strong>Kenapa penting?</strong></p>
+            <p>Dengan TaRL, siswa bisa belajar dengan percaya diri dan maju lebih cepat. Guru membantu siswa yang belum paham konsep dasar, sementara siswa yang sudah paham bisa belajar lebih dalam.</p>
+            <p><strong>Dalam pelajaran cahaya:</strong></p>
+            <p>Kita mulai dari pengertian cahaya sehari-hari, seperti cahaya matahari atau lampu. Kemudian, kita pelajari sifat cahaya seperti pantulan dan pembiasan. Terakhir, kita bahas konsep lanjutan seperti interferensi cahaya.</p>
+            <p><strong>Manfaat untuk siswa:</strong></p>
+            <ul>
+                <li>Belajar sesuai kemampuan</li>
+                <li>Meningkatkan pemahaman</li>
+                <li>Menumbuhkan rasa percaya diri</li>
+                <li>Membuat belajar lebih menyenangkan</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modal for Coding -->
+    <div id="coding-modal" class="modal">
+        <div class="modal-content">
+            <h3>Coding</h3>
+            <p>Coding adalah proses menulis instruksi dalam bahasa pemrograman untuk membuat program komputer. Dalam pembelajaran fisika cahaya, coding dapat digunakan untuk mensimulasikan fenomena cahaya seperti difraksi atau interferensi.</p>
+            <p>Melalui coding, siswa dapat memahami konsep fisika secara interaktif dan kreatif.</p>
+        </div>
+    </div>
+
+    <!-- Modal for Computational Thinking -->
+    <div id="ct-modal" class="modal">
+        <div class="modal-content">
+            <h3>Bekerja dengan Komputer</h3>
+            <p><strong>Apa itu Computational Thinking?</strong></p>
+            <p>Computational Thinking adalah cara berpikir seperti komputer. Ini berarti kita belajar memecah masalah besar menjadi langkah-langkah kecil yang bisa diselesaikan.</p>
+            <p><strong>Kenapa penting?</strong></p>
+            <p>Dalam dunia modern, kita sering menggunakan komputer untuk menyelesaikan masalah. Computational thinking membantu kita berpikir lebih sistematis dan efisien.</p>
+            <p><strong>Dalam pelajaran cahaya, kita gunakan:</strong></p>
+            <ul>
+                <li><strong>Decomposition (Pemecahan):</strong> Memecah masalah cahaya menjadi bagian kecil. Misalnya, "Bagaimana cahaya bergerak?" dipecah menjadi: sumber cahaya, arah cahaya, hambatan cahaya.</li>
+                <li><strong>Pattern Recognition (Mengenali Pola):</strong> Mencari pola dalam gelombang cahaya. Seperti mengamati bahwa cahaya selalu bergerak lurus kecuali ada yang menghalanginya.</li>
+                <li><strong>Abstraction (Abstraksi):</strong> Fokus pada hal penting saja. Misalnya, dalam percobaan cahaya, kita abaikan warna meja atau suhu ruangan, fokus pada cahaya itu sendiri.</li>
+                <li><strong>Algorithm Design (Merancang Algoritma):</strong> Membuat langkah-langkah untuk menyelesaikan masalah. Seperti: 1. Amati cahaya, 2. Ukur sudut, 3. Hitung hasil, 4. Buat kesimpulan.</li>
+            </ul>
+            <p><strong>Contoh dalam kehidupan sehari-hari:</strong></p>
+            <p>Saat memasak, kita ikuti resep langkah demi langkah. Itu adalah algoritma! Computational thinking membantu kita membuat "resep" untuk menyelesaikan masalah sains.</p>
+            <p><strong>Manfaat untuk siswa:</strong></p>
+            <ul>
+                <li>Belajar berpikir logis</li>
+                <li>Menyelesaikan masalah lebih efektif</li>
+                <li>Mengembangkan kemampuan analisis</li>
+                <li>Mempersiapkan diri untuk dunia digital</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Floating lights -->
+    <div class="light light1"></div>
+    <div class="light light2"></div>
+    <div class="light light3"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKPD Mahir - Interferensi & Noise Cancellation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2fe; --secondary: #4facfe; --bg: #0f172a;
+            --dekom: #ff4757; --pola: #ffa502; --abs: #2ed573; --algo: #1e90ff;
+        }
+
+        body { background-color: var(--bg); color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .lks-container { max-width: 850px; width: 100%; background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        
+        .header { display: flex; align-items: center; gap: 15px; border-bottom: 2px solid var(--primary); padding-bottom: 15px; margin-bottom: 25px; }
+        .logo { height: 50px; width: auto; }
+        .header h1 { font-size: 1.5rem; margin: 0; color: var(--primary); text-transform: uppercase; }
+
+        .case-study { background: rgba(255, 71, 87, 0.1); padding: 20px; border-radius: 15px; border-left: 5px solid var(--dekom); margin-bottom: 25px; }
+
+        .sim-container { background: #000; height: 250px; border-radius: 15px; position: relative; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--primary); }
+        canvas { width: 100%; height: 100%; }
+
+        /* Indicator Status Getaran */
+        .vibe-status {
+            position: absolute; top: 10px; right: 10px; padding: 5px 12px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: bold; background: rgba(255,255,255,0.1);
+            border: 1px solid var(--primary); color: var(--primary);
+        }
+
+        .control-panel { background: rgba(0,0,0,0.4); padding: 25px; border-radius: 15px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        /* Slider Styling */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: #334155; border-radius: 10px; }
+        input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radius: 50%; background: var(--primary); cursor: pointer; -webkit-appearance: none; margin-top: -8px; box-shadow: 0 0 15px var(--primary); }
+
+        .label-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .phase-badge { background: var(--primary); color: #0f172a; padding: 2px 10px; border-radius: 5px; font-weight: 800; font-family: monospace; }
+
+        .question-card { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid transparent; }
+        .pillar-tag { font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 5px; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
+        
+        textarea { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid #444; color: var(--primary); padding: 12px; border-radius: 8px; margin-top: 10px; font-family: inherit; resize: none; }
+        .submit-btn { background: linear-gradient(45deg, var(--secondary), var(--primary)); width: 100%; padding: 18px; border: none; border-radius: 12px; color: #0f172a; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
+        .submit-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
+    </style>
+</head>
+<body>
+
+<div class="lks-container">
+    <header class="header">
+        <img src="../foto/1.png" alt="Logo" class="logo">
+        <h1>LKPD Mahir: Sinyal & Interferensi</h1>
+    </header>
+
+    <div class="case-study">
+        <strong>🛡️ Misi: Destructive Interference</strong><br>
+        Gunakan slider di bawah untuk menggeser fase sinyal biru. Rasakan getaran di tanganmu—getaran akan **menghilang** jika kamu berhasil membatalkan sinyal merah secara sempurna!
+    </div>
+
+    <div class="sim-container">
+        <div id="vibe-text" class="vibe-status">📳 MENCARI SINYAL...</div>
+        <canvas id="interferenceCanvas"></canvas>
+    </div>
+
+    <div class="control-panel">
+        <div class="label-group">
+            <label style="color: var(--primary); font-weight: bold;">Geser Beda Fase ($\Delta \phi$)</label>
+            <div class="phase-badge"><span id="phase-val">0.00</span> rad</div>
+        </div>
+        <input type="range" id="phase-slider" min="0" max="6.28" step="0.01" value="0">
+        <p style="font-size: 0.7rem; color: #64748b; margin-top: 10px;">*Petunjuk: Sinyal akan saling meniadakan pada $\pi \approx 3.14$</p>
+    </div>
+
+    <div id="quiz-lks">
+        <div class="question-card" style="border-color: var(--dekom)">
+            <span class="pillar-tag" style="background: var(--dekom)">Dekomposisi</span>
+            <p>Sebutkan 2 syarat utama agar sinyal penyeimbang bisa menghilangkan kebisingan secara total!</p>
+            <textarea id="ans-dekom" rows="2" placeholder="Tuliskan syarat amplitudo dan fasenya..."></textarea>
+        </div>
+
+        <div class="question-card" style="border-color: var(--pola)">
+            <span class="pillar-tag" style="background: var(--pola)">Pengenalan Pola</span>
+            <p>Berapa nilai fase tepatnya saat HP berhenti bergetar dan garis menjadi lurus?</p>
+            <textarea id="ans-pola" rows="1" placeholder="Contoh: 3.14"></textarea>
+        </div>
+
+        <div class="question-card" style="border-color: var(--abs)">
+            <span class="pillar-tag" style="background: var(--abs)">Abstraksi</span>
+            <p>Dalam simulasi ini, hal mana yang TIDAK RELEVAN untuk dipertimbangkan dalam pembatalan kebisingan? (Contoh: warna gelombang, frekuensi sinyal, atau amplitudo sinyal?)</p>
+            <textarea id="ans-abs" rows="2" placeholder="Sebutkan hal yang tidak penting..."></textarea>
+        </div>
+
+        <div class="question-card" style="border-color: var(--algo)">
+            <span class="pillar-tag" style="background: var(--algo)">Algoritma</span>
+            <p>Jika sinyal bising adalah $A \sin(\omega t)$, maka sinyal pembatal haruslah:</p>
+            <div style="background:#1e1e1e; padding:15px; border-radius:8px; font-family:monospace; font-size:0.9rem;">
+                Sinyal_Baru = <input type="text" id="ans-algo-1" style="width:120px; border:none; border-bottom:1px solid #fff; background:none; color:var(--primary);" placeholder="-A sin(wt)">;
+            </div>
+        </div>
+    </div>
+
+    <button class="submit-btn" onclick="evaluateLKS()">SIMPAN PROGRES MAHIR</button>
+</div>
+
+
+
+<script>
+    const canvas = document.getElementById('interferenceCanvas');
+    const ctx = canvas.getContext('2d');
+    const phaseSlider = document.getElementById('phase-slider');
+    const vibeText = document.getElementById('vibe-text');
+    let time = 0;
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const phase = parseFloat(phaseSlider.value);
+        document.getElementById('phase-val').innerText = phase.toFixed(2);
+
+        const centerY = canvas.height / 2;
+        const amp = 50;
+        const freq = 0.04;
+
+        // 1. Sinyal Pengganggu (Merah)
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255, 71, 87, 0.4)';
+        for (let x = 0; x < canvas.width; x++) {
+            const y = centerY + Math.sin(x * freq + time) * amp;
+            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // 2. Sinyal Penyeimbang (Biru)
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(0, 242, 254, 0.4)';
+        for (let x = 0; x < canvas.width; x++) {
+            const y = centerY + Math.sin(x * freq + time + phase) * amp;
+            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // 3. Superposisi (Putih)
+        ctx.beginPath();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        let currentCombinedAmp = 0;
+
+        for (let x = 0; x < canvas.width; x++) {
+            const y1 = Math.sin(x * freq + time) * amp;
+            const y2 = Math.sin(x * freq + time + phase) * amp;
+            const yTotal = centerY + (y1 + y2);
+            if (x === 0) ctx.moveTo(x, yTotal); else ctx.lineTo(x, yTotal);
+            
+            // Ambil sampel amplitudo di tengah untuk kontrol getaran
+            if (x === Math.floor(canvas.width/2)) {
+                currentCombinedAmp = Math.abs(y1 + y2);
+            }
+        }
+        ctx.stroke();
+        ctx.lineWidth = 1;
+
+        // LOGIKA GETARAN (Haptic)
+        // Semakin besar gelombang resultan, semakin kuat getarannya
+        if (currentCombinedAmp > 5) {
+            vibeText.innerText = "📳 SINYAL TERDETEKSI";
+            vibeText.style.color = "#ff4757";
+            if ("vibrate" in navigator) {
+                // Getaran berdenyut sesuai intensitas amplitudo
+                navigator.vibrate(currentCombinedAmp * 2);
+            }
+        } else {
+            vibeText.innerText = "✅ SILENT / NOISE CANCELLED";
+            vibeText.style.color = "#2ed573";
+            if ("vibrate" in navigator) navigator.vibrate(0);
+        }
+
+        time += 0.08;
+        requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', () => {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    });
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    draw();
+
+    function evaluateLKS() {
+        let scores = { dekom: 0, pola: 0, abs: 80, algo: 0 };
+        
+        const qDekom = document.getElementById('ans-dekom').value.toLowerCase();
+        if (qDekom.includes('sama') && (qDekom.includes('lawan') || qDekom.includes('beda'))) scores.dekom = 100;
+
+        const qPola = parseFloat(document.getElementById('ans-pola').value);
+        if (qPola >= 3.1 && qPola <= 3.2) scores.pola = 100;
+
+        const qAbs = document.getElementById('ans-abs').value.toLowerCase();
+        if (['warna'].some(k => q3.includes(k))) scores.abs = 100;
+
+        const qAlgo = document.getElementById('ans-algo-1').value.replace(/\s/g, '').toLowerCase();
+        if (qAlgo.includes('-asin') || qAlgo.includes('lawan')) scores.algo = 100;
+
+        saveProgress(scores);
+    }
+
+    function saveProgress(currentScores) {
+        let history = JSON.parse(localStorage.getItem('ct_history')) || [];
+        history.push({
+            label: "LKPD Mahir",
+            date: new Date().toLocaleDateString('id-ID'),
+            data: currentScores
+        });
+        localStorage.setItem('ct_history', JSON.stringify(history));
+        alert("Level Mahir Selesai! Mengalihkan ke Dashboard Hasil...");
+        window.location.href = "../materi2/index.html";
+    }
+</script>
+</body>
+</html>

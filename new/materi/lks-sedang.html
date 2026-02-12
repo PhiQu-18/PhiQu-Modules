@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKS Sedang</title>
+    <link rel="icon" type="image/png" href="../foto/1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2fe; --secondary: #4facfe; --bg: #0f172a;
+            --dekom: #ff4757; --pola: #ffa502; --abs: #2ed573; --algo: #1e90ff;
+        }
+
+        body { background-color: var(--bg); color: white; font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .lks-container { max-width: 850px; width: 100%; background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        
+        .header { position: fixed; top: 0; left: 0; right: 0; background: var(--bg); z-index: 1000; padding: 5px 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); text-align: center; margin-bottom: 0; }
+        .logo { width: 35px; height: auto; margin-right: 8px; }
+
+        @media (max-width: 768px) {
+            .header { justify-content: flex-start; padding: 5px 10px; }
+        }
+        .case-study { background: rgba(79, 172, 254, 0.1); padding: 20px; border-radius: 15px; border-left: 5px solid var(--secondary); margin-bottom: 25px; }
+
+        /* Wave Simulator */
+        .sim-container {
+            background: #000; height: 220px; border-radius: 15px; position: relative;
+            overflow: hidden; margin-bottom: 20px; border: 1px solid var(--secondary);
+            display: flex; align-items: center; justify-content: center;
+        }
+        canvas { width: 100%; height: 100%; position: absolute; }
+        
+        /* Feedback Haptic Indicator */
+        .vibe-indicator {
+            position: absolute; top: 10px; right: 10px; font-size: 0.7rem;
+            background: rgba(255, 71, 87, 0.3); padding: 5px 10px; border-radius: 20px;
+            border: 1px solid var(--dekom); color: #ff4757; animation: pulse 1s infinite;
+            display: none; z-index: 10;
+        }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+        .control-panel {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; margin-bottom: 30px;
+        }
+        
+        input[type=range] { width: 100%; accent-color: var(--secondary); cursor: pointer; }
+        label { font-size: 0.85rem; color: var(--secondary); font-weight: bold; }
+
+        .question-card { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid transparent; }
+        .pillar-tag { font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 5px; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
+        
+        textarea {
+            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid #444;
+            color: var(--primary); padding: 12px; border-radius: 8px; margin-top: 10px; font-family: inherit; resize: none;
+        }
+
+        .code-block { background: #1e1e1e; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9rem; border: 1px solid #333; }
+        
+        .action-area { display: flex; gap: 10px; margin-bottom: 20px; }
+        .vibrate-btn {
+            flex: 1; background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white; border: none; padding: 15px; border-radius: 12px;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .submit-btn {
+            flex: 2; background: linear-gradient(45deg, #4facfe, #00f2fe);
+            width: 100%; padding: 18px; border: none; border-radius: 12px;
+            color: #0f172a; font-weight: bold; font-size: 1.1rem; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-left">
+            <img src="../foto/1.png" alt="Logo Phi-R" class="logo">
+            <span>LKS Sedang</span>
+        </div>
+    </header>
+
+<div class="lks-container">
+    <div class="case-study">
+        <strong>🚀 Kasus: Sinkronisasi Sinyal</strong><br>
+        Kamu adalah teknisi transmisi. Atur <b>Amplitudo</b> dan <b>Frekuensi</b> agar gelombang stabil, lalu rasakan energinya dengan menekan tombol getar!
+    </div>
+
+    <div class="sim-container">
+        <div id="vibe-active" class="vibe-indicator">📳 GETARAN AKTIF</div>
+        <canvas id="stringCanvas"></canvas>
+    </div>
+
+    <div class="control-panel">
+        <div>
+            <label>Frekuensi (f)</label>
+            <input type="range" id="freq-slider" min="0.01" max="0.1" step="0.01" value="0.03">
+        </div>
+        <div>
+            <label>Amplitudo (A)</label>
+            <input type="range" id="amp-slider" min="10" max="80" step="5" value="40">
+        </div>
+    </div>
+
+    <div class="action-area">
+        <button class="vibrate-btn" onclick="toggleVibration()">AKTIFKAN GETARAN</button>
+    </div>
+
+    <div id="quiz-lks">
+        <div class="question-card" style="border-color: var(--dekom)">
+            <span class="pillar-tag" style="background: var(--dekom)">Dekomposisi</span>
+            <p>Sebutkan 3 variabel fisik utama yang membangun sistem simulasi gelombang di atas agar dapat berjalan!</p>
+            <textarea id="ans-dekom" rows="2" placeholder="Contoh: Amplitudo, Frekuensi, Waktu..."></textarea>
+        </div>
+
+        <div class="question-card" style="border-color: var(--pola)">
+            <span class="pillar-tag" style="background: var(--pola)">Pengenalan Pola</span>
+            <p>Aktifkan getaran, lalu geser <b>Amplitudo</b> ke maksimal. Bagaimana perubahan sensasi getaran di tanganmu dibandingkan saat Amplitudo rendah?</p>
+            <textarea id="ans-pola" rows="2" placeholder="Semakin tinggi amplitudo, getaran terasa..."></textarea>
+        </div>
+
+        <div class="question-card" style="border-color: var(--abs)">
+            <span class="pillar-tag" style="background: var(--abs)">Abstraksi</span>
+            <p>Jika kita ingin mengirim kode Morse (titik dan garis), variabel mana yang paling efektif kita abaikan (Warna garis atau Frekuensi)?</p>
+            <textarea id="ans-abs" rows="2" placeholder="Variabel yang diabaikan adalah..."></textarea>
+        </div>
+
+        <div class="question-card" style="border-color: var(--algo)">
+            <span class="pillar-tag" style="background: var(--algo)">Algoritma</span>
+            <p>Lengkapi baris kode untuk menghitung durasi getar berdasarkan Amplitudo (A) dikali 10:</p>
+            <div class="code-block">
+                let A = <span id="code-amp">40</span>;<br>
+                let durasiGetar = <input type="text" id="ans-algo-1" style="width:100px; border:none; border-bottom:1px solid #fff; background:none; color:var(--primary); font-family:monospace;" placeholder="A ... 10">;<br>
+                navigator.vibrate(durasiGetar);
+            </div>
+        </div>
+    </div>
+
+    <button class="submit-btn" onclick="evaluateLKS()">SIMPAN PROGRES SEDANG</button>
+</div>
+
+<script>
+    const canvas = document.getElementById('stringCanvas');
+    const ctx = canvas.getContext('2d');
+    let offset = 0;
+    let isVibrating = false;
+    let vibeInterval;
+
+    const freqSlider = document.getElementById('freq-slider');
+    const ampSlider = document.getElementById('amp-slider');
+    const codeAmp = document.getElementById('code-amp');
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const freq = parseFloat(freqSlider.value);
+        const amp = parseFloat(ampSlider.value);
+        codeAmp.innerText = amp;
+
+        ctx.beginPath();
+        ctx.strokeStyle = '#4facfe';
+        ctx.lineWidth = 4;
+        ctx.lineJoin = 'round';
+
+        for (let x = 0; x < canvas.width; x += 5) {
+            const y = canvas.height / 2 + Math.sin(x * freq + offset) * amp;
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        offset -= 0.05;
+        requestAnimationFrame(draw);
+    }
+    
+    window.addEventListener('resize', () => {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    });
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    draw();
+
+    function toggleVibration() {
+        const btn = document.querySelector('.vibrate-btn');
+        const indicator = document.getElementById('vibe-active');
+        
+        if (!isVibrating) {
+            isVibrating = true;
+            btn.innerText = "HENTIKAN GETARAN";
+            indicator.style.display = "block";
+            
+            vibeInterval = setInterval(() => {
+                const amp = parseFloat(ampSlider.value);
+                if ("vibrate" in navigator) {
+                    navigator.vibrate([amp * 2, 50]);
+                }
+            }, 200);
+        } else {
+            isVibrating = false;
+            btn.innerText = "AKTIFKAN GETARAN";
+            indicator.style.display = "none";
+            clearInterval(vibeInterval);
+            if ("vibrate" in navigator) navigator.vibrate(0);
+        }
+    }
+
+    function evaluateLKS() {
+        let scores = { dekom: 0, pola: 0, abs: 0, algo: 0 };
+        
+        // 1. Evaluasi Dekomposisi
+        const qDekom = document.getElementById('ans-dekom').value.toLowerCase();
+        const keywordsDekom = ['amplitudo', 'frekuensi', 'waktu', 'periode', 'cepat rambat', 'jarak'];
+        let matchDekom = keywordsDekom.filter(k => qDekom.includes(k)).length;
+        scores.dekom = matchDekom >= 2 ? 100 : (matchDekom === 1 ? 50 : 0);
+
+        // 2. Evaluasi Pengenalan Pola
+        const qPola = document.getElementById('ans-pola').value.toLowerCase();
+        if (['kuat', 'kencang', 'besar', 'keras', 'terasa'].some(k => qPola.includes(k))) scores.pola = 100;
+
+        // 3. Evaluasi Abstraksi
+        const qAbs = document.getElementById('ans-abs').value.toLowerCase();
+        if (qAbs.includes('warna')) scores.abs = 100;
+
+        // 4. Evaluasi Algoritma
+        const qAlgo = document.getElementById('ans-algo-1').value.replace(/\s/g, '');
+        const currentA = ampSlider.value;
+        if (qAlgo === "A*10" || qAlgo === `${currentA}*10` || qAlgo === (currentA * 10).toString()) scores.algo = 100;
+
+        saveProgress(scores);
+    }
+
+    function saveProgress(currentScores) {
+        let history = JSON.parse(localStorage.getItem('ct_history')) || [];
+        history.push({
+            label: "LKPD Sedang",
+            date: new Date().toLocaleDateString('id-ID'),
+            folder: 'materi',
+            data: currentScores
+        });
+        localStorage.setItem('ct_history', JSON.stringify(history));
+
+        alert("Pencapaian Level Sedang Disimpan!");
+        window.location.href = "../materi2/index.html";
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Progres CT - Phi-R</title>
+    <link rel="icon" type="image/png" href="./foto/1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #00f2fe; --secondary: #4facfe; --bg: #0f172a;
+            --card: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background-color: var(--bg); color: white;
+            font-family: 'Poppins', sans-serif; margin: 0; padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: auto; }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
+
+        .grid-charts {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+        }
+
+        .chart-card {
+            background: var(--card); padding: 20px; border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+        }
+
+        .chart-title { text-align: center; margin-bottom: 15px; font-weight: 600; font-size: 1.1rem; color: var(--primary); }
+
+        .full-width { grid-column: span 2; }
+
+        .btn-back {
+            display: inline-block; margin-top: 30px; padding: 12px 25px;
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            color: #0f172a; text-decoration: none; border-radius: 50px;
+            font-weight: bold; transition: 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .grid-charts { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>📊 Dashboard Pencapaian CT</h1>
+        <p>Pantau perkembangan Computational Thinking kamu di sini</p>
+    </div>
+
+    <div class="grid-charts">
+        <div class="chart-card">
+            <p class="chart-title">Profil Kompetensi Terkini</p>
+            <canvas id="radarChart"></canvas>
+            <p style="font-size: 0.8rem; text-align: center; margin-top: 10px; color: #aaa;">
+                Menampilkan skor total terakhir yang kamu capai pada setiap pilar.
+            </p>
+        </div>
+
+        <div class="chart-card">
+            <p class="chart-title">Tren Peningkatan Belajar</p>
+            <canvas id="lineChart"></canvas>
+            <p style="font-size: 0.8rem; text-align: center; margin-top: 10px; color: #aaa;">
+                Membandingkan nilai dari Tes Diagnostik awal hingga LKS.
+            </p>
+        </div>
+    </div>
+
+    <div style="text-align: center;">
+        <a href="index.html" class="btn-back"> Kembali ke Menu Modul</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const history = JSON.parse(localStorage.getItem('ct_history')) || [];
+
+        if (history.length === 0) {
+            alert("Belum ada data! Silakan kerjakan Tes Diagnostik terlebih dahulu.");
+            window.location.href = "diagnostik.html";
+            return;
+        }
+
+        // 1. DATA UNTUK RADAR (Rata-rata dari semua data)
+        const allDekom = history.map(h => h.data.dekom || h.data.dekomposisi || 0);
+        const allPola = history.map(h => h.data.pola || 0);
+        const allAbs = history.map(h => h.data.abs || h.data.abstraksi || 0);
+        const allAlgo = history.map(h => h.data.algo || h.data.algoritma || 0);
+
+        const avgData = {
+            dekom: Math.round(allDekom.reduce((a, b) => a + b, 0) / allDekom.length),
+            pola: Math.round(allPola.reduce((a, b) => a + b, 0) / allPola.length),
+            abs: Math.round(allAbs.reduce((a, b) => a + b, 0) / allAbs.length),
+            algo: Math.round(allAlgo.reduce((a, b) => a + b, 0) / allAlgo.length)
+        };
+
+        // 2. DATA UNTUK LINE (Ambil Seluruh Riwayat dengan folder label)
+        const labelsLine = history.map(h => h.label + (h.folder ? ` (${h.folder})` : ''));
+        const dekomLine = history.map(h => h.data.dekom || h.data.dekomposisi || 0);
+        const polaLine = history.map(h => h.data.pola || 0);
+        const absLine = history.map(h => h.data.abs || h.data.abstraksi || 0);
+        const algoLine = history.map(h => h.data.algo || h.data.algoritma || 0);
+
+        // --- KONFIGURASI RADAR CHART ---
+        new Chart(document.getElementById('radarChart'), {
+            type: 'radar',
+            data: {
+                labels: ['Dekomposisi', 'Pengenalan Pola', 'Abstraksi', 'Algoritma'],
+                datasets: [{
+                    label: 'Skor Rata-rata',
+                    data: [avgData.dekom, avgData.pola, avgData.abs, avgData.algo],
+                    fill: true,
+                    backgroundColor: 'rgba(0, 242, 254, 0.2)',
+                    borderColor: '#00f2fe',
+                    pointBackgroundColor: '#00f2fe',
+                    pointBorderColor: '#fff',
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255,255,255,0.1)' },
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        pointLabels: { color: '#fff' },
+                        ticks: { display: false },
+                        suggestedMin: 0, suggestedMax: 100
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // --- KONFIGURASI LINE CHART ---
+        new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: {
+                labels: labelsLine,
+                datasets: [
+                    { label: 'Dekom', data: dekomLine, borderColor: '#ff4757', tension: 0.3 },
+                    { label: 'Pola', data: polaLine, borderColor: '#ffa502', tension: 0.3 },
+                    { label: 'Abs', data: absLine, borderColor: '#2ed573', tension: 0.3 },
+                    { label: 'Algo', data: algoLine, borderColor: '#1e90ff', tension: 0.3 }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { labels: { color: '#fff', boxWidth: 10, font: { size: 10 } } }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true, max: 100,
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { color: '#aaa' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#aaa' }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

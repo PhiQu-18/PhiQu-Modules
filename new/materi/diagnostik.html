@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asesmen Diagnostik - Phi-R</title>
+    <link rel="icon" type="image/png" href="../foto/1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --bg: #1a1a2e;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --dekom: #ff4757; --pola: #ffa502; --abs: #2ed573; --algo: #1e90ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); color: white; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { width: 100%; max-width: 700px; background: var(--card-bg); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        
+        /* Progress & Header */
+        .header { text-align: center; margin-bottom: 30px; }
+        .progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        #progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: 0.5s ease; }
+        
+        /* Pillar Badge */
+        .pillar-badge { display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Quiz Elements */
+        .question-box { display: none; }
+        .question-box.active { display: block; animation: fadeIn 0.5s ease; }
+        .question-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .options-grid { display: grid; gap: 12px; }
+        .option-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; color: white; text-align: left; cursor: pointer; transition: 0.3s; }
+        .option-btn:hover { background: rgba(0, 242, 254, 0.2); border-color: var(--primary); transform: translateX(5px); }
+
+        /* Result Screen */
+        .result-screen { display: none; text-align: center; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
+        .stat-card { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; border-top: 4px solid #fff; }
+        .lks-btn { background: linear-gradient(45deg, #00b09b, #96c93d); color: white; border: none; padding: 18px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 1.1rem; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container" id="main-container">
+    <div id="quiz-ui">
+        <div class="header">
+            <div id="pillar-label"></div>
+            <div class="progress-container"><div id="progress-bar"></div></div>
+            <p id="counter">Soal 1 dari 15</p>
+        </div>
+        <div id="quiz-content"></div>
+    </div>
+
+    <div id="result-ui" class="result-screen">
+        <h2 style="color: var(--primary)">Hasil Analisis CT</h2>
+        <p>Berdasarkan jawabanmu, berikut tingkat kemampuan Computational Thinking-mu:</p>
+        
+        <div class="stat-grid">
+            <div class="stat-card" style="border-color: var(--dekom)">
+                <small>Dekomposisi</small>
+                <h3 id="res-dekom">0</h3>
+            </div>
+            <div class="stat-card" style="border-color: var(--pola)">
+                <small>Pengenalan Pola</small>
+                <h3 id="res-pola">0</h3>
+            </div>
+            <div class="stat-card" style="border-color: var(--abs)">
+                <small>Abstraksi</small>
+                <h3 id="res-abs">0</h3>
+            </div>
+            <div class="stat-card" style="border-color: var(--algo)">
+                <small>Algoritma</small>
+                <h3 id="res-algo">0</h3>
+            </div>
+        </div>
+
+        <div id="level-info" style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+            <p id="level-text"></p>
+        </div>
+
+        <button class="lks-btn" id="redirect-btn">BUKA LKS YANG SESUAI</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        // DEKOMPOSISI (4 Soal)
+        { q: "Manakah komponen utama yang menyusun sistem getaran pada pegas?", a: ["Massa benda dan konstanta pegas", "Warna pegas dan suhu", "Panjang ruangan", "Tekanan udara"], c: 0, p: "dekom", pName: "Dekomposisi" },
+        { q: "Dalam menganalisis gelombang transversal, satu gelombang penuh terdiri atas...", a: ["Hanya satu puncak", "Satu bukit dan satu lembah", "Dua bukit saja", "Tiga titik simpul"], c: 1, p: "dekom", pName: "Dekomposisi" },
+        { q: "Untuk menghitung energi potensial elastis, komponen mana yang harus dipisahkan dari variabel lain?", a: ["Kecepatan benda", "Simpangan (x)", "Waktu tempuh", "Jenis baterai"], c: 1, p: "dekom", pName: "Dekomposisi" },
+        { q: "Identifikasi bagian terkecil penyusun gelombang bunyi yang merambat di udara!", a: ["Partikel medium (rapatan/renggangan)", "Ruang hampa", "Cahaya matahari", "Arus listrik"], c: 0, p: "dekom", pName: "Dekomposisi" },
+
+        // PENGENALAN POLA (4 Soal)
+        { q: "Jika panjang tali bandul diperpanjang frekuensi berkurang. Jika pada senar gitar diperpanjang, maka...", a: ["Frekuensi bertambah", "Frekuensi juga berkurang", "Nada hilang", "Suara makin nyaring"], c: 1, p: "pola", pName: "Pengenalan Pola" },
+        { q: "Gelombang air dan gelombang tali memiliki pola gerakan yang sama, yaitu...", a: ["Gelombang Longitudinal", "Gelombang Transversal", "Gelombang Stasioner", "Gelombang Elektromagnetik"], c: 1, p: "pola", pName: "Pengenalan Pola" },
+        { q: "Perhatikan pola: Frekuensi 10Hz (Energi 10J), Frekuensi 20Hz (Energi 40J). Pola ini menunjukkan Energi sebanding dengan...", a: ["Frekuensi", "Kuadrat Frekuensi", "Akar Frekuensi", "Waktu"], c: 1, p: "pola", pName: "Pengenalan Pola" },
+        { q: "Cahaya dan gelombang radio sama-sama merambat tanpa medium. Keduanya mengikuti pola...", a: ["Gelombang Mekanik", "Gelombang Elektromagnetik", "Gelombang Bunyi", "Gelombang Tekan"], c: 1, p: "pola", pName: "Pengenalan Pola" },
+
+        // ABSTRAKSI (4 Soal)
+        { q: "Saat mengamati gelombang laut, variabel mana yang paling penting untuk menentukan besarnya energi destruktif?", a: ["Warna air laut", "Amplitudo (tinggi gelombang)", "Banyaknya ikan", "Suhu air permukaan"], c: 1, p: "abs", pName: "Abstraksi" },
+        { q: "Dalam rumus getaran T = 1/f, kita mengabaikan berat tali karena merupakan variabel...", a: ["Utama", "Tidak relevan (distraksi)", "Paling penting", "Rahasia"], c: 1, p: "abs", pName: "Abstraksi" },
+        { q: "Bunyi tidak terdengar di luar angkasa. Abstraksi syarat bunyi yang hilang adalah...", a: ["Sumber bunyi", "Medium perambatan", "Pendengar", "Waktu"], c: 1, p: "abs", pName: "Abstraksi" },
+        { q: "Fokus utama saat menganalisis pemantulan cahaya pada cermin datar adalah...", a: ["Suhu cermin", "Sudut datang = Sudut pantul", "Merk cermin", "Luas ruangan"], c: 1, p: "abs", pName: "Abstraksi" },
+
+        // ALGORITMA (3 Soal)
+        { q: "Langkah sistematis menghitung cepat rambat (v) jika diketahui panjang gelombang (λ) dan periode (T) adalah...", a: ["v = λ / T", "v = λ x T", "v = T / λ", "v = λ + T"], c: 0, p: "algo", pName: "Algoritma" },
+        { q: "Urutan logis pemanfaatan energi gelombang bunyi pada alat USG adalah...", a: ["Pantulan -> Sinyal Listrik -> Gambar", "Gambar -> Pantulan -> Getaran", "Suhu -> Cahaya -> Bunyi", "Listrik -> Magnet -> Panas"], c: 0, p: "algo", pName: "Algoritma" },
+        { q: "Langkah pertama mencari periode ayunan bandul secara eksperimen adalah...", a: ["Menghitung massa", "Menghitung waktu untuk 10 getaran", "Membeli bandul baru", "Mengukur suhu air"], c: 1, p: "algo", pName: "Algoritma" }
+    ];
+
+    let currentIdx = 0;
+    let totalScore = 0;
+    let ctScores = { dekom: 0, pola: 0, abs: 0, algo: 0 };
+    let targetLKS = "";
+
+    function loadQuestion() {
+        const q = questions[currentIdx];
+        const pillarLabel = document.getElementById('pillar-label');
+        
+        // Update Badge
+        pillarLabel.innerHTML = `<span class="pillar-badge" style="background: var(--${q.p})">${q.pName}</span>`;
+        
+        document.getElementById('quiz-content').innerHTML = `
+            <div class="question-box active">
+                <p class="question-text">${q.q}</p>
+                <div class="options-grid">
+                    ${q.a.map((opt, i) => `
+                        <button class="option-btn" onclick="selectAnswer(${i})">${opt}</button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        document.getElementById('counter').innerText = `Soal ${currentIdx + 1} dari 15`;
+        document.getElementById('progress-bar').style.width = `${((currentIdx + 1) / 15) * 100}%`;
+    }
+
+    window.selectAnswer = (idx) => {
+        const q = questions[currentIdx];
+        if (idx === q.c) {
+            totalScore++;
+            // Skor per pilar (soal per pilar bervariasi 3-4, kita normalkan ke 100)
+            let increment = q.p === 'algo' ? 33.3 : 25; 
+            ctScores[q.p] += Math.round(increment);
+        }
+
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function saveToHistory(scores) {
+        let history = JSON.parse(localStorage.getItem('ct_history')) || [];
+
+        let entry = {
+            label: "Tes " + (history.length + 1), // Tes 1, Tes 2, dst
+            date: new Date().toLocaleDateString('id-ID'),
+            folder: 'materi',
+            data: scores // {dekom: 80, pola: 70, abs: 90, algo: 60}
+        };
+
+        history.push(entry);
+        localStorage.setItem('ct_history', JSON.stringify(history));
+    }
+
+    function showResults() {
+        document.getElementById('quiz-ui').style.display = 'none';
+        document.getElementById('result-ui').style.display = 'block';
+
+        // Simpan ke localStorage
+        localStorage.setItem('ct_dekom', Math.min(ctScores.dekom, 100));
+        localStorage.setItem('ct_pola', Math.min(ctScores.pola, 100));
+        localStorage.setItem('ct_abs', Math.min(ctScores.abs, 100));
+        localStorage.setItem('ct_algo', Math.min(ctScores.algo, 100));
+
+        // Update UI Angka
+        document.getElementById('res-dekom').innerText = Math.min(ctScores.dekom, 100);
+        document.getElementById('res-pola').innerText = Math.min(ctScores.pola, 100);
+        document.getElementById('res-abs').innerText = Math.min(ctScores.abs, 100);
+        document.getElementById('res-algo').innerText = Math.min(ctScores.algo, 100);
+
+        // Penentuan LKS
+        const levelText = document.getElementById('level-text');
+        if (totalScore < 8) {
+            targetLKS = "lks-rendah.html";
+            levelText.innerText = "Kamu berada di Level Rendah. Jangan khawatir, LKS ini akan membantumu memahami konsep dasar!";
+        } else if (totalScore <= 12) {
+            targetLKS = "lks-sedang.html";
+            levelText.innerText = "Kamu berada di Level Sedang. Kamu sudah punya dasar yang baik, ayo perkuat lagi!";
+        } else {
+            targetLKS = "lks-mahir.html";
+            levelText.innerText = "Luar biasa! Kamu berada di Level Mahir. Siap untuk tantangan lebih tinggi?";
+        }
+    }
+
+    document.getElementById('redirect-btn').onclick = () => {
+        window.location.href = targetLKS;
+    };
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
