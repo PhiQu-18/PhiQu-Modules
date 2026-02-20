@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phi-R | Lab Diagnostik Gelombang</title>
+    
+    <link rel="icon" href="../foto/1.png" type="image/png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-soft: #efedff;
+            --accent: #00d2d3;
+            --dark: #1e272e;
+            --body-bg: #f4f7fe;
+            --white: #ffffff;
+            --text-secondary: #808e9b;
+            --grad: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.03);
+            --shadow-md: 0 12px 34px rgba(108, 92, 231, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigasi / Header */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            background: var(--grad);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+        }
+
+        .brand-name {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        /* Main Container */
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 100px 20px 40px;
+        }
+
+        .quiz-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 32px;
+            padding: 35px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(255,255,255,0.6);
+            transition: all 0.4s ease;
+        }
+
+        /* Progress Header */
+        .meta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 25px;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-number {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .bar-container {
+            height: 8px;
+            background: #f1f2f6;
+            border-radius: 10px;
+            width: 100%;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--grad);
+            width: 20%;
+            border-radius: 10px;
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Media Box */
+        .visual-box {
+            width: 100%;
+            border-radius: 24px;
+            background: #f9f9fb;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 1px solid #f1f2f6;
+            aspect-ratio: 4 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #question-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .quiz-card:hover #question-image {
+            transform: scale(1.03);
+        }
+
+        /* Question & Options */
+        .q-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 22px;
+            line-height: 1.45;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .opt-item {
+            appearance: none;
+            background: var(--white);
+            border: 2px solid #f1f2f6;
+            padding: 16px 22px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #485e6a;
+            transition: all 0.25s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .opt-item:hover {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .opt-item.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .opt-item::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border: 2px solid currentColor;
+            border-radius: 50%;
+            margin-right: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .opt-item.selected::before {
+            background: white;
+            border-color: white;
+            transform: scale(1.2);
+        }
+
+        /* Action Button */
+        .action-area {
+            margin-top: 35px;
+        }
+
+        #next-btn {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            background: var(--grad);
+            color: white;
+            border-radius: 22px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #next-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.4);
+        }
+
+        #next-btn:active {
+            transform: translateY(0);
+        }
+
+        #next-btn:disabled {
+            background: #dcdde1;
+            box-shadow: none;
+            cursor: not-allowed;
+            color: #aeb1b4;
+        }
+
+        /* Mobile Specific Updates */
+        @media (max-width: 480px) {
+            nav { padding: 12px 20px; }
+            .brand-name { font-size: 1.1rem; }
+            .quiz-card { padding: 25px; border-radius: 28px; }
+            .q-title { font-size: 1.1rem; }
+            .opt-item { padding: 14px 18px; font-size: 0.95rem; }
+        }
+
+        /* Animation Loading Soal */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.4s ease forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="brand">
+            <div class="brand-logo">Φ</div>
+            <span class="brand-name">Phi-R <span style="color:var(--dark)">Lab</span></span>
+        </div>
+        <div class="progress-number" id="progress-text">1/5</div>
+    </nav>
+
+    <div class="app-container">
+        <main class="quiz-card" id="main-card">
+            <div class="meta-header">
+                <div class="progress-label">Challenge Progress</div>
+            </div>
+            
+            <div class="bar-container">
+                <div class="bar-fill" id="progress-fill"></div>
+            </div>
+            
+            <div class="visual-box" style="margin-top:20px;">
+                <img id="question-image" src="https://via.placeholder.com/600x450/f9f9fb/6c5ce7?text=Memuat+Simulasi..." alt="Simulasi Fisika">
+            </div>
+
+            <div class="question-body animate-fade">
+                <h3 id="question-text" class="q-title">Menyiapkan tantangan kognitif untukmu...</h3>
+                
+                <div class="options-list" id="options-container">
+                    </div>
+            </div>
+
+            <div class="action-area">
+                <button id="next-btn" disabled>
+                    Konfirmasi Jawaban
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script src="../script_tantangan/gelombang.js"></script>
+
+    <script>
+        // Sedikit script visual tambahan untuk efek interaktif saat tombol ditekan
+        document.addEventListener('click', function(e) {
+            if(e.target && e.target.classList.contains('opt-item')) {
+                const card = document.getElementById('main-card');
+                // Hapus class selected dari semua
+                document.querySelectorAll('.opt-item').forEach(el => el.classList.remove('selected'));
+                // Tambah ke yang dipilih
+                e.target.classList.add('selected');
+                document.getElementById('next-btn').disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

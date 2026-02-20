@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phi-R | Tes Akhir Gelombang Cahaya</title>
+    <link rel="icon" href="../foto/1.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0984e3;
+            --secondary: #74b9ff;
+            --bg: #f5f6fa;
+            --success: #00b894;
+            --error: #d63031;
+            --dark: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center;
+        }
+
+        .quiz-card {
+            max-width: 800px; width: 100%;
+            background: white; padding: 35px;
+            border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .header-meta {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 25px;
+        }
+
+        .pilar-tag {
+            background: var(--primary); color: white;
+            padding: 6px 16px; border-radius: 50px;
+            font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+        }
+
+        .progress-info { color: #888; font-weight: 600; font-size: 0.9rem; }
+
+        .img-wrapper {
+            width: 100%; height: 280px;
+            background: #fdfdfd; border-radius: 15px;
+            margin-bottom: 25px; border: 1px solid #eee;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+
+        .img-wrapper img { max-width: 100%; height: 100%; object-fit: contain; }
+
+        .question-box {
+            font-size: 1.1rem; font-weight: 600;
+            line-height: 1.6; color: var(--dark);
+            margin-bottom: 25px;
+        }
+
+        .options-grid { display: grid; gap: 12px; }
+
+        .opt-btn {
+            padding: 16px 20px; border: 2px solid #edeff2;
+            border-radius: 12px; cursor: pointer; transition: all 0.2s ease;
+            display: flex; align-items: flex-start; background: none;
+            text-align: left; font-family: inherit; font-size: 0.95rem;
+            color: var(--dark);
+        }
+
+        .opt-btn:hover:not(.disabled) { border-color: var(--secondary); background: #f9f8ff; }
+        .opt-btn.correct { background: var(--success) !important; color: white !important; border-color: var(--success); }
+        .opt-btn.wrong { background: var(--error) !important; color: white !important; border-color: var(--error); }
+        .opt-btn.disabled { cursor: default; }
+
+        .footer-action {
+            margin-top: 35px; padding-top: 20px;
+            border-top: 1px solid #eee;
+            display: flex; justify-content: flex-end;
+        }
+
+        #next-step {
+            background: var(--primary); color: white; border: none;
+            padding: 14px 45px; border-radius: 12px;
+            font-weight: 600; cursor: pointer; transition: 0.3s;
+        }
+
+        #next-step:disabled { background: #d1d1d1; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-card">
+    <div class="header-meta">
+        <span id="ct-badge" class="pilar-tag">Analisis</span>
+        <div id="q-counter" class="progress-info">Soal 1/20</div>
+    </div>
+
+    <div class="img-wrapper">
+        <img id="q-visual" src="" alt="Visualisasi Gelombang Cahaya">
+    </div>
+
+    <div class="question-box" id="q-content">Memuat soal...</div>
+
+    <div class="options-grid" id="opt-container"></div>
+
+    <div class="footer-action">
+        <button id="next-step" disabled>Lanjut</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            pilar: "Dekomposisi",
+            q: "Dalam menganalisis fenomena warna-warni pada lapisan tipis sabun, komponen manakah yang paling penting untuk diurai agar kita bisa menghitung syarat terjadinya interferensi konstruktif?",
+            options: ["Indeks bias sabun, tebal lapisan, dan panjang gelombang cahaya", "Wangi sabun dan merek produsen", "Volume air untuk buih", "Suhu ruangan pengamatan", "Warna wadah sabun"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Thin+Film+Interference"
+        },
+        {
+            pilar: "Abstraksi",
+            q: "Saat merancang model simulasi untuk interferensi celah ganda Young, detail mana yang bisa diabaikan (diabstraksi) agar perhitungan menjadi lebih efisien tanpa mengurangi akurasi utama?",
+            options: ["Bentuk fisik lampu sumber (titik atau kotak)", "Jarak antar celah (d)", "Jarak celah ke layar (L)", "Panjang gelombang cahaya", "Orde pita terang"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Young+Double+Slit"
+        },
+        {
+            pilar: "Pengenalan Pola",
+            q: "Data percobaan: Kisi 100 garis/mm menghasilkan lebar pita 1 cm. Kisi 200 garis/mm menghasilkan lebar pita 2 cm. Berapa lebar pita jika digunakan kisi 500 garis/mm?",
+            options: ["5 cm", "0.5 cm", "10 cm", "2.5 cm", "1.5 cm"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Diffraction+Pattern"
+        },
+        {
+            pilar: "Algoritma",
+            q: "Urutan langkah (algoritma) yang benar untuk menentukan λ laser dengan kisi adalah: (1) Ukur y, (2) Hitung λ (d.y/L), (3) Cari d dari garis/mm, (4) Ukur L.",
+            options: ["3-4-1-2", "1-2-3-4", "4-1-2-3", "2-3-4-1", "3-1-4-2"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Experimental+Steps"
+        },
+        {
+            pilar: "Dekomposisi",
+            q: "Masalah utama yang harus dipecah (dekomposisi) untuk memahami cara kerja kacamata polaroid anti-silau adalah...",
+            options: ["Cara filter menyerap gelombang arah getar horizontal", "Bahan plastik gagang kacamata", "Harga jual di toko", "Tren warna tahun ini", "Berat kacamata"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Polarizing+Sunglasses"
+        },
+        {
+            pilar: "Pengenalan Pola",
+            q: "Jika cahaya merah diganti biru, jarak antar pita terang menjadi lebih rapat. Pola ini terjadi karena...",
+            options: ["λ biru < λ merah", "Cahaya biru lebih panas", "Biru lebih lambat di udara", "Frekuensi biru lebih rendah", "Intensitas biru lebih besar"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Color+Wavelength"
+        },
+        {
+            pilar: "Algoritma",
+            q: "Berdasarkan Hukum Malus, urutan untuk meredupkan intensitas cahaya menjadi 1/4 I₀ adalah...",
+            options: ["Atur sudut antar sumbu polarisasi 60°", "Atur sudut 45°", "Atur sejajar", "Atur tegak lurus", "Atur sudut 30°"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Malus+Law"
+        },
+        {
+            pilar: "Abstraksi",
+            q: "Dalam menghitung daya urai lensa (Rayleigh), variabel mana yang biasanya diabstraksi (diabaikan)?",
+            options: ["Ketidaksempurnaan permukaan kaca mikroskopis", "Diameter lensa (D)", "Panjang gelombang (λ)", "Jarak benda", "Medium sekitar"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Resolving+Power"
+        },
+        {
+            pilar: "Pengenalan Pola",
+            q: "Jika jarak layar (L) dijauhkan menjadi 2 kali lipat pada kisi difraksi, maka pola jarak antar pita terang (y) adalah...",
+            options: ["Menjadi 2 kali lebih lebar", "Menjadi setengahnya", "Tetap sama", "Garis terang hilang", "Warna berubah"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Screen+Distance+Pattern"
+        },
+        {
+            pilar: "Algoritma",
+            q: "Algoritma pengerjaan yang benar untuk menentukan Sudut Brewster (θp) adalah...",
+            options: ["Cari n -> Gunakan tan θp = n2/n1 -> Hitung θp", "Ukur λ -> Bagi dengan c", "Ukur intensitas -> Kali sudut", "Gunakan c = f.λ", "Jumlahkan n lalu bagi dua"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Brewster+Angle"
+        },
+        {
+            pilar: "Dekomposisi",
+            q: "Membagi pengecekan kegagalan Fiber Optik menjadi: sumber laser, kemurnian core, dan sudut masuk. Ini disebut...",
+            options: ["Dekomposisi", "Abstraksi", "Debugging", "Data Mining", "Enkapsulasi"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=System+Breakdown"
+        },
+        {
+            pilar: "Abstraksi",
+            q: "Menggambar sinar cahaya masuk ke serat optik sebagai garis lurus tunggal mengabaikan (abstraksi)...",
+            options: ["Lebar fisik berkas dan sifat partikel", "Warna cahaya", "Kecepatan cahaya", "Indeks bias", "Sudut kritis"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Ray+Model"
+        },
+        {
+            pilar: "Pengenalan Pola",
+            q: "Pada difraksi celah tunggal, jika lebar celah dipersempit, pola yang muncul adalah...",
+            options: ["Pita terang pusat melebar", "Pita terang pusat menyempit", "Pita pusat hilang", "Intensitas jadi nol", "Muncul pelangi"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Slit+Width+Effect"
+        },
+        {
+            pilar: "Algoritma",
+            q: "Algoritma kerja LCD untuk menampilkan gambar melibatkan...",
+            options: ["Manipulasi arah getar cahaya oleh kristal cair", "Dua polaroid sejajar tanpa kristal", "Cermin cekung fokus", "Lampu pijar depan layar", "Kisi difraksi tinggi"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=LCD+Logic"
+        },
+        {
+            pilar: "Dekomposisi",
+            q: "Proses fisis yang menyusun (dekomposisi) terbentuknya pelangi di langit adalah...",
+            options: ["Refraksi, dispersi, dan refleksi internal", "Polarisasi dan difraksi saja", "Interferensi celah ganda", "Pemantulan baur", "Pembiasan awan"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Rainbow+Physics"
+        },
+        {
+            pilar: "Abstraksi",
+            q: "Menganggap indeks bias ruang hampa tepat 1.00 dalam Hukum Snellius adalah bentuk...",
+            options: ["Abstraksi untuk memudahkan perhitungan", "Dekomposisi cahaya", "Algoritma pembiasan", "Pengenalan pola", "Debugging data"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Index+Refraction+Model"
+        },
+        {
+            pilar: "Pengenalan Pola",
+            q: "Warna gelembung sabun berubah dari merah ke hijau saat menipis menunjukkan pola hubungan antara...",
+            options: ["Tebal lapisan dengan λ yang berinterferensi", "Warna sabun dengan harga", "Tekanan dengan c", "Luas dengan jumlah cahaya", "Air dengan n udara"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Soap+Bubble+Pattern"
+        },
+        {
+            pilar: "Algoritma",
+            q: "Debugging jika percobaan interferensi Young gagal memunculkan garis terang adalah...",
+            options: ["Cek koherensi sumber dan lebar celah", "Ganti layar dengan cermin", "Matikan laser", "Jauhkan layar 100m", "Ubah warna tembok"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Troubleshooting"
+        },
+        {
+            pilar: "Dekomposisi",
+            q: "Analisis daya urai mata manusia melibatkan pemecahan variabel berikut, KECUALI...",
+            options: ["Warna cat mobil", "Diameter pupil", "Jarak antar lampu", "λ lampu", "Jarak mobil"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Eye+Resolution"
+        },
+        {
+            pilar: "Evaluasi",
+            q: "Kesimpulan: Kisi 1000 garis/mm menghasilkan pola lebih lebar dari 500 garis/mm. Evaluasi pernyataan ini:",
+            options: ["Benar, karena d lebih kecil sehingga y lebih besar", "Salah, harusnya d lebih besar", "Benar, karena λ bertambah", "Salah, jumlah garis tidak pengaruh", "Benar, karena energi cahaya naik"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Final+Evaluation"
+        }
+    ];
+
+    let currentIdx = 0;
+    let answered = false;
+    let ctScores = { "Dekomposisi": 0, "Abstraksi": 0, "Pengenalan Pola": 0, "Algoritma": 0, "Evaluasi": 0 };
+
+    function renderQuestion() {
+        answered = false;
+        const data = quizData[currentIdx];
+        
+        document.getElementById("ct-badge").innerText = data.pilar;
+        document.getElementById("q-counter").innerText = `Soal ${currentIdx + 1}/${quizData.length}`;
+        document.getElementById("q-content").innerText = data.q;
+        document.getElementById("q-visual").src = data.img;
+
+        const container = document.getElementById("opt-container");
+        container.innerHTML = "";
+
+        data.options.forEach((txt, i) => {
+            const btn = document.createElement("button");
+            btn.className = "opt-btn";
+            btn.innerHTML = `<b>${String.fromCharCode(65 + i)}.</b> &nbsp; ${txt}`;
+            btn.onclick = () => checkResponse(i);
+            container.appendChild(btn);
+        });
+
+        document.getElementById("next-step").disabled = true;
+    }
+
+    function checkResponse(idx) {
+        if (answered) return;
+        answered = true;
+
+        const correctIdx = quizData[currentIdx].correct;
+        const btns = document.querySelectorAll(".opt-btn");
+
+        if (idx === correctIdx) {
+            btns[idx].classList.add("correct");
+            ctScores[quizData[currentIdx].pilar] += 20; 
+        } else {
+            btns[idx].classList.add("wrong");
+            btns[correctIdx].classList.add("correct");
+        }
+
+        btns.forEach(b => b.classList.add("disabled"));
+        document.getElementById("next-step").disabled = false;
+    }
+
+    document.getElementById("next-step").onclick = () => {
+        currentIdx++;
+        if (currentIdx < quizData.length) {
+            renderQuestion();
+        } else {
+            finalizeQuiz();
+        }
+    };
+
+    async function finalizeQuiz() {
+        const user = localStorage.getItem("username") || "Siswa_SMA_Cahaya";
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwzIL_2ScjfTJT8InR7zsJkkzkYu2UGieDAJZXS_eOx5aI-OOC7wgFpg9gwCjpeTEuQbg/exec';
+
+        Swal.fire({ title: 'Menyimpan Hasil Akhir...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+        const totalScore = Object.values(ctScores).reduce((a, b) => a + b, 0) / 5;
+
+        const payload = {
+            action: "save_ct",
+            username: user,
+            materi: "Gelombang_Cahaya_Final",
+            tipe_tes: "Sumatif CT",
+            dekomposisi: ctScores["Dekomposisi"] || 0,
+            pola: ctScores["Pengenalan Pola"] || 0,
+            abstraksi: ctScores["Abstraksi"] || 0,
+            algoritma: ctScores["Algoritma"] || 0,
+            total: totalScore
+        };
+
+        try {
+            const params = new URLSearchParams(payload).toString();
+            await fetch(`${scriptURL}?${params}`, { method: 'POST', mode: 'no-cors' });
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Tes Selesai!',
+                html: `Skor Rata-rata CT: <b>${totalScore}</b><br>Data telah diekspor.`,
+                confirmButtonText: 'Kembali ke Dashboard'
+            }).then(() => window.location.href = "../../dashboard.html");
+        } catch (err) {
+            window.location.href = "../../dashboard.html";
+        }
+    }
+
+    renderQuestion();
+</script>
+</body>
+</html>

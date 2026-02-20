@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Kemandirian (TTI) | Phi-R</title>
+    <link rel="icon" type="image/png" href="./foto/1.png">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #0055ff;
+            --dark: #06060c;
+            --glass: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at top, #001a33, #06060c);
+            color: white; min-height: 100vh; padding: 20px;
+        }
+
+        .container { max-width: 600px; margin: 0 auto; }
+        
+        .header-tti { text-align: center; margin-bottom: 30px; }
+        .header-tti h1 { color: var(--primary); font-size: 1.5rem; }
+
+        .q-card {
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px; border-radius: 15px; margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .question { margin-bottom: 15px; font-weight: 500; }
+
+        .options { display: flex; justify-content: space-between; gap: 10px; }
+        
+        .option-item { flex: 1; text-align: center; }
+
+        .option-item input { display: none; }
+
+        .option-item label {
+            display: block; padding: 10px; background: rgba(255,255,255,0.05);
+            border-radius: 8px; cursor: pointer; font-size: 0.8rem;
+            border: 1px solid transparent; transition: 0.3s;
+        }
+
+        .option-item input:checked + label {
+            background: var(--secondary); border-color: var(--primary);
+        }
+
+        .btn-kirim {
+            width: 100%; padding: 15px; border-radius: 12px;
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            color: white; border: none; font-weight: bold; cursor: pointer;
+            font-size: 1rem; margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-tti">
+        <h1>Tes Kemandirian Belajar (TTI)</h1>
+        <p>Halo <span id="user-display">Siswa</span>, jawablah sejujurnya untuk menentukan jalur belajarmu.</p>
+    </div>
+
+    <form id="ttiForm">
+        <div id="questions-container"></div>
+        <button type="submit" class="btn-kirim" id="btnSubmit">SIMPAN HASIL TES</button>
+    </form>
+</div>
+
+<script src="./script/tti.js"></script>
+</body>
+</html>

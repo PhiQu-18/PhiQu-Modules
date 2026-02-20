@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phi-R | Post-Test Gelombang Bunyi</title>
+    <link rel="icon" href="../foto/1.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --bg: #f0f2f5;
+            --success: #00b894;
+            --error: #ff7675;
+            --text: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center;
+        }
+
+        .quiz-card {
+            max-width: 800px; width: 100%;
+            background: white; padding: 35px;
+            border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .header-meta {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 25px;
+        }
+
+        .pilar-tag {
+            background: var(--primary); color: white;
+            padding: 6px 16px; border-radius: 50px;
+            font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-info { color: #888; font-weight: 600; font-size: 0.9rem; }
+
+        .img-wrapper {
+            width: 100%; height: 280px;
+            background: #fdfdfd; border-radius: 15px;
+            margin-bottom: 25px; border: 1px solid #eee;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+
+        .img-wrapper img { max-width: 100%; height: 100%; object-fit: contain; }
+
+        .question-box {
+            font-size: 1.1rem; font-weight: 600;
+            line-height: 1.6; color: var(--text);
+            margin-bottom: 25px;
+        }
+
+        .options-grid { display: grid; gap: 12px; }
+
+        .opt-btn {
+            padding: 16px 20px; border: 2px solid #edeff2;
+            border-radius: 12px; cursor: pointer; transition: all 0.2s ease;
+            display: flex; align-items: flex-start; background: none;
+            text-align: left; font-family: inherit; font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .opt-btn:hover:not(.disabled) { border-color: var(--secondary); background: #f9f8ff; }
+        .opt-btn.correct { background: var(--success) !important; color: white !important; border-color: var(--success); }
+        .opt-btn.wrong { background: var(--error) !important; color: white !important; border-color: var(--error); }
+        .opt-btn.disabled { cursor: default; }
+
+        .footer-action {
+            margin-top: 35px; padding-top: 20px;
+            border-top: 1px solid #eee;
+            display: flex; justify-content: flex-end;
+        }
+
+        #next-step {
+            background: var(--primary); color: white; border: none;
+            padding: 14px 45px; border-radius: 12px;
+            font-weight: 600; cursor: pointer; transition: 0.3s;
+        }
+
+        #next-step:disabled { background: #d1d1d1; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-card">
+    <div class="header-meta">
+        <span id="ct-badge" class="pilar-tag">Analisis</span>
+        <div id="q-counter" class="progress-info">Soal 1/20</div>
+    </div>
+
+    <div class="img-wrapper">
+        <img id="q-visual" src="" alt="Ilustrasi Fisika Bunyi">
+    </div>
+
+    <div class="question-box" id="q-content">Memuat soal...</div>
+
+    <div class="options-grid" id="opt-container"></div>
+
+    <div class="footer-action">
+        <button id="next-step" disabled>Lanjut</button>
+    </div>
+</div>
+
+<script>
+    // Data 20 Soal Post-Test Berbasis CT
+    const quizData = [
+        {
+            pilar: "Dekomposisi",
+            q: "Seorang teknisi ingin menganalisis kualitas akustik sebuah aula besar yang bergema. Ia membagi masalah tersebut menjadi pengamatan pantulan dinding, penyerapan oleh audiens, dan pengaruh bentuk plafon. Pilar CT apa yang sedang diterapkan?",
+            options: ["Dekomposisi", "Abstraksi", "Pengenalan Pola", "Algoritma", "Evaluasi"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Akustik+Aula"
+        },
+        {
+            pilar: "Abstraksi",
+            q: "Dalam menghitung cepat rambat bunyi pada gas v = √(γRT/M), variabel manakah yang paling mungkin diabaikan (diabstraksi) jika kita hanya ingin melihat pengaruh suhu terhadap kecepatan?",
+            options: ["Konstanta Laplace (γ) dan Massa Molar (M)", "Suhu Mutlak (T)", "Konstanta Gas (R)", "Waktu tempuh bunyi", "Volume gas"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Rumus+Cepat+Rambat"
+        },
+        {
+            pilar: "Pengenalan Pola",
+            q: "Dawai A (panjang L, freq f), Dawai B (0.5L, 2f), Dawai C (0.25L, 4f). Jika panjang dawai dijadikan 2L berdasarkan pola tersebut, berapakah frekuensinya?",
+            options: ["0.5f", "2f", "4f", "f", "0.25f"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Pola+Dawai"
+        },
+        {
+            pilar: "Algoritma",
+            q: "Urutan langkah yang benar untuk menghitung Taraf Intensitas (TI) dari n buah sumber bunyi identik adalah: (1) Hitung TI_n, (2) Tentukan n, (3) Tentukan TI_1, (4) Tampilkan hasil.",
+            options: ["3 - 2 - 1 - 4", "1 - 2 - 3 - 4", "2 - 3 - 4 - 1", "3 - 1 - 2 - 4", "4 - 3 - 2 - 1"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Logika+TI"
+        },
+        {
+            pilar: "Pengenalan Pola",
+            q: "Pelayangan bunyi terjadi antara dua sumber 440 Hz dan 442 Hz. Jumlah 'detak' per detik yang didengar merupakan representasi dari...",
+            options: ["Selisih frekuensi kedua sumber", "Rata-rata frekuensi", "Jumlah frekuensi", "Amplitudo maksimum", "Cepat rambat bunyi"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Interferensi+Layangan"
+        },
+        {
+            pilar: "Algoritma",
+            q: "Sebuah sistem sonar memancarkan pulsa dan menerima pantulan dalam waktu t. Jika algoritma sistem d = v * t, kesalahan apa yang terjadi?",
+            options: ["Lupa membagi dua karena jarak bolak-balik", "Salah variabel waktu", "Massa jenis air tidak dihitung", "Harusnya v / t", "Mengabaikan frekuensi"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Sonar+Principle"
+        },
+        {
+            pilar: "Abstraksi",
+            q: "Saat mempelajari pipa organa terbuka, kita sering mengabaikan ketebalan dinding pipa. Hal ini dilakukan karena...",
+            options: ["Ketebalan tidak mempengaruhi frekuensi secara signifikan", "Agar diagram estetik", "Dinding tidak bermassa", "Udara tidak menyentuh dinding", "Bahan selalu tipis"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Pipa+Organa"
+        },
+        {
+            pilar: "Pengenalan Pola",
+            q: "Siswa mengamati bahwa tiap kenaikan suhu 1°C, cepat rambat bunyi naik 0,6 m/s. Siswa tersebut melakukan...",
+            options: ["Pengenalan Pola", "Dekomposisi", "Algoritma", "Debugging", "Simulasi"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Grafik+Suhu+dan+Cepat+Rambat"
+        },
+        {
+            pilar: "Dekomposisi",
+            q: "Analisis polusi suara bandara dibagi menjadi: mesin pesawat, desain pembatas, dan vegetasi. Ini contoh...",
+            options: ["Dekomposisi", "Logika Biner", "Algoritma", "Pola Sinkron", "Abstraksi"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Analisis+Polusi+Suara"
+        },
+        {
+            pilar: "Algoritma",
+            q: "Cuplikan kode: IF sumber_mendekat THEN f_p = f_s * (v / (v - v_s)) ELSE f_p = f_s * (v / (v + v_s)). Ini adalah pilar...",
+            options: ["Algoritma", "Dekomposisi", "Abstraksi", "Enkapsulasi", "Iterasi"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Pseudocode+Doppler"
+        },
+        {
+            pilar: "Pengenalan Pola",
+            q: "Pipa organa tertutup nada atas pertama λ=4/3 L, nada atas kedua λ=4/5 L. Pola untuk nada atas ketiga adalah...",
+            options: ["4/7 L", "4/6 L", "4/9 L", "2/3 L", "1/2 L"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Harmonis+Pipa+Tertutup"
+        },
+        {
+            pilar: "Abstraksi",
+            q: "Programmer simulasi bunyi memilih jumlah titik molekul udara agar ringan tapi akurat. Ini adalah...",
+            options: ["Abstraksi", "Algoritma", "Dekomposisi", "Debugging", "Sorting"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Simulasi+Molekul"
+        },
+        {
+            pilar: "Algoritma",
+            q: "Langkah menentukan tanda positif/negatif pada kecepatan sumber Doppler sangat krusial agar...",
+            options: ["Menentukan pergeseran frekuensi naik/turun", "Tampilan berwarna", "Frekuensi sumber berubah", "Menghitung massa jenis", "Mempercepat bunyi"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Rule+of+Signs"
+        },
+        {
+            pilar: "Pengenalan Pola",
+            q: "Musisi menyadari menekan senar di tengah (setengah L) membuat nada naik satu oktav (2f). Pilar CT-nya adalah...",
+            options: ["Pengenalan Pola", "Dekomposisi", "Algoritma", "Abstraksi", "Data Mining"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Octave+Pattern"
+        },
+        {
+            pilar: "Dekomposisi",
+            q: "Resonansi tabung air diurai menjadi: sumber getar, media rambat, dan reflektor air. Ini adalah...",
+            options: ["Dekomposisi", "Algoritma", "Abstraksi", "Debugging", "Pemrograman"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Resonance+Components"
+        },
+        {
+            pilar: "Abstraksi",
+            q: "Menganggap sumber bunyi sebagai titik (point source) dan gelombang berbentuk bola sempurna adalah...",
+            options: ["Abstraksi", "Algoritma", "Dekomposisi", "Pola Sinkron", "Iterasi"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Point+Source+Model"
+        },
+        {
+            pilar: "Algoritma",
+            q: "Urutan manual: Siapkan sumber, ukur r, ukur P, hitung I. Secara komputasi disebut...",
+            options: ["Algoritma", "Abstraksi", "Pola", "Input/Output", "Variabel"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Workflow+Intensity"
+        },
+        {
+            pilar: "Pengenalan Pola",
+            q: "Data: TI jarak 10m = 80dB, jarak 100m = 60dB. Pola pengurangan TI tiap kenaikan jarak 10x adalah...",
+            options: ["20 dB", "10 dB", "40 dB", "5 dB", "80 dB"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Decibel+Pattern"
+        },
+        {
+            pilar: "Abstraksi",
+            q: "Insinyur memasukkan 'koefisien serap material' ke simulasi untuk mewakili sifat fisik dinding. Ini adalah...",
+            options: ["Abstraksi", "Dekomposisi", "Pola", "Algoritma", "Sorting"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Material+Coefficient"
+        },
+        {
+            pilar: "Algoritma",
+            q: "Memperbaiki kesalahan penggunaan massa jenis udara padahal seharusnya air dalam hitungan bunyi disebut...",
+            options: ["Debugging", "Algoritma", "Abstraksi", "Encoding", "Scanning"],
+            correct: 0,
+            img: "https://via.placeholder.com/600x300?text=Fixing+Bugs"
+        }
+    ];
+
+    let currentIndex = 0;
+    let answered = false;
+    let ctScores = { "Dekomposisi": 0, "Abstraksi": 0, "Pengenalan Pola": 0, "Algoritma": 0 };
+
+    function renderQuestion() {
+        answered = false;
+        const data = quizData[currentIndex];
+        
+        document.getElementById("ct-badge").innerText = data.pilar;
+        document.getElementById("q-counter").innerText = `Soal ${currentIndex + 1}/${quizData.length}`;
+        document.getElementById("q-content").innerText = data.q;
+        document.getElementById("q-visual").src = data.img;
+
+        const container = document.getElementById("opt-container");
+        container.innerHTML = "";
+
+        data.options.forEach((txt, i) => {
+            const btn = document.createElement("button");
+            btn.className = "opt-btn";
+            btn.innerHTML = `<b>${String.fromCharCode(65 + i)}.</b> &nbsp; ${txt}`;
+            btn.onclick = () => checkResponse(i);
+            container.appendChild(btn);
+        });
+
+        document.getElementById("next-step").disabled = true;
+    }
+
+    function checkResponse(idx) {
+        if (answered) return;
+        answered = true;
+
+        const correctIdx = quizData[currentIndex].correct;
+        const btns = document.querySelectorAll(".opt-btn");
+
+        if (idx === correctIdx) {
+            btns[idx].classList.add("correct");
+            ctScores[quizData[currentIndex].pilar] += 20; 
+        } else {
+            btns[idx].classList.add("wrong");
+            btns[correctIdx].classList.add("correct");
+        }
+
+        btns.forEach(b => b.classList.add("disabled"));
+        document.getElementById("next-step").disabled = false;
+    }
+
+    document.getElementById("next-step").onclick = () => {
+        currentIndex++;
+        if (currentIndex < quizData.length) {
+            renderQuestion();
+        } else {
+            finalizeQuiz();
+        }
+    };
+
+    async function finalizeQuiz() {
+        const user = localStorage.getItem("username") || "Siswa_SMA";
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwzIL_2ScjfTJT8InR7zsJkkzkYu2UGieDAJZXS_eOx5aI-OOC7wgFpg9gwCjpeTEuQbg/exec';
+
+        Swal.fire({ 
+            title: 'Menganalisis Hasil...', 
+            allowOutsideClick: false, 
+            didOpen: () => Swal.showLoading() 
+        });
+
+        const totalScore = (ctScores["Dekomposisi"] + ctScores["Abstraksi"] + ctScores["Pengenalan Pola"] + ctScores["Algoritma"]) / 4;
+
+        const payload = {
+            action: "save_ct",
+            username: user,
+            materi: "Gelombang_Bunyi_Final",
+            tipe_tes: "Sumatif CT",
+            dekomposisi: ctScores["Dekomposisi"],
+            pola: ctScores["Pengenalan Pola"],
+            abstraksi: ctScores["Abstraksi"],
+            algoritma: ctScores["Algoritma"],
+            total: totalScore
+        };
+
+        try {
+            const params = new URLSearchParams(payload).toString();
+            await fetch(`${scriptURL}?${params}`, { method: 'POST', mode: 'no-cors' });
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Tes Selesai!',
+                html: `Rata-rata Skor CT: <b>${totalScore}</b><br><br>
+                       Dekomposisi: ${ctScores["Dekomposisi"]}<br>
+                       Pola: ${ctScores["Pengenalan Pola"]}<br>
+                       Abstraksi: ${ctScores["Abstraksi"]}<br>
+                       Algoritma: ${ctScores["Algoritma"]}`,
+                confirmButtonText: 'Kembali ke Dashboard'
+            }).then(() => window.location.href = "../../dashboard.html");
+        } catch (err) {
+            window.location.href = "../../dashboard.html";
+        }
+    }
+
+    // Jalankan Soal Pertama
+    renderQuestion();
+</script>
+</body>
+</html>

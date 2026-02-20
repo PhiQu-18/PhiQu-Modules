@@ -1,0 +1,3 @@
+simulasi (dibagian ini yang memiliki ATI dan TTI rendah akan diberikan hint atau petunjuk langsung dan dengan petunjuk yang sangat jelas. jika siswa memiliki ATI dan TTI tinggi maka petunjuk akan muncul setelah lima kali percobaan dengan petunjuk yang terstruktur. jika salah satu tinggi dan rendah, maka petunjuk akan muncul setelah 2 kali percobaan dengan penjelasan yang jelas),
+kemudian setelah simulasi ada soal khusus tentang materi gelombang dasarnya (dibagian ini juga berlaku proses hint atau petunjuk yang sebelumnya).
+rangkuman dan tombol menuju halaman tertentu

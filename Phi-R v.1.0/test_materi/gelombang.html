@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phi-R | Tes Akhir Gelombang CT</title>
+    <link rel="icon" href="../foto/1.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0984e3;
+            --success: #00b894;
+            --error: #d63031;
+            --bg: #f5f6fa;
+            --dark: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            color: var(--dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #dfe6e9;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        #progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .pilar-tag {
+            display: inline-block;
+            background: #e1f5fe;
+            color: #0288d1;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .opt-btn {
+            padding: 15px;
+            border: 2px solid #dfe6e9;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+
+        .opt-btn:hover:not([disabled]) {
+            border-color: var(--primary);
+            background: #f0f7ff;
+        }
+
+        .footer {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #next-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        #next-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="header">
+        <h2>Tes Akhir: Karakteristik Gelombang</h2>
+        <p id="question-number">Soal 1 dari 20</p>
+    </div>
+
+    <div class="progress-container">
+        <div id="progress-fill"></div>
+    </div>
+
+    <div id="quiz-content">
+        <div id="pilar-label" class="pilar-tag">Abstraksi</div>
+        <div class="question-text" id="question-display">Memuat soal...</div>
+        <div class="options-grid" id="options-display"></div>
+    </div>
+
+    <div class="footer">
+        <span id="score-temp"></span>
+        <button id="next-btn" disabled>Lanjut</button>
+    </div>
+</div>
+
+<script>
+    // DATA SOAL (20 SOAL)
+    const questions = [
+        { pilar: "abstraksi", q: "Karakteristik mendasar yang mendefinisikan gelombang adalah perambatan...", opt: ["Massa medium secara permanen", "Energi tanpa perpindahan massa permanen", "Warna pada medium", "Bunyi di ruang hampa", "Kecepatan yang selalu konstan"], ans: 1 },
+        { pilar: "dekomposisi", q: "Untuk menghitung frekuensi, komponen terkecil yang diamati adalah...", opt: ["Panjang total tali", "Warna tali", "Jumlah getaran per satuan waktu", "Amplitudo maksimum", "Jarak antar puncak"], ans: 2 },
+        { pilar: "pola", q: "Jika frekuensi naik 2x pada medium yang sama, maka panjang gelombang akan...", opt: ["Tetap", "Menjadi 2x lipat", "Menjadi 1/2 kali semula", "Menjadi 4x lipat", "Hilang"], ans: 2 },
+        { pilar: "algoritma", q: "Langkah logis mencari periode (T) jika diketahui frekuensi (f) adalah...", opt: ["T = f x v", "T = 1 / f", "T = f^2", "T = f - lambda", "T = f + A"], ans: 1 },
+        { pilar: "abstraksi", q: "Mengabaikan gesekan udara dalam perhitungan dasar disebut teknik...", opt: ["Dekomposisi", "Abstraksi", "Algoritma", "Pengenalan Pola", "Distorsi"], ans: 1 },
+        { pilar: "dekomposisi", q: "Interferensi gelombang dianalisis dengan menjumlahkan...", opt: ["Waktu", "Simpangan (Posisi vertikal)", "Panjang tali", "Volume suara", "Warna"], ans: 1 },
+        { pilar: "pola", q: "Cahaya masuk ke air, lambda memendek, f tetap. Ini artinya kecepatan cahaya di air...", opt: ["Lebih besar dari udara", "Lebih kecil dari udara", "Sama dengan udara", "Menjadi nol", "Tak terhingga"], ans: 1 },
+        { pilar: "algoritma", q: "Urutan animasi gelombang: Update posisi -> Hapus layar -> Gambar baru. Ini adalah pilar...", opt: ["Abstraksi", "Dekomposisi", "Algoritma", "Pola", "Visualisasi"], ans: 2 },
+        { pilar: "abstraksi", q: "Sumbu Y pada grafik gelombang secara abstrak mewakili...", opt: ["Waktu", "Suhu", "Simpangan", "Ketebalan", "Harga"], ans: 2 },
+        { pilar: "dekomposisi", q: "Mengurai gelombang kompleks menjadi sinus sederhana disebut Analisis...", opt: ["Pembulatan", "Fourier", "Gauss", "Genetik", "Biologis"], ans: 1 },
+        { pilar: "pola", q: "Efek Doppler: Sumber mendekat, suara terdengar lebih tinggi karena...", opt: ["Lambda merenggang", "Energi bertambah", "Penerimaan gelombang lebih rapat", "Kecepatan bunyi naik", "Amplitudo berubah"], ans: 2 },
+        { pilar: "algoritma", q: "Rumus algoritma mencari v jika diketahui jarak (s) dan waktu (t) adalah...", opt: ["s - t", "s * t", "s / t", "t / s", "s + t"], ans: 2 },
+        { pilar: "abstraksi", q: "Dalam gelombang stasioner, kita menganggap ujung kaku sempurna. Ini pilar...", opt: ["Pola", "Dekomposisi", "Abstraksi", "Algoritma", "Refleksi"], ans: 2 },
+        { pilar: "dekomposisi", q: "Gelombang longitudinal diurai menjadi area...", opt: ["Atas dan Bawah", "Rapatan dan Renggangan", "Panas dan Dingin", "Padat dan Cair", "Bukit dan Lembah"], ans: 1 },
+        { pilar: "pola", q: "Memperbesar amplitudo speaker akan mengubah...", opt: ["Jarak antar puncak", "Jumlah gelombang per detik", "Tinggi/rendah simpangan", "Bentuk dasar garis", "Warna suara"], ans: 2 },
+        { pilar: "algoritma", q: "Algoritma mencari lambda (panjang gelombang) jika diketahui v dan T adalah...", opt: ["v / T", "v * T", "T / v", "v + T", "sqrt(v*T)"], ans: 1 },
+        { pilar: "abstraksi", q: "Developer game mengabaikan riak air mikro untuk optimasi. Ini pilar...", opt: ["Dekomposisi", "Pola", "Algoritma", "Abstraksi", "Simulasi"], ans: 3 },
+        { pilar: "dekomposisi", q: "Membedakan transversal/longitudinal dilihat dari hubungan...", opt: ["Arah getar dan arah rambat", "Massa dan Volume", "Warna dan Cahaya", "Amplitudo dan Frekuensi", "Jarak dan Dinding"], ans: 0 },
+        { pilar: "pola", q: "Pelangi membuktikan cahaya matahari adalah gelombang...", opt: ["Monokromatik", "Polikromatik", "Longitudinal", "Tanpa bias", "Partikel padat"], ans: 1 },
+        { pilar: "algoritma", q: "Menurunkan nada 1 oktav (f jadi setengah) berarti periode (T) harus...", opt: ["Tetap", "Dijadikan 2x lipat", "Dikurangi 50%", "Dimatikan", "Diubah kecepatannya"], ans: 1 }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+    let ctResults = { dekomposisi: 0, pola: 0, abstraksi: 0, algoritma: 0 };
+    let counts = { dekomposisi: 0, pola: 0, abstraksi: 0, algoritma: 0 };
+
+    // Hitung jumlah soal per pilar untuk normalisasi nilai
+    questions.forEach(q => counts[q.pilar]++);
+
+    function loadQuestion() {
+        const q = questions[currentIdx];
+        document.getElementById("question-number").innerText = `Soal ${currentIdx + 1} dari ${questions.length}`;
+        document.getElementById("progress-fill").style.width = `${((currentIdx + 1) / questions.length) * 100}%`;
+        document.getElementById("pilar-label").innerText = q.pilar;
+        document.getElementById("question-display").innerText = q.q;
+        
+        const optCont = document.getElementById("options-display");
+        optCont.innerHTML = "";
+        q.opt.forEach((o, i) => {
+            const btn = document.createElement("button");
+            btn.className = "opt-btn";
+            btn.innerText = o;
+            btn.onclick = () => checkAnswer(i);
+            optCont.appendChild(btn);
+        });
+        document.getElementById("next-btn").disabled = true;
+    }
+
+    function checkAnswer(selected) {
+        const q = questions[currentIdx];
+        const buttons = document.querySelectorAll(".opt-btn");
+        
+        if (selected === q.ans) {
+            score++;
+            ctResults[q.pilar] += (100 / counts[q.pilar]); // Beri poin sesuai porsi soal
+            buttons[selected].style.backgroundColor = "#00b894";
+            buttons[selected].style.color = "white";
+        } else {
+            buttons[selected].style.backgroundColor = "#ff7675";
+            buttons[selected].style.color = "white";
+            buttons[q.ans].style.backgroundColor = "#00b894";
+            buttons[q.ans].style.color = "white";
+        }
+
+        buttons.forEach(b => b.disabled = true);
+        document.getElementById("next-btn").disabled = false;
+    }
+
+    document.getElementById("next-btn").onclick = () => {
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            loadQuestion();
+        } else {
+            finishQuiz();
+        }
+    };
+
+    async function finishQuiz() {
+        const finalScore = (score / questions.length) * 100;
+        const activeUser = localStorage.getItem("username") || "Siswa_Offline";
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwzIL_2ScjfTJT8InR7zsJkkzkYu2UGieDAJZXS_eOx5aI-OOC7wgFpg9gwCjpeTEuQbg/exec'; // Masukkan URL yang tadi di Deploy
+
+        Swal.fire({ title: "Menyimpan Hasil...", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+        const payload = {
+            action: "save_ct",
+            username: activeUser,
+            materi: "Gelombang_Final",
+            tipe_tes: "Sumatif Akhir",
+            dekomposisi: Math.round(ctResults.dekomposisi),
+            pola: Math.round(ctResults.pola),
+            abstraksi: Math.round(ctResults.abstraksi),
+            algoritma: Math.round(ctResults.algoritma),
+            total: finalScore
+        };
+
+        const queryString = new URLSearchParams(payload).toString();
+        try {
+            await fetch(`${scriptURL}?${queryString}`, { method: 'POST', mode: 'no-cors' });
+            Swal.fire("Selesai!", `Skor Akhir: ${finalScore.toFixed(1)}`, "success")
+            .then(() => window.location.href = "../../dashboard.html");
+        } catch (e) {
+            window.location.href = "../../dashboard.html";
+        }
+    }
+
+    loadQuestion();
+</script>
+</body>
+</html>

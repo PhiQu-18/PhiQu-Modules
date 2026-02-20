@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phi-R | Tes Awal Gelombang Cahaya</title>
+    <link rel="icon" href="../foto/1.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0984e3;
+            --secondary: #74b9ff;
+            --bg: #f5f6fa;
+            --success: #00b894;
+            --error: #d63031;
+            --dark: #2d3436;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center;
+        }
+
+        .quiz-card {
+            max-width: 750px; width: 100%;
+            background: white; padding: 30px;
+            border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .header-box {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 20px;
+        }
+
+        .pilar-badge {
+            background: var(--primary); color: white;
+            padding: 5px 15px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 600; text-transform: uppercase;
+        }
+
+        .img-container {
+            width: 100%; height: 250px;
+            background: #f9f9f9; border-radius: 12px;
+            margin: 20px 0; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid #eee;
+        }
+
+        .img-container img { max-width: 100%; height: 100%; object-fit: contain; }
+
+        .question-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; color: var(--dark); }
+
+        .options-list { display: grid; gap: 12px; }
+
+        .option-item {
+            padding: 15px; border: 2px solid #edeff2;
+            border-radius: 12px; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; font-size: 0.95rem;
+            color: var(--dark);
+        }
+
+        .option-item:hover:not(.locked) { border-color: var(--primary); background: #f0f7ff; }
+        .option-item.correct { background: var(--success) !important; color: white !important; border-color: var(--success); }
+        .option-item.wrong { background: var(--error) !important; color: white !important; border-color: var(--error); }
+        .option-item.locked { cursor: default; }
+
+        .footer {
+            margin-top: 30px; padding-top: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-top: 1px solid #eee;
+        }
+
+        #btn-next {
+            background: var(--primary); color: white; border: none;
+            padding: 12px 35px; border-radius: 10px; cursor: pointer;
+            font-weight: 600; transition: 0.3s;
+        }
+
+        #btn-next:disabled { background: #ccc; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-card">
+    <div class="header-box">
+        <span id="pilar-display" class="pilar-badge">Pilar</span>
+        <div id="progress-text" style="color: #888; font-weight: 600;">Soal 1/5</div>
+    </div>
+
+    <div class="img-container">
+        <img id="q-image" src="" alt="Ilustrasi Gelombang Cahaya">
+    </div>
+
+    <div class="question-text" id="q-text">Memuat pertanyaan...</div>
+
+    <div class="options-list" id="options-cont"></div>
+
+    <div class="footer">
+        <div style="font-size: 0.8rem; color: #888;">Materi: Gelombang Cahaya</div>
+        <button id="btn-next" disabled>Lanjut</button>
+    </div>
+</div>
+
+<script src="../script_tantangan/cahaya.js"></script>
+</body>
+</html>

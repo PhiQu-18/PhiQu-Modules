@@ -1,0 +1,645 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<div class="swiper-slide lab-mobile-fit">
+    <div class="lab-wrapper">
+        
+        <div class="mission-stripe">
+            <div class="m-text">
+                <span class="m-tag">MISI</span>
+                <p>Gelombang <b>Energi Tinggi</b> & <b>Lambat</b></p>
+            </div>
+            <button class="m-hint" onclick="showHint()">?</button>
+        </div>
+
+        <div class="screen-container">
+            <canvas id="logicCanvas"></canvas>
+            <div id="status-msg">Siapkan Komponen...</div>
+        </div>
+
+        <div class="drop-grid">
+            <div class="slot" id="drop-type" ondrop="drop(event)" ondragover="allowDrop(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">
+                <span class="s-hint">JENIS</span>
+            </div>
+            <div class="slot" id="drop-amp" ondrop="drop(event)" ondragover="allowDrop(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">
+                <span class="s-hint">AMP</span>
+            </div>
+            <div class="slot" id="drop-freq" ondrop="drop(event)" ondragover="allowDrop(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">
+                <span class="s-hint">FREQ</span>
+            </div>
+            <div class="slot" id="drop-wave" ondrop="drop(event)" ondragover="allowDrop(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">
+                <span class="s-hint">λ</span>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="run-btn" onclick="runSimulation()">PLAY SIMULASI</button>
+            <button class="reset-btn" onclick="resetLogic()">↻</button>
+        </div>
+
+        <div class="inventory-grid">
+            <div class="inv-group">
+                <label>JENIS</label>
+                <div class="chip-wrap">
+                    <div class="chip c-blue" draggable="true" ondragstart="drag(event)" id="t-trans" data-type="type" data-val="transversal" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">Transversal</div>
+                    <div class="chip c-blue" draggable="true" ondragstart="drag(event)" id="t-long" data-type="type" data-val="longitudinal" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">Longitudinal</div>
+                </div>
+            </div>
+            <div class="inv-group">
+                <label>AMP</label>
+                <div class="chip-wrap">
+                    <div class="chip c-purple" draggable="true" ondragstart="drag(event)" id="a-high" data-type="amp" data-val="50" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">Tinggi</div>
+                    <div class="chip c-purple" draggable="true" ondragstart="drag(event)" id="a-low" data-type="amp" data-val="12" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">Rendah</div>
+                </div>
+            </div>
+            <div class="inv-group">
+                <label>FREQ</label>
+                <div class="chip-wrap">
+                    <div class="chip c-pink" draggable="true" ondragstart="drag(event)" id="f-fast" data-type="freq" data-val="0.12" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">Cepat</div>
+                    <div class="chip c-pink" draggable="true" ondragstart="drag(event)" id="f-slow" data-type="freq" data-val="0.04" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">Lambat</div>
+                </div>
+            </div>
+            <div class="inv-group">
+                <label>λ</label>
+                <div class="chip-wrap">
+                    <div class="chip c-orange" draggable="true" ondragstart="drag(event)" id="w-long" data-type="wave" data-val="0.02" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">Panjang</div>
+                    <div class="chip c-orange" draggable="true" ondragstart="drag(event)" id="w-short" data-type="wave" data-val="0.08" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">Pendek</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Touch Drag Element (Hidden by default) -->
+<div id="touch-drag-element" class="touch-drag-element"></div>
+
+<style>
+    /* Meta viewport sudah ditambahkan di atas untuk scalabilitas mobile yang tepat */
+    
+    /* Hapus putih edges/borders */
+    html, body { 
+        margin: 0; 
+        padding: 0; 
+        background: #020617;
+        overflow: hidden;
+    }
+    
+    /* Gunakan vh (Viewport Height) untuk mengunci tinggi agar pas satu layar HP */
+    .lab-mobile-fit { 
+        background: #020617; 
+        height: 100vh; /* Kunci tinggi tepat satu layar */
+        height: 100dvh; /* Dynamic viewport height untuk mobile */
+        width: 100%;
+        display: flex; 
+        flex-direction: column; 
+        padding: 8px; /* Padding lebih kecil agar tidak sempit */
+        padding: env(safe-area-inset-top, 8px) env(safe-area-inset-right, 8px) env(safe-area-inset-bottom, 8px) env(safe-area-inset-left, 8px);
+        box-sizing: border-box;
+        overflow: hidden; /* Hilangkan scroll luar */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .lab-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%; /* Isi penuh 100vh */
+        gap: 6px; /* Jarak antar elemen lebih rapat */
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Mission: Lebih ramping */
+    .mission-stripe {
+        background: rgba(30, 41, 59, 0.8);
+        padding: 6px 12px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid #1e293b;
+        flex-shrink: 0; /* Jangan biarkan mengecil */
+    }
+    .m-tag { font-size: 0.55rem; font-weight: 900; color: #38bdf8; display: block; }
+    .m-text p { font-size: 0.75rem; color: #f1f5f9; margin: 0; }
+    .m-hint { 
+        width: 28px; 
+        height: 28px; 
+        border-radius: 50%; 
+        background: #eab308; 
+        border: none; 
+        font-size: 0.8rem; 
+        font-weight: bold;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .m-hint:active { transform: scale(0.95); }
+
+    /* Canvas Monitor: Dibuat lebih kecil */
+    .screen-container {
+        flex: 0 0 35%; /* Tinggi tetap 35% dari container */
+        background: #000;
+        border-radius: 8px;
+        border: 1px solid #334155;
+        position: relative;
+        overflow: hidden;
+        min-height: 80px;
+        max-height: 35%;
+    }
+    #logicCanvas { 
+        width: 100%; 
+        height: 100%; 
+        display: block; /* Diubah dari none agar canvas terlihat */
+    }
+    #status-msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #475569; font-size: 0.7rem; width: 100%; text-align: center; }
+
+    /* Area Rakit: Slot diperpendek tingginya */
+    .drop-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        flex-shrink: 0;
+    }
+    .slot {
+        background: rgba(255,255,255,0.02);
+        border: 1.5px dashed #475569;
+        border-radius: 10px;
+        height: 45px; /* Lebih pendek dari sebelumnya */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: background-color 0.2s, border-color 0.2s;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .slot.drag-over {
+        background: rgba(16, 185, 129, 0.2);
+        border-color: #10b981;
+        border-style: solid;
+    }
+    .s-hint { font-size: 0.55rem; color: #475569; font-weight: 800; }
+    .slot .chip { width: 100%; height: 100%; margin: 0; font-size: 0.65rem; }
+
+    /* Tombol Utama */
+    .action-bar { display: flex; gap: 6px; flex-shrink: 0; }
+    .run-btn { 
+        flex: 1; 
+        background: #10b981; 
+        border: none; 
+        color: white; 
+        font-weight: 800; 
+        border-radius: 10px; 
+        height: 42px; 
+        font-size: 0.85rem;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 0.1s, background-color 0.2s;
+    }
+    .run-btn:active { transform: scale(0.96); background: #059669; }
+    .run-btn:disabled { background: #374151; color: #6b7280; }
+    
+    .reset-btn { 
+        width: 42px; 
+        background: #ef4444; 
+        border: none; 
+        border-radius: 10px; 
+        color: white; 
+        font-size: 1rem;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 0.1s;
+    }
+    .reset-btn:active { transform: scale(0.95); }
+
+    /* Inventory: 2 Baris ke Bawah (Grid) */
+    .inventory-grid {
+        background: #0f172a;
+        padding: 8px;
+        border-radius: 8px;
+        flex-shrink: 0;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 2 kolom */
+        gap: 8px;
+        margin-bottom: 4px;
+    }
+    .inv-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .inv-group label { font-size: 0.5rem; color: #64748b; font-weight: 800; display: block; margin-bottom: 4px; text-transform: uppercase; }
+    .chip-wrap { display: flex; gap: 4px; }
+    
+    .chip { 
+        padding: 8px 12px; 
+        border-radius: 6px; 
+        color: white; 
+        font-weight: 700; 
+        font-size: 0.65rem; 
+        white-space: nowrap; 
+        cursor: grab;
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 0.1s, opacity 0.2s;
+    }
+    .chip:active { transform: scale(1.05); }
+    .chip.dragging { opacity: 0.5; }
+    
+    .c-blue { background: #2563eb; }
+    .c-purple { background: #7c3aed; }
+    .c-pink { background: #db2777; }
+    .c-orange { background: #ea580c; }
+
+    /* Touch Drag Element - untuk mobile drag and drop */
+    .touch-drag-element {
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(1.1);
+        padding: 8px 12px;
+        border-radius: 6px;
+        color: white;
+        font-weight: 700;
+        font-size: 0.65rem;
+        white-space: nowrap;
+        display: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    .touch-drag-element.c-blue { background: #2563eb; }
+    .touch-drag-element.c-purple { background: #7c3aed; }
+    .touch-drag-element.c-pink { background: #db2777; }
+    .touch-drag-element.c-orange { background: #ea580c; }
+
+    /* Sembunyikan Scrollbar tapi tetap bisa scroll */
+    .inventory-scroll::-webkit-scrollbar { height: 2px; }
+    .inventory-scroll::-webkit-scrollbar-thumb { background: #334155; }
+    
+    /* Media Queries untuk layar sangat kecil */
+    @media (max-height: 500px) {
+        .lab-wrapper { gap: 4px; }
+        .mission-stripe { padding: 4px 8px; }
+        .m-text p { font-size: 0.65rem; }
+        .slot { height: 38px; }
+        .run-btn { height: 36px; font-size: 0.75rem; }
+        .reset-btn { width: 36px; height: 36px; }
+        .inventory-scroll { padding: 6px 8px; }
+        .chip { padding: 6px 10px; font-size: 0.6rem; }
+    }
+    
+    /* Media Queries untuk orientation landscape di mobile */
+    @media (orientation: landscape) and (max-height: 500px) {
+        .lab-mobile-fit { 
+            height: 100vh; 
+            padding: 4px;
+        }
+        .mission-stripe { padding: 3px 6px; }
+        .m-text p { font-size: 0.6rem; }
+        .m-tag { font-size: 0.45rem; }
+        .slot { height: 35px; }
+        .run-btn { height: 32px; font-size: 0.7rem; }
+        .reset-btn { width: 32px; height: 32px; }
+        .chip { padding: 5px 8px; font-size: 0.55rem; }
+        .inv-group label { font-size: 0.4rem; }
+    }
+
+    /* Preven scroll saat touch pada elemen tertentu */
+    .chip, .slot, .run-btn, .reset-btn, .m-hint {
+        touch-action: manipulation;
+    }
+</style>
+
+<script>
+    // Variabel untuk touch drag
+    let touchDragElement = null;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let currentDragData = null;
+    let currentTouchElement = null;
+
+    // Touch event handlers untuk mobile drag and drop
+    function handleTouchStart(event) {
+        event.preventDefault();
+        const touch = event.touches[0];
+        const target = event.currentTarget;
+        
+        currentTouchElement = target;
+        currentDragData = {
+            type: target.dataset.type,
+            val: target.dataset.val,
+            className: target.className
+        };
+        
+        // Clone element untuk drag visual
+        touchDragElement = document.getElementById('touch-drag-element');
+        touchDragElement.textContent = target.textContent;
+        touchDragElement.className = 'touch-drag-element ' + 
+            (target.classList.contains('c-blue') ? 'c-blue' : 
+             target.classList.contains('c-purple') ? 'c-purple' :
+             target.classList.contains('c-pink') ? 'c-pink' :
+             target.classList.contains('c-orange') ? 'c-orange' : '');
+        touchDragElement.style.display = 'block';
+        touchDragElement.style.left = touch.clientX + 'px';
+        touchDragElement.style.top = touch.clientY + 'px';
+        
+        // Add dragging class
+        target.classList.add('dragging');
+        
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+    }
+
+    function handleTouchMove(event) {
+        event.preventDefault();
+        if (!touchDragElement || !currentDragData) return;
+        
+        const touch = event.touches[0];
+        touchDragElement.style.left = touch.clientX + 'px';
+        touchDragElement.style.top = touch.clientY + 'px';
+        
+        // Check if over a slot
+        const elementsUnder = document.elementsFromPoint(touch.clientX, touch.clientY);
+        const slot = elementsUnder.find(el => el.classList.contains('slot'));
+        
+        // Remove drag-over from all slots
+        document.querySelectorAll('.slot').forEach(s => s.classList.remove('drag-over'));
+        
+        // Add drag-over to current slot
+        if (slot) {
+            slot.classList.add('drag-over');
+        }
+    }
+
+    function handleTouchEnd(event) {
+        event.preventDefault();
+        if (!currentTouchElement || !currentDragData) return;
+        
+        // Get final position
+        const touch = event.changedTouches[0];
+        const elementsUnder = document.documentElement.elementsFromPoint(touch.clientX, touch.clientY);
+        const slot = elementsUnder.find(el => el.classList.contains('slot'));
+        
+        if (slot) {
+            // Check if slot accepts this type
+            const slotType = slot.id.replace('drop-', '');
+            if (slotType === currentDragData.type || (currentDragData.type === 'type' && slotType === 'type')) {
+                // Remove existing chip in slot if any
+                const existingChip = slot.querySelector('.chip');
+                if (existingChip) {
+                    existingChip.remove();
+                }
+                
+                // Create new chip in slot
+                const newChip = document.createElement('div');
+                newChip.className = 'chip ' + 
+                    (currentDragData.className.includes('c-blue') ? 'c-blue' : 
+                     currentDragData.className.includes('c-purple') ? 'c-purple' :
+                     currentDragData.className.includes('c-pink') ? 'c-pink' :
+                     currentDragData.className.includes('c-orange') ? 'c-orange' : '');
+                newChip.textContent = currentTouchElement.textContent;
+                newChip.dataset.type = currentDragData.type;
+                newChip.dataset.val = currentDragData.val;
+                
+                // Clear hint
+                const hint = slot.querySelector('.s-hint');
+                if (hint) hint.style.display = 'none';
+                
+                slot.appendChild(newChip);
+            }
+        }
+        
+        // Reset
+        if (currentTouchElement) {
+            currentTouchElement.classList.remove('dragging');
+        }
+        
+        if (touchDragElement) {
+            touchDragElement.style.display = 'none';
+        }
+        
+        // Remove all drag-over classes
+        document.querySelectorAll('.slot').forEach(s => s.classList.remove('drag-over'));
+        
+        currentDragData = null;
+        currentTouchElement = null;
+    }
+
+    // Fungsi-fungsi yang sudah ada (dari kode asli)
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        var draggedElement = document.getElementById(data);
+        
+        // Find the slot
+        var target = ev.target;
+        while (target && !target.classList.contains('slot')) {
+            target = target.parentElement;
+        }
+        
+        if (target) {
+            // Check if slot accepts this type
+            var slotType = target.id.replace('drop-', '');
+            var chipType = draggedElement.dataset.type;
+            
+            if (slotType === chipType || (chipType === 'type' && slotType === 'type')) {
+                // Remove existing chip
+                var existingChip = target.querySelector('.chip');
+                if (existingChip) {
+                    existingChip.remove();
+                }
+                
+                // Clone the chip
+                var clone = draggedElement.cloneNode(true);
+                clone.id = data + '_dropped';
+                
+                // Hide hint
+                var hint = target.querySelector('.s-hint');
+                if (hint) hint.style.display = 'none';
+                
+                target.appendChild(clone);
+            }
+        }
+    }
+
+    // Placeholder functions (should be defined in external script)
+    function showHint() {
+        console.log('Show hint clicked');
+    }
+
+    // Variabel simulasi
+    let animationId = null;
+    let simTime = 0;
+    
+    function runSimulation() {
+        // Dapatkan nilai dari slot
+        const typeSlot = document.getElementById('drop-type');
+        const ampSlot = document.getElementById('drop-amp');
+        const freqSlot = document.getElementById('drop-freq');
+        const waveSlot = document.getElementById('drop-wave');
+        
+        const typeChip = typeSlot.querySelector('.chip');
+        const ampChip = ampSlot.querySelector('.chip');
+        const freqChip = freqSlot.querySelector('.chip');
+        const waveChip = waveSlot.querySelector('.chip');
+        
+        // Validasi - semua slot harus terisi
+        if (!typeChip || !ampChip || !freqChip || !waveChip) {
+            document.getElementById('status-msg').textContent = 'Isi semua komponen terlebih dahulu!';
+            document.getElementById('status-msg').style.display = 'block';
+            return;
+        }
+        
+        // Ambil nilai
+        const waveType = typeChip.dataset.val; // transversal atau longitudinal
+        const amplitude = parseInt(ampChip.dataset.val);
+        const frequency = parseFloat(freqChip.dataset.val);
+        const wavelength = parseFloat(waveChip.dataset.val);
+        
+        // Mulai simulasi
+        document.getElementById('status-msg').style.display = 'none';
+        simTime = 0;
+        
+        const canvas = document.getElementById('logicCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Hentikan animasi sebelumnya
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+        }
+        
+        function animate() {
+            const w = canvas.width;
+            const h = canvas.height;
+            const centerY = h / 2;
+            
+            // Clear canvas
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, w, h);
+            
+            // Gambar grid
+            ctx.strokeStyle = '#1a1a2e';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < w; i += 30) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, h);
+                ctx.stroke();
+            }
+            for (let i = 0; i < h; i += 30) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(w, i);
+                ctx.stroke();
+            }
+            
+            // Gambar gelombang
+            ctx.beginPath();
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 3;
+            
+            const points = [];
+            for (let x = 0; x < w; x++) {
+                // Rumus gelombang: y = A * sin(2πft - 2πx/λ)
+                const phase = (2 * Math.PI * x / (wavelength * 500)) - (2 * Math.PI * frequency * simTime * 0.1);
+                let y;
+                
+                if (waveType === 'transversal') {
+                    // Gelombang transversal - osilasi tegak lurus arah rambat
+                    y = centerY + amplitude * Math.sin(phase);
+                } else {
+                    // Gelombang longitudinal - osilasi sejajar arah rambat
+                    // Tampilkan sebagai osilasi partikel
+                    const particleSpacing = 20;
+                    const particleIndex = Math.floor(x / particleSpacing);
+                    const offset = amplitude * 0.5 * Math.sin(phase);
+                    const particleX = particleIndex * particleSpacing + offset;
+                    
+                    // Gambar partikel
+                    if (x === 0 || Math.abs(x - particleIndex * particleSpacing) < 2) {
+                        points.push({x: particleX, y: centerY});
+                    }
+                }
+                
+                if (waveType === 'transversal') {
+                    ctx.lineTo(x, y);
+                }
+            }
+            
+            if (waveType === 'transversal') {
+                ctx.stroke();
+            } else {
+                // Untuk longitudinal, gambar partikel-partikel
+                ctx.fillStyle = '#00ff88';
+                for (let i = 0; i < w / 20; i++) {
+                    const phase = (2 * Math.PI * (i * 20) / (wavelength * 500)) - (2 * Math.PI * frequency * simTime * 0.1);
+                    const offset = amplitude * 0.5 * Math.sin(phase);
+                    const px = i * 20 + offset;
+                    ctx.beginPath();
+                    ctx.arc(px, centerY, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            // Gambar info gelombang
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px Arial';
+            ctx.fillText(`Tipe: ${waveType === 'transversal' ? 'Transversal' : 'Longitudinal'}`, 10, 20);
+            ctx.fillText(`Amp: ${amplitude}`, 10, 35);
+            ctx.fillText(`Freq: ${frequency}`, 10, 50);
+            ctx.fillText(`λ: ${wavelength}`, 10, 65);
+            
+            // Hitung energi dan kecepatan
+            const energy = amplitude * frequency;
+            const velocity = frequency * wavelength * 500;
+            ctx.fillText(`Energi: ${energy.toFixed(2)}`, 10, 80);
+            ctx.fillText(`Kecepatan: ${velocity.toFixed(2)}`, 10, 95);
+            
+            simTime++;
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        animate();
+    }
+
+    function resetLogic() {
+        console.log('Reset clicked');
+        // Clear all slots
+        document.querySelectorAll('.slot').forEach(slot => {
+            var chip = slot.querySelector('.chip');
+            if (chip) chip.remove();
+            var hint = slot.querySelector('.s-hint');
+            if (hint) hint.style.display = 'block';
+        });
+    }
+
+    // Canvas initialization
+    window.addEventListener('load', function() {
+        var canvas = document.getElementById('logicCanvas');
+        if (canvas) {
+            var container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+    });
+
+    // Handle resize
+    window.addEventListener('resize', function() {
+        var canvas = document.getElementById('logicCanvas');
+        if (canvas) {
+            var container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+    });
+</script>

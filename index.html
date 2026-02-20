@@ -1,23 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index Page</title>
+    <title>Menu Utama - Media Fisika</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="text-center">
-        <h1 class="text-2xl font-bold mb-8">Welcome</h1>
-        <div class="space-y-4">
-            <a href="index1.html" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Go to Index1
-            </a>
-            <br>
-            <a href="new/index.html" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                Go to New Index
-            </a>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-2xl w-full bg-white shadow-2xl rounded-3xl overflow-hidden">
+        
+        <div class="bg-gradient-to-r from-blue-600 to-cyan-500 p-8 text-white text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold mb-2">Media Pembelajaran</h1>
+            <p class="text-blue-100 opacity-90">Fisika Interaktif: Getaran & Gelombang</p>
         </div>
+
+        <div class="p-8">
+            <h2 class="text-lg font-semibold text-slate-500 mb-6 uppercase tracking-wider text-center md:text-left">Pilih Menu Belajar:</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <a href="index1.html" class="group relative flex flex-col p-6 bg-white border-2 border-slate-100 rounded-2xl hover:border-blue-500 hover:shadow-lg transition-all duration-300">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold text-slate-800">Modul Belajar</span>
+                    <p class="text-sm text-slate-500 mt-1">Baca materi dan tonton video apersepsi di sini.</p>
+                </a>
+
+                <a href="new/index.html" class="group relative flex flex-col p-6 bg-white border-2 border-slate-100 rounded-2xl hover:border-green-500 hover:shadow-lg transition-all duration-300">
+                    <div class="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold text-slate-800">Simulator Wave</span>
+                    <p class="text-sm text-slate-500 mt-1">Praktikkan logika coding untuk menggerakkan gelombang.</p>
+                </a>
+
+                <a href="./Phi-R v.1.0/index.html" class="group relative flex flex-col p-6 bg-white border-2 border-slate-100 rounded-2xl hover:border-blue-500 hover:shadow-lg transition-all duration-300">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold text-slate-800">Modul Belajar</span>
+                    <p class="text-sm text-slate-500 mt-1">Baca materi dan tonton video apersepsi di sini.</p>
+                </a>
+
+            </div>
+        </div>
+
+        <div class="bg-slate-50 p-4 text-center border-t border-slate-100">
+            <p class="text-xs text-slate-400 font-medium tracking-widest uppercase">E-Learning Fisika Berbasis TaRL & CT</p>
+        </div>
+
     </div>
+
 </body>
 </html>
